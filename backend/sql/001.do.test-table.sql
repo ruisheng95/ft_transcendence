@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS test (
+  id INTEGER PRIMARY KEY,
+  count INTEGER NOT NULL
+);
+DELETE FROM test;
+INSERT INTO test(id, count) VALUES(1, 1);
