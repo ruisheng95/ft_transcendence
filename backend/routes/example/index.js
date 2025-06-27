@@ -1,7 +1,7 @@
-'use strict'
+const root = async function (fastify) {
+  fastify.get("/", async function () {
+    return "this is an example";
+  });
+};
 
-module.exports = async function (fastify, opts) {
-  fastify.get('/', async function (request, reply) {
-    return 'this is an example'
-  })
-}
+export default root;

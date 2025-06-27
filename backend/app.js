@@ -1,16 +1,17 @@
-"use strict";
-
-const path = require("node:path");
-const AutoLoad = require("@fastify/autoload");
-const cors = require("@fastify/cors");
+import path from "node:path";
+import AutoLoad from "@fastify/autoload";
+import cors from "@fastify/cors";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Pass --options via CLI arguments in command to enable these options.
-const options = {};
+export const options = {abc:"def"};
 
-module.exports = async function (fastify, opts) {
+async function app(fastify, opts) {
   // Place here your custom code!
   fastify.register(cors, {
-    origin: ["http://localhost:3001"]
+    origin: ["http://localhost:3001"],
   });
 
   // Do not touch the following lines
@@ -29,6 +30,6 @@ module.exports = async function (fastify, opts) {
     dir: path.join(__dirname, "routes"),
     options: Object.assign({}, opts),
   });
-};
+}
 
-module.exports.options = options;
+export default app;

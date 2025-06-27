@@ -4,7 +4,6 @@ import Postgrator from "postgrator";
 
 function fastifyBetterSqlite3(fastify, options, done) {
   const db = new Database("data.db");
-
   // optional pragmas
   // db.prepare("PRAGMA foreign_keys = ON").run();
   // db.prepare("PRAGMA journal_mode = WAL").run();
@@ -15,7 +14,7 @@ function fastifyBetterSqlite3(fastify, options, done) {
   }
 
   const execQuery = (query) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const stm = db.prepare(query);
       try {
         const rows = stm.all();
@@ -30,7 +29,7 @@ function fastifyBetterSqlite3(fastify, options, done) {
     });
   };
   const execSqlScript = (sqlScript) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       db.exec(sqlScript);
       resolve();
     });
