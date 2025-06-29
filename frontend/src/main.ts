@@ -3,6 +3,7 @@ import "./style.css";
 import typescriptLogo from "./typescript.svg";
 import viteLogo from "/vite.svg";
 import { setupCounter } from "./counter.ts";
+import { startGame } from "./startgame.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
@@ -20,6 +21,10 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <p class="read-the-docs">
       Click on the Vite and TypeScript logos to learn more
     </p>
+
+    <p>
+      <button id="entergame" type="button" >Click here to start game</button>
+    </p>
   </div>
 `;
 fetch(`http://127.0.0.1:3000`)
@@ -30,4 +35,6 @@ fetch(`http://127.0.0.1:3000`)
       testDiv.innerHTML = json.root;
     }
   });
+
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
+startGame(document.querySelector<HTMLButtonElement>("#entergame")!);
