@@ -1,11 +1,8 @@
 import "./gamestyle.css";
 
-const key_down: Record<string, boolean> = {
-  ArrowUp: false,
-  ArrowDown: false,
-  w: false,
-  s: false
-}; // the TS map bruh
+
+//prep stuffssss
+const socket = new WebSocket("ws://localhost:3000/ws");
 
 const game_obj = document.querySelector<HTMLDivElement>("#game");
 
@@ -27,25 +24,22 @@ const rightplayer = document.querySelector<HTMLDivElement>("#rightplayer");
 const leftplayer = document.querySelector<HTMLDivElement>("#leftplayer");
 const ball = document.querySelector<HTMLDivElement>("#ball");
 
-document.addEventListener('keydown', handleKeyDown);
-document.addEventListener('keyup', handleKeyUp);
+//bruh stupid ts
+if (!board) throw new Error("board element not found");
+if (!rightplayer) throw new Error("rightplayer element not found");
+if (!leftplayer) throw new Error("leftplayer element not found");
+if (!ball) throw new Error("ball element not found");
+if (!start_game_button) throw new Error("start game button element not found");
 
-if(start_game_button)
-    start_game_button.addEventListener("click", game_loop)
 
-
-if (!board) throw new Error("Board element not found");
-if (!rightplayer) throw new Error("Board element not found");
-if (!leftplayer) throw new Error("Board element not found");
-if (!ball) throw new Error("Board element not found");
-
+//init them vars from the css / html
 
 //ball stuff
 const ball_len = ball.clientWidth;
-let ballX = board.clientWidth / 2;
-let ballY = board.clientHeight / 2;
-let dy = 2;
-let dx = 2;
+const ballX = board.clientWidth / 2;
+const ballY = board.clientHeight / 2;
+const dy = 4;
+const dx = 4;
 
 //board stuff
 const boardHeight = board.clientHeight;
@@ -55,131 +49,105 @@ const board_border_width = parseInt(getComputedStyle(board).borderLeftWidth);
 //players settings
 const block_height = rightplayer.clientHeight;
 const block_width = rightplayer.clientWidth;
-const player_speed = 5;
-let rightplayerY = board.clientHeight / 2 - (block_height / 2);
-let leftplayerY = board.clientHeight / 2 - (block_height / 2);
+const player_speed = 10;
+const rightplayerY = board.clientHeight / 2 - (block_height / 2);
+const leftplayerY = board.clientHeight / 2 - (block_height / 2);
 const player_indent = 20;
-rightplayer.style.right = player_indent + "px";
-leftplayer.style.left = player_indent + "px"
 
 
-//other variables
-let game_interval_id = 0;
-let game_hit_lock = false;
+render_positions(ballX, ballY, leftplayerY, rightplayerY);
+socket.addEventListener("message", process_msg_from_socket);
+document.addEventListener('keydown', handleKeyDown);
+document.addEventListener('keyup', handleKeyUp);
+start_game_button.addEventListener("click", start_the_fkin_game)
 
-set_starting_pos();
 
-function game_loop()
+//functions
+
+function start_the_fkin_game()
 {
-    if(start_game_button)
+	//init the init game JSON obj
+	const config_obj = {
+
+	//type
+	type: "game_init",
+
+	//board stuff
+	boardHeight: boardHeight,
+	boardWidth: boardWidth,
+	board_border_width: board_border_width,
+
+	//player stuff
+	block_height: block_height,
+	block_width: block_width,
+	player_speed: player_speed,
+	player_indent: player_indent,
+
+	// Ball stuff
+	ball_len: ball_len,
+	ballX: ballX,
+	ballY: ballY,
+	dy: dy,
+	dx: dx,
+};
+	//remove the start button
+    if (start_game_button)
         start_game_button.style.display = "none";
-	
-    if(ball && leftplayer && rightplayer && board)
-    {
-		//starting pos
-		set_starting_pos()
+    
+	//send the init JSON to backend
+    if (socket.readyState === WebSocket.OPEN)
+        socket.send(JSON.stringify(config_obj));
+}
 
-        clearInterval(game_interval_id);
-        game_interval_id = setInterval(frame, 5); //loop every 5 milisec
-        function frame()
-        {
-			change_player_pos();
-			if(ballX <= 0 || ballX + ball_len >= boardWidth)
-			{
-				clearInterval(game_interval_id);
-				if(start_game_button)
-					start_game_button.style.display = "block";
-			}
-            else
-            {
-                if(ball && board)
-                {
-                    if (!game_hit_lock && ((ballX <= player_indent + block_width && ballX >= player_indent &&
-						ballY + ball_len >= leftplayerY && ballY <= leftplayerY + block_height) ||
-						(ballX + ball_len >= (boardWidth - player_indent) - block_width && ballX + ball_len <= (boardWidth - player_indent) &&
-						ballY + ball_len >= rightplayerY && ballY + ball_len<= rightplayerY + block_height)
-						))
-						{
-							dx = -dx;
-							dx *= 1.05;
-							dy *= 1.05;
-							game_hit_lock = true;
-							setTimeout(() => {game_hit_lock = false;}, 1000);
-						}
-
-                    if (ballY + ball_len >= boardHeight || ballY <= 0)
-                        dy = -dy;
-
-                    ballX += dx;
-                    ballY += dy;
-
-                    ball.style.left = ballX + "px"; 
-                    ball.style.top = ballY + "px";
-                } 
-            }
-        }
+function process_msg_from_socket(message: MessageEvent)
+{
+	console.log("JSON recv to frontend");
+	const msg_obj = JSON.parse(message.data);
+        
+	if(msg_obj.type == "game_update")
+    	render_positions(msg_obj.ballX, msg_obj.ballY, msg_obj.leftplayerY, msg_obj.rightplayerY);
+	else if(msg_obj.type == "game_over")
+	{
+		if (start_game_button)
+        	start_game_button.style.display = "block";
     }
 }
 
-function set_starting_pos()
+function render_positions(ballX: number, ballY: number, leftplayerY: number, rightplayerY: number)
 {
-	if(ball && rightplayer && leftplayer && board)
+	if (ball && leftplayer && rightplayer)
 	{
-		ball.style.top = boardHeight / 2 - (ball_len / 2) + "px";
-		ball.style.left = boardWidth / 2 - (ball_len / 2) + "px";
-		rightplayer.style.top = boardHeight / 2  - (block_height / 2) + "px";
-		leftplayer.style.top = boardHeight / 2  - (block_height / 2) + "px";
-		ballX = board.clientWidth / 2;
-		ballY = board.clientHeight / 2;
-		rightplayerY = board.clientHeight / 2 - (block_height / 2);
-		leftplayerY = board.clientHeight / 2 - (block_height / 2);
-		dy = 2;
-		dx = 2;
-	}
-	
-}
-function change_player_pos()
-{
-	if(key_down["ArrowDown"] == true)
-	{
-		if(rightplayer && rightplayerY + block_height + board_border_width <= boardHeight)
-        {
-            rightplayerY += player_speed;
-            rightplayer.style.top = rightplayerY + "px";
-        }
-	}
-	if(key_down["ArrowUp"] == true)
-	{
-		if(rightplayer && rightplayerY - board_border_width > 0)
-        {
-            rightplayerY -= player_speed;
-            rightplayer.style.top = rightplayerY + "px";
-        }
-	}
-	if(key_down["s"] == true)
-	{
-		if(leftplayer && leftplayerY + block_height + board_border_width <= boardHeight)
-        {
-            leftplayerY += player_speed;
-            leftplayer.style.top = leftplayerY + "px";
-        }
-	}
-	if(key_down["w"] == true)
-	{
-		if(leftplayer && leftplayerY - board_border_width > 0)
-        {
-            leftplayerY -= player_speed;
-            leftplayer.style.top = leftplayerY + "px";
-        }
+		ball.style.left = ballX + "px";
+		ball.style.top = ballY + "px";
+
+		rightplayer.style.right = player_indent + "px";
+		rightplayer.style.top = rightplayerY + "px";
+
+		leftplayer.style.left = player_indent + "px"
+		leftplayer.style.top = leftplayerY + "px";
 	}
 }
 
 function handleKeyDown(key_pressed: KeyboardEvent)
 {
-	key_down[key_pressed.key] = true;
+	if (socket.readyState === WebSocket.OPEN)
+	{
+		const keydown_obj = {
+			type: "keydown",
+			key: key_pressed.key
+		}
+		socket.send(JSON.stringify(keydown_obj));
+	}
 }
 
 function handleKeyUp(key_pressed: KeyboardEvent)
 {
-	key_down[key_pressed.key] = false;
+	if (socket.readyState === WebSocket.OPEN)
+	{
+		const keyup_obj = {
+			type: "keyup",
+			key: key_pressed.key
+		}
+		socket.send(JSON.stringify(keyup_obj));
+	}
 }
