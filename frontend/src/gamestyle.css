@@ -41,7 +41,7 @@ body {
 
 #leftplayer{
   background-color: white;
-  width: 5px;
+  width: 10px;
   height: 150px;
   position: absolute;
   font-size: 18px;
@@ -49,7 +49,7 @@ body {
 
 #rightplayer{
   background-color: white;
-  width: 5px;
+  width: 10px;
   height: 150px;
   position: absolute;
   font-size: 18px;
