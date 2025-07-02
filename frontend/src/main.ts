@@ -6,14 +6,16 @@ import { setupCounter } from "./counter.ts";
 import { startGame } from "./startgame.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
+  <div class="flex flex-col gap-4">
+    <div class="flex justify-center">
+      <a href="https://vite.dev" target="_blank">
+        <img src="${viteLogo}" class="logo" alt="Vite logo" />
+      </a>
+      <a href="https://www.typescriptlang.org/" target="_blank">
+        <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
+      </a>
+    </div>
+    <h1 class="text-3xl font-bold">Vite + TypeScript</h1>
     <div class="card">
       <button id="counter" type="button"></button>
     </div>
@@ -21,7 +23,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <p class="read-the-docs">
       Click on the Vite and TypeScript logos to learn more
     </p>
-
+    <p class="text-3xl font-bold underline text-green-300">This is very tailwind</p>
     <p>
       <button id="entergame" type="button" >Click here to start game</button>
     </p>
