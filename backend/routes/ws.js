@@ -1,7 +1,7 @@
-const fp = require("fastify-plugin");
-const websocket = require('@fastify/websocket');
+import fp from "fastify-plugin";
+import websocket from "@fastify/websocket";
 
-async function websocketPlugin(fastify, opts)
+const plugin = fp(async function (fastify, opts)
 {
 	await fastify.register(websocket); //need use async await if not somehow it will skip this register function and the websocket wont be initialised bruh
 
@@ -137,6 +137,6 @@ async function websocketPlugin(fastify, opts)
 		// 	clearInterval(game_interval_id);
 		// }
 	});
-}
+});
 
-module.exports = fp(websocketPlugin);
+export default plugin;
