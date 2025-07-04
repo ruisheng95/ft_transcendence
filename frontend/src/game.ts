@@ -1,6 +1,5 @@
 import "./gamestyle.css";
 
-
 //prep stuffssss
 const socket = new WebSocket("ws://localhost:3000/ws");
 
@@ -8,12 +7,13 @@ const game_obj = document.querySelector<HTMLDivElement>("#game");
 
 if(game_obj)
     game_obj.innerHTML = `
-<button id = "start_game_button" type="button" >Start game</button>
+<button id = "start_game_button" type="button" class="bg-black text-white w-[10vw] h-[10vh] absolute top-[20px] left-[20px] text-lg border-2 border-white">Start game</button>
 <center>
-<div id = "board">
-    <div id = "ball"></div>
-    <div id = "leftplayer"></div>
-    <div id = "rightplayer"></div>
+<div id="board" class="bg-black w-[80vw] h-[85vh] relative justify-center border-4 border-white">
+    <div id="ball" class="bg-white w-[15px] h-[15px] absolute top-[100px]"></div>
+    <div id="leftplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
+    <div id="rightplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
+
 </div>
 </center>
 `;
