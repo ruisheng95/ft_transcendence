@@ -27,7 +27,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <p>
       <button id="entergame" type="button" >Click here to start game</button>
     </p>
-	<div id="google_sign_in" class="absolute top-4 right-4"></div>
+	<div id="google_sign_in"></div>
   </div>
 `;
 fetch(`http://127.0.0.1:3000`)

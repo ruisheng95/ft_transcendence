@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* used to hide scrollbar need to use css cuz tailwind dh for this rip */
+.hide-scrollbar
+{
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
