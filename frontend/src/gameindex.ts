@@ -3,6 +3,10 @@
 
 import "./gameindex.css";
 import { startGame } from "./startgame.ts";
+import { pf_config_setup, pf_config_popup } from "./config_profile.ts"
+import { playerstats_setup, playerstats_popup } from "./other_stuff.ts"
+import { settings_setup, settings_popup } from "./other_stuff.ts"
+import { help_setup, help_popup } from "./other_stuff.ts"
 
 //////////////////////////////////////////////
 //fetch the fren list and profile stuff here
@@ -13,7 +17,7 @@ const player =
 {
 	"id": "100",
 	"username": "Player1",
-	"pfp": null,
+	"pfp": null as string | null,
 	"friends":
 	[
 		{
@@ -86,7 +90,7 @@ if(!game) throw new Error("Game element not found");
 const enter_game_sec = `
 		<div id="enter_game_sec" class="border-2 border-white border w-[500px] h-[450px] bg-black flex flex-col justify-center items-center gap-[20px]">
 			<h1 class="text-white text-[25px] font-bold"> Enter game: </h1>
-			<button id="entergame" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Singleplayer</button>
+			<button id="entergame" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Localhost play</button>
 			<button id="multiplayer" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Multiplayer</button>
 			<button id="vs_Ai" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">vs_Ai</button>
 		</div> `
@@ -94,10 +98,10 @@ const enter_game_sec = `
 //left sec
 const left_sec = `
 	<div id="left_sec" class="flex flex-col border-2 border-white border w-[200px] h-[450px] bg-black justify-center items-center gap-[20px]">
-		<h1 class="text-white text-[20px] font-bold"> Player stuffs: </h1>
-		<button class="flex flex-col items-center justify-center text-white text-[20px] border-1 w-[120px] h-[100px]">player profile</button>
-		<button class="flex flex-col items-center justify-center text-white text-[20px] border-1 w-[120px] h-[100px]">settings</button>
-		<button class="flex flex-col items-center justify-center text-white text-[20px] border-1 w-[120px] h-[100px]">stats</button>
+		<h1 class="text-white text-[20px] font-bold"> Other stuffs: </h1>
+		<button id="playerstats_button" class="flex flex-col items-center justify-center text-white text-[20px] border-1 w-[120px] h-[100px]">Player stats</button>
+		<button id="settings_button" class="flex flex-col items-center justify-center text-white text-[20px] border-1 w-[120px] h-[100px]">Settings</button>
+		<button id="help_button" class="flex flex-col items-center justify-center text-white text-[20px] border-1 w-[120px] h-[100px]">Help</button>
 	</div>
 ` 
 
@@ -128,10 +132,10 @@ while (i < player.friends.length)
 }
 
 const right_sec = `
-	<div id="right_sec" class="flex flex-col border-2 border-white border w-[200px] h-[450px] bg-black p-[10px]">
+	<div id="right_sec" class="flex flex-col border-2 border-white border w-[200px] h-[450px] bg-black">
 		<h1 class="text-white text-[20px] font-bold text-center mb-[10px]"> Friends </h1>
 		
-		<div class="flex-1 overflow-y-auto hide-scrollbar">
+		<div class="flex-1 overflow-y-auto hide-scrollbar p-[10px]">
 			<div id="online_frens" class="mb-[15px]">
 				<h2 class="text-white text-[16px] mb-[5px]"> Online: </h2>
 				<div class="w-full border-b-1 border-white mb-[10px]"></div>
@@ -148,6 +152,10 @@ const right_sec = `
 				</div>
 			</div>
 		</div>
+		<div id="fren_buttons" class="flex w-full">
+			<button id="add_frens" class="flex-1 text-white text-[14px] border-white border-1 p-[3px]">Add friend</button>
+			<button id="remove_frens" class="flex-1 text-white text-[14px] p-[3px] border-white border-1">Remove friend </button>
+		</div>
 	</div>
 ` 
 
@@ -155,15 +163,25 @@ const right_sec = `
 const header_sec = `
 	<div id="header_sec">
 		<div class="flex items-center w-[99vw] h-[10vh] bg-black border-b border-white">
-			<img src="${player.pfp ? player.pfp : "/src/defaultpfp.png"}" class="w-[40px] h-[40px] rounded-full border-2 border-white ml-[1vw]">
-			<h1 class="text-white text-[18px] pl-[1vw]">${player.username}</h1>
-			<button class="ml-auto text-white text-[14px] px-[10px] py-[5px] border border-white">Logout</button>
+			
+			<img id ="header_img" src="${player.pfp ? player.pfp : "/src/defaultpfp.png"}" class="w-[40px] h-[40px] rounded-full border-2 border-white ml-[1vw]">
+			<div id="header_name">
+				<h1 class="text-white text-[18px] pl-[1vw]">${player.username}</h1>
+			</div>
+			
+			<div id="buttons" class="flex ml-auto px-[10px] py-[5px] gap-[10px]">
+				<button id="pf_config_button" class="text-white text-[14px] border border-white p-[3px]">Configure profile</button>
+				<button class="text-white text-[14px] border border-white p-[3px]">Logout</button>
+			</div>
+		
 		</div>
-		<div class="text-center bg-black pt-[5vh]">
+		<div class="text-center bg-black pt-[4vh]">
 			<h1 class="text-white text-[40px] font-bold">ft_transcendence menus :/</h1>
 		</div>
 	</div>
 `
+
+
 
 game.innerHTML = `
 	<div id = "screen" class = "min-h-screen bg-black">
@@ -173,7 +191,22 @@ game.innerHTML = `
 			${enter_game_sec}
 			${right_sec}
 		</div>
+		${pf_config_popup}
+
+		${playerstats_popup}
+		${settings_popup}
+		${help_popup}
 	</div>
 `;
 
+
+
+
+
 startGame(document.querySelector<HTMLButtonElement>("#entergame")!);
+
+playerstats_setup();
+settings_setup();
+help_setup();
+
+pf_config_setup();

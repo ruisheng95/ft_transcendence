@@ -24,7 +24,7 @@ window.handle_credential_response = function(response: google.accounts.id.Creden
 	const info_part = atob(response.credential.split('.')[1]); //decode the Base64 string
 	console.log(info_part);
 
-	window.location.href = '/gameindex.html';
+	// window.location.href = "/gameindex.html";
 	//parse the undecoded token later for backend to handle
 };
 // wtf liddat oni oso need to do so much work just for ts ignore
