@@ -2,11 +2,17 @@ import path from "node:path";
 import AutoLoad from "@fastify/autoload";
 import cors from "@fastify/cors";
 import { fileURLToPath } from "url";
+import pino from "pino";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Pass --options via CLI arguments in command to enable these options.
-export const options = {abc:"def"};
+export const options = {
+  abc: "def",
+  logger: {
+    timestamp: pino.stdTimeFunctions.isoTime,
+  },
+};
 
 async function app(fastify, opts) {
   // Place here your custom code!
