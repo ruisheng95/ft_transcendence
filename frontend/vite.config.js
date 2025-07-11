@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import path from "path";
 import eslint from "vite-plugin-eslint2";
 import checker from "vite-plugin-checker";
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(() => {
   return {
@@ -14,6 +14,12 @@ export default defineConfig(() => {
     },
     build: {
       outDir: "build",
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, "index.html"),
+          nested: path.resolve(__dirname, "game-online/index.html"),
+        },
+      },
     },
     plugins: [
       tailwindcss(),
@@ -22,5 +28,8 @@ export default defineConfig(() => {
         typescript: true,
       }),
     ],
+    server: {
+      allowedHosts: ["ft.ruisheng.me"],
+    },
   };
 });
