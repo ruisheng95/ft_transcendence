@@ -1,4 +1,6 @@
 //pf config
+// const socket = new WebSocket("ws://localhost:3000/ws_profile");
+
 export function pf_config_setup()
 {
 	const pf_config_button = document.querySelector<HTMLButtonElement>("#pf_config_button");
@@ -39,6 +41,21 @@ export function pf_config_setup()
 	});
 
 	save_pf_config.addEventListener("click", () => {
+
+		// interface send_obj_type
+		// {
+		// 	type: string;
+		// 	name: string | null;
+		// 	pfp: string | null;
+		// }
+
+		// let send_obj : send_obj_type =
+		// {
+		// 	type : "modify_profile",
+		// 	name: null,
+		// 	pfp: null
+		// };
+
 		////////////////////////////////
 		//send the responses to backend
 		////////////////////////////////
@@ -50,7 +67,9 @@ export function pf_config_setup()
 		//currently just store in frontend (still need to implement to backend)
 		
 		if(pfp_img_preview.src)
+		{
 			header_pfp.src = pfp_img_preview.src;
+		}
 
 		if(name_input.value)
 			header_name.innerHTML = `<h1 class="text-white text-[18px] pl-[1vw]">${name_input.value}</h1>`

@@ -3,6 +3,7 @@ import AutoLoad from "@fastify/autoload";
 import cors from "@fastify/cors";
 import { fileURLToPath } from "url";
 import pino from "pino";
+import websocket from "@fastify/websocket";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -20,6 +21,7 @@ async function app(fastify, opts) {
     origin: ["http://localhost:3001"],
   });
 
+  await fastify.register(websocket); 
   // Do not touch the following lines
 
   // This loads all plugins defined in plugins

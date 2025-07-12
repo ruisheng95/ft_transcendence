@@ -1,10 +1,7 @@
-import websocket from "@fastify/websocket";
 import { GameInstance } from "../objects/GameInstance.js";
 
 const root = async function (fastify) {
-  await fastify.register(websocket); //need use async await if not somehow it will skip this register function and the websocket wont be initialised bruh
-
-  const gameLobby = {};
+	  const gameLobby = {};
   const defaultGameSetting = {
     boardWidth: 1120,
     boardHeight: 630,
@@ -193,6 +190,7 @@ const root = async function (fastify) {
       }
     });
   });
+
 };
 
 export default root;

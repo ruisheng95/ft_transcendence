@@ -5,6 +5,8 @@ if (!google_sign_in) throw new Error("board element not found");
 //setup stuffs
 const client_id = "313465714569-nq8gfim6in2iki8htj3t326vhbunl23a.apps.googleusercontent.com" //the client id is like to tell google wat is using the google sign-in feature (in this case my ft_transcendence project in google cloud)
 const uri = "http://localhost" // redirect link after auth
+const socket = new WebSocket("ws://localhost:3000/ws_profile");
+
 
 //div id = g_id_onload is for the google gsi script to determine where can it get the data-* infos for the login stuffs
 //div id = g_id_signin is for the gsi script to get the data-* for the button
@@ -24,7 +26,14 @@ window.handle_credential_response = function(response: google.accounts.id.Creden
 	const info_part = atob(response.credential.split('.')[1]); //decode the Base64 string
 	console.log(info_part);
 
-	// window.location.href = "/gameindex.html";
-	//parse the undecoded token later for backend to handle
+	const send_obj = {
+		type: "google-sign-in JWT token",
+		JWT_token: response.credential
+	}
+
+	window.location.href = "/gameindex.html";
+
+	if(socket.readyState === WebSocket.OPEN)
+		socket.send(JSON.stringify(send_obj));
 };
 // wtf liddat oni oso need to do so much work just for ts ignore
