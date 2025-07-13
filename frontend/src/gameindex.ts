@@ -9,10 +9,8 @@ import { playerstats_setup, playerstats_popup } from "./other_stuff.ts"
 import { settings_setup, settings_popup } from "./other_stuff.ts"
 import { help_setup, help_popup } from "./other_stuff.ts"
 
+import { add_friends_setup, add_friends_popup } from "./friends.ts"
 
-//////////////////////////////////////////////
-//fetch the fren list and profile stuff here
-//////////////////////////////////////////////
 
 
 const socket = new WebSocket("ws://localhost:3000/ws_profile");
@@ -87,7 +85,7 @@ function main_ft()
 		const friend = friends_obj.friends[i];
 
 		const friend_html = `
-			<div class="flex items-center text-white text-[14px] w-full h-[35px] px-[5px] py-[2px] hover:bg-gray-800">
+			<div class="flex items-center text-white text-[14px] w-full h-[35px] px-[5px] py-[2px]">
 				<img src="${friend.pfp? friend.pfp : "/src/defaultpfp.png"}" class="w-[20px] h-[20px]">
 				<h1 class="text-white ml-[5px]">${friend.username}</h1>
 				<div class="ml-auto w-[8px] h-[8px] rounded-full ${friend.status === 'online' ? 'bg-green-400' : 'bg-gray-500'}"></div>
@@ -124,7 +122,7 @@ function main_ft()
 				</div>
 			</div>
 			<div id="fren_buttons" class="flex w-full">
-				<button id="add_frens" class="flex-1 text-white text-[14px] border-white border-1 p-[3px]">Add friend</button>
+				<button id="add_friends_button" class="flex-1 text-white text-[14px] border-white border-1 p-[3px]">Add friend</button>
 				<button id="remove_frens" class="flex-1 text-white text-[14px] p-[3px] border-white border-1">Remove friend </button>
 			</div>
 		</div>
@@ -152,8 +150,6 @@ function main_ft()
 		</div>
 	`
 
-
-
 	game.innerHTML = `
 		<div id = "screen" class = "min-h-screen bg-black">
 			${header_sec}
@@ -167,6 +163,8 @@ function main_ft()
 			${playerstats_popup}
 			${settings_popup}
 			${help_popup}
+
+			${add_friends_popup}
 		</div>
 	`;
 
@@ -177,4 +175,6 @@ function main_ft()
 	help_setup();
 
 	pf_config_setup();
+
+	add_friends_setup();
 }

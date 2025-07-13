@@ -1,5 +1,5 @@
 //pf config
-// const socket = new WebSocket("ws://localhost:3000/ws_profile");
+const socket = new WebSocket("ws://localhost:3000/ws_profile");
 
 export function pf_config_setup()
 {
@@ -13,67 +13,91 @@ export function pf_config_setup()
 	const pfp_empty = document.querySelector<HTMLDivElement>("#pfp_empty");
 	const save_pf_config = document.querySelector<HTMLButtonElement>("#save_pf_config");
 	const name_input = document.querySelector<HTMLInputElement>("#name_input");
+	const error_display = document.querySelector<HTMLDivElement>("#error_display");
 
 	const header_pfp = document.querySelector<HTMLImageElement>("#header_img");
 	const header_name = document.querySelector<HTMLDivElement>("#header_name");
 
 
-	if(!header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config || !pfp_button || !input_pfp || !file_name_display || !pfp_img_preview || !pfp_empty)
-		throw new Error("Error pf_config buttons not found");
+	if(!error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config || !pfp_button || !input_pfp || !file_name_display || !pfp_img_preview || !pfp_empty)
+		throw new Error("Error pf_config stuff not found");
 
 	pf_config_button.addEventListener("click", () => {pf_config_popup.classList.remove("hidden");});
 	close_pf_config.addEventListener("click", () => {pf_config_popup.classList.add("hidden");});
 
 	pfp_button.addEventListener("click", () => { input_pfp.click();});
 	
-	input_pfp.addEventListener("change", (event: Event) => {
-		
-		const target = event.target as HTMLInputElement;
+	socket.addEventListener('message', (event) => {
 
-		if(!target || !target.files) throw new Error("target not found");
-		const file = target.files[0];
+		console.log(event.data);
+		const response = JSON.parse(event.data);
+		if (response.type === 'modify_profile_status')
+		{
+			if (response.status === "success")
+			{
+				pf_config_popup.classList.add("hidden");
+				if (response.name)
+					header_name.innerHTML = `<h1 class="text-white text-[18px] pl-[1vw]">${response.name}</h1>`;
+				if (response.pfp)
+					header_pfp.src = response.pfp;
+			}
+			else
+				error_display.innerHTML = `<p class="text-red-500"> Error: ${response.error_msg}</p>`;
+		}
+	});
+
+	input_pfp.addEventListener("change", () => {
+		
+		if(!input_pfp.files) throw new Error("files not found");
+		const file = input_pfp.files[0];
 		file_name_display.innerHTML = `<p>${file.name}</p>`;
 
 		const imageUrl = URL.createObjectURL(file);
 		pfp_img_preview.src = imageUrl;
 		pfp_img_preview.classList.remove("hidden");
 		pfp_empty.classList.add("hidden");
-	});
+		});
 
-	save_pf_config.addEventListener("click", () => {
+	save_pf_config.addEventListener("click", async () => {
 
-		// interface send_obj_type
-		// {
-		// 	type: string;
-		// 	name: string | null;
-		// 	pfp: string | null;
-		// }
-
-		// let send_obj : send_obj_type =
-		// {
-		// 	type : "modify_profile",
-		// 	name: null,
-		// 	pfp: null
-		// };
-
-		////////////////////////////////
-		//send the responses to backend
-		////////////////////////////////
-
-		///////////////////////////////
-		//change the pfp and the name displayed in the index
-		///////////////////////////////////
-
-		//currently just store in frontend (still need to implement to backend)
-		
-		if(pfp_img_preview.src)
+		interface send_obj_type
 		{
-			header_pfp.src = pfp_img_preview.src;
+			type: string;
+			name: string | null;
+			pfp: string | null;
+		}
+
+		const send_obj : send_obj_type =
+		{
+			type : "modify_profile",
+			name: null,
+			pfp: null
+		};
+		
+		if (input_pfp.files && input_pfp.files.length > 0)
+		{
+        	const file = input_pfp.files[0]; //get file
+			const buffer = await file.arrayBuffer(); // get the binary data of the file (useless one cannot read or modify)
+            const bytes = new Uint8Array(buffer); // convert this to Unicode (smth like ascii but more numbers) [255, 216, 255, 224, 0, 16, ...]
+            
+            let binaryString = '';
+            for (const byte of bytes)
+    			binaryString += String.fromCharCode(byte); //convert this unicode to actual characters "ÿØÿà..." (mostly weird characters)
+
+            const base64 = btoa(binaryString); // convert to base64 string
+            const dataURL = `data:${file.type};base64,${base64}`; //conver to dataurl to store, later can display immediately
+			send_obj.pfp = dataURL;
+
+			header_pfp.src = dataURL;
 		}
 
 		if(name_input.value)
+		{
+			send_obj.name = name_input.value;
 			header_name.innerHTML = `<h1 class="text-white text-[18px] pl-[1vw]">${name_input.value}</h1>`
-		pf_config_popup.classList.add("hidden");
+		}
+
+		socket.send(JSON.stringify(send_obj)); //send to backend to verify the pf config shit
 	});
 }
 
@@ -83,7 +107,7 @@ export const pf_config_popup = `
 		<div id="pf_config_screen" class="relative bg-black h-[70vh] w-[35vw] flex flex-col items-center border border-2 border-white">
 			<h1 class="text-white text-[30px] font-semibold my-[5vh]">profile config:</h1>
 
-			<form id="profile_form" class="flex flex-col items-center justify-center gap-4">
+			<div id="profile_form" class="flex flex-col items-center justify-center gap-4">
 
 				<div id="pfp_part" class="flex flex-col items-center gap-3">
 					<label class="text-white text-[18px]">Profile Picture:</label>
@@ -99,10 +123,10 @@ export const pf_config_popup = `
 					<label class="text-white text-[18px]" class="flex">Name:</label>
 					<input type="text" id="name_input" class="flex px-2 py-1 bg-black border border-white text-white">
 				</div>
-
+				<div id="error_display"></div>
 				<button type="button" id="close_pf_config" class="text-white border border-white absolute bottom-4 left-4 w-[5vw] h-[5vh]">close</button>
 				<button type="button" id="save_pf_config" class="text-white border border-white absolute bottom-4 right-4 w-[5vw] h-[5vh]">save</button>
-			</form>
+			</div>
 		</div>
 	</div>
 `
