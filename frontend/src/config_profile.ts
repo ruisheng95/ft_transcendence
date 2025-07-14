@@ -131,5 +131,4 @@ export const pf_config_popup = `
 	</div>
 `
 // in the pfp config above need to hide the <input> and do a custom button instead then link the custom button to the input using js cuz the input button very hard to style
-// submit button must be type = 'button' not 'submit' cuz that will somehow add a '?' behind the url wts
 // im not rly gud at ts so i trying use the arrow ft so my code doesnt look so cpp lmao

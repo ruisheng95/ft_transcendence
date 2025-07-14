@@ -1,5 +1,5 @@
 //currently import temp objects for frontend
-import { temp_player_obj, temp_friends_obj, temp_server_players } from "./tempstuff";
+import { temp_player_obj, temp_friends_obj, temp_server_players } from "./tempstuff.js";
 
 // current to do list:
 // JWT token processing and profile initialisation
@@ -8,6 +8,7 @@ import { temp_player_obj, temp_friends_obj, temp_server_players } from "./tempst
 // storing the name and pfp after profile config
 // check for duplicate names for profile config
 // send server player list for addfrens
+// rmb to send back the friends list whenever it changes
 
 const root = async function (fastify) {
 
@@ -33,8 +34,10 @@ const root = async function (fastify) {
 			modify_profile(message_obj);
 		else if(message_obj.type === "get_server_players")
 			send_server_players_for_addfrens(message_obj.name);
-		else if(message_obj.type === "add_friend")
-			add_friend(message_obj);
+		else if(message_obj.type === "add_friend_name")
+			add_friend(message_obj.name);
+		else if(message_obj.type === "remove_friend_name")
+			remove_friend(message_obj.name);
 	}
 	
 	function process_JWT_token(JWT_token)
@@ -104,7 +107,6 @@ const root = async function (fastify) {
 		}
 
 		connection.send(JSON.stringify(ret_obj));
-		console.log("SeNDED: ", ret_obj);
 	}
 
 	function modify_profile(message_obj)
@@ -175,10 +177,10 @@ const root = async function (fastify) {
 		{
 			const code = name.charCodeAt(i);
 			if (!(
-					(code >= 48 && code <= 57) ||   // nums 0-9
-					(code >= 65 && code <= 90) ||   // big chars A-Z
-					(code >= 97 && code <= 122) ||  // small chars a-z
-					code === 95                     // underscore _
+					(code >= 48 && code <= 57) ||	// nums 0-9
+					(code >= 65 && code <= 90) ||	// big chars A-Z
+					(code >= 97 && code <= 122) ||	// small chars a-z
+					code === 95						// underscore _
 				))
 					return "only letters, numbers, and '_' allowed"
 		}
@@ -192,6 +194,31 @@ const root = async function (fastify) {
 		//2) compare
 
 		return "";
+	}
+
+	function add_friend(add_friend_name)
+	{
+		//////////////////////////////////////////////
+		//////process add fren hereee/////////////////
+		///////////////////////////////////////////////
+
+		//steps:
+		//1)find the profile of the name added in the database
+		//2)add the profile to the frens list of the current player's profile
+
+		console.log("added friend name: ", add_friend_name);
+	}
+
+	function remove_friend(remove_friend_name)
+	{
+		//////////////////////////////////////////////
+		//////process remove fren hereee/////////////////
+		///////////////////////////////////////////////
+
+		//steps:
+		//1)find the current player profile in the frens table
+		//2)remove the fren with the name
+		console.log("remove friend name: ", remove_friend_name);
 	}
 	});
 };

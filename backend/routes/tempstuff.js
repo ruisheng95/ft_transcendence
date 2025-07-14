@@ -14,62 +14,52 @@ export const temp_friends_obj =
 	"friends":
 	[
 		{
-			"id": "101",
-			"username": "Player2",
+			"username": "John_smith123",
 			"pfp": null, 
 			"status": "online"
 		},
 		{
-			"id": "102",
-			"username": "Player3",
+			"username": "kitandhin101",
 			"pfp": null, 
 			"status": "offline"
 		},
 		{
-			"id": "103",
-			"username": "Player4",
+			"username": "kitnhin2",
 			"pfp": null, 
 			"status": "offline"
 		},
 		{
-			"id": "104",
-			"username": "Player5",
+			"username": "notrs",
 			"pfp": null, 
 			"status": "offline"
 		},
 		{
-			"id": "105",
-			"username": "Player6",
+			"username": "noobmaster69",
 			"pfp": null, 
 			"status": "offline"
 		},
 		{
-			"id": "106",
-			"username": "Player8",
+			"username": "Christiano_Ronaldo_7",
 			"pfp": null, 
 			"status": "offline"
 		},
 		{
-			"id": "106",
-			"username": "Player9",
+			"username": "Unknown_player123",
 			"pfp": null, 
 			"status": "offline"
 		},
 		{
-			"id": "106",
-			"username": "Player10",
+			"username": "ykyj",
 			"pfp": null, 
 			"status": "offline"
 		},
 		{
-			"id": "106",
-			"username": "Player11",
+			"username": "kitandhin",
 			"pfp": null, 
 			"status": "offline"
 		},
 		{
-			"id": "106",
-			"username": "Player12",
+			"username": "kitandhin2",
 			"pfp": null, 
 			"status": "offline"
 		}

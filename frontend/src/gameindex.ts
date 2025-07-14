@@ -10,6 +10,7 @@ import { settings_setup, settings_popup } from "./other_stuff.ts"
 import { help_setup, help_popup } from "./other_stuff.ts"
 
 import { add_friends_setup, add_friends_popup } from "./friends.ts"
+import { remove_friends_setup, remove_friends_popup } from "./friends.ts"
 
 
 
@@ -83,11 +84,12 @@ function main_ft()
 	while (i < friends_obj.friends.length)
 	{
 		const friend = friends_obj.friends[i];
+		const display_name = friend.username.length > 15 ? friend.username.substring(0, 15) + "..." : friend.username;
 
 		const friend_html = `
 			<div class="flex items-center text-white text-[14px] w-full h-[35px] px-[5px] py-[2px]">
 				<img src="${friend.pfp? friend.pfp : "/src/defaultpfp.png"}" class="w-[20px] h-[20px]">
-				<h1 class="text-white ml-[5px]">${friend.username}</h1>
+				<h1 class="text-white ml-[5px]">${display_name}</h1>
 				<div class="ml-auto w-[8px] h-[8px] rounded-full ${friend.status === 'online' ? 'bg-green-400' : 'bg-gray-500'}"></div>
 			</div>
 		`;
@@ -123,7 +125,7 @@ function main_ft()
 			</div>
 			<div id="fren_buttons" class="flex w-full">
 				<button id="add_friends_button" class="flex-1 text-white text-[14px] border-white border-1 p-[3px]">Add friend</button>
-				<button id="remove_frens" class="flex-1 text-white text-[14px] p-[3px] border-white border-1">Remove friend </button>
+				<button id="remove_friends_button" class="flex-1 text-white text-[14px] p-[3px] border-white border-1">Remove friend </button>
 			</div>
 		</div>
 	` 
@@ -165,6 +167,7 @@ function main_ft()
 			${help_popup}
 
 			${add_friends_popup}
+			${remove_friends_popup}
 		</div>
 	`;
 
@@ -177,4 +180,5 @@ function main_ft()
 	pf_config_setup();
 
 	add_friends_setup();
+	remove_friends_setup();
 }
