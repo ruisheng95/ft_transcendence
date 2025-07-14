@@ -2,7 +2,8 @@
 
 //add fren
 
-const socket = new WebSocket("ws://localhost:3000/ws_profile");
+const token = localStorage.getItem("token") || "";
+const socket = new WebSocket(`ws://localhost:3000/ws_profile?token=${token}`);
 
 export function add_friends_setup()
 {
