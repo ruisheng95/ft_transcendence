@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import "./gameindex.css";
-import { startGame } from "./startgame.ts";
 import { pf_config_setup, pf_config_popup } from "./config_profile.ts";
 import { playerstats_setup, playerstats_popup } from "./other_stuff.ts";
 import { settings_setup, settings_popup } from "./other_stuff.ts";
@@ -10,6 +9,8 @@ import { help_setup, help_popup } from "./other_stuff.ts";
 
 import { add_friends_setup, add_friends_popup } from "./friends.ts";
 import { remove_friends_setup, remove_friends_popup } from "./friends.ts";
+
+import { localhost_game_setup, localhost_game_popup } from "./game.ts";
 
 const token = localStorage.getItem("token") || "";
 const socket = new WebSocket(`ws://localhost:3000/ws_profile?token=${token}`);
@@ -46,8 +47,9 @@ function init_friends(msg_obj: object) {
 
 //main logic
 
-function main_ft() {
-  const game = document.querySelector<HTMLButtonElement>("#game");
+function main_ft()
+{
+	const game = document.querySelector<HTMLButtonElement>("#index");
 
   if (!game) throw new Error("Game element not found");
   if (!player) throw new Error("Player element not found");
@@ -55,7 +57,7 @@ function main_ft() {
   const enter_game_sec = `
 			<div id="enter_game_sec" class="border-2 border-white border w-[500px] h-[450px] bg-black flex flex-col justify-center items-center gap-[20px]">
 				<h1 class="text-white text-[25px] font-bold"> Enter game: </h1>
-				<button id="entergame" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Localhost play</button>
+				<button id="localhost_game_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Localhost play</button>
 				<button id="multiplayer" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Multiplayer</button>
 				<button id="vs_Ai" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">vs_Ai</button>
 			</div> `;
@@ -169,10 +171,11 @@ function main_ft() {
 
 			${add_friends_popup}
 			${remove_friends_popup}
+
+			${localhost_game_popup}
+
 		</div>
 	`;
-
-  startGame(document.querySelector<HTMLButtonElement>("#entergame")!);
 
   playerstats_setup();
   settings_setup();
@@ -182,4 +185,6 @@ function main_ft() {
 
   add_friends_setup();
   remove_friends_setup();
+
+  localhost_game_setup();
 }

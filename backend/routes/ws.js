@@ -88,7 +88,7 @@ const root = async function (fastify) {
             game_hit_lock = true;
             setTimeout(() => {
               game_hit_lock = false;
-            }, 1000); //does exactly wat i want damnnn non blocks and later sets gamelock to false
+            }, 200); //does exactly wat i want damnnn non blocks and later sets gamelock to false
           }
 
           //check collision wif horizontal walls

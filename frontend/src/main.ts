@@ -3,7 +3,6 @@ import "./style.css";
 import typescriptLogo from "./typescript.svg";
 import viteLogo from "/vite.svg";
 import { setupCounter } from "./counter.ts";
-import { startGame } from "./startgame.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div class="flex flex-col gap-4">
@@ -24,9 +23,6 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
       Click on the Vite and TypeScript logos to learn more
     </p>
     <p class="text-3xl font-bold underline text-green-300">This is very tailwind</p>
-    <p>
-      <button id="entergame" type="button" >Click here to start game</button>
-    </p>
 	<div id="google_sign_in"></div>
   </div>
 `;
@@ -40,4 +36,3 @@ fetch(`http://127.0.0.1:3000`)
   });
 
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
-startGame(document.querySelector<HTMLButtonElement>("#entergame")!);
