@@ -1,6 +1,8 @@
 //pf config
-const token = localStorage.getItem("token") || "";
-const socket = new WebSocket(`ws://localhost:3000/ws_profile?token=${token}`);
+const session = localStorage.getItem("session") || "";
+const socket = new WebSocket(
+  `ws://localhost:3000/ws_profile?session=${session}`
+);
 
 export function pf_config_setup()
 {

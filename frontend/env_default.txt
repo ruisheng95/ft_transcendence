@@ -1,0 +1,4 @@
+# Note: rename this file as .env file
+
+VITE_SOCKET_URL=ws://localhost:3000/ws-online
+VITE_BACKEND_API_HOST=http://localhost:3000

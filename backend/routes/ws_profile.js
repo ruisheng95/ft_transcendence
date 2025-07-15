@@ -4,7 +4,6 @@ import {
   temp_friends_obj,
   temp_server_players,
 } from "./tempstuff.js";
-import { OAuth2Client } from "google-auth-library";
 
 // current to do list:
 // JWT token processing and profile initialisation
@@ -20,7 +19,7 @@ const root = async function (fastify) {
     "/ws_profile",
     { websocket: true },
     async (connection, request) => {
-      const token = await verify_token(connection, request);
+      verify_session();
       connection.on("message", recv_msg);
       //functions
 
@@ -38,20 +37,18 @@ const root = async function (fastify) {
           add_friend(message_obj.name);
         else if (message_obj.type === "remove_friend_name")
           remove_friend(message_obj.name);
+        else if (message_obj.type === "logout") logout();
       }
 
       function send_player_profile() {
-        /////////////////////////////////////////////////
-        //get the player profile stuff hereeeee/////////
-        ////////////////////////////////////////////////
-
-        //steps:
-        //1) get the player details from database
-        //2) put the info in the JSON obj like in the example at the top and send back
+        const email = get_email_by_session();
+        const { EMAIL, AVATAR } = fastify.betterSqlite3
+          .prepare("SELECT EMAIL, USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
+          .get(email);
         const player_profile = {
           ...temp_player_obj,
-          username: token.email,
-          pfp: token.picture,
+          username: EMAIL,
+          pfp: AVATAR,
         };
         connection.send(JSON.stringify(player_profile));
       }
@@ -200,31 +197,25 @@ const root = async function (fastify) {
         console.log("remove friend name: ", remove_friend_name);
       }
 
-      async function verify_token(connection, request) {
-        // Close connection if token verify failed. Return token details if success
-        const token = request.query.token;
-        try {
-          if (!token) {
-            throw new Error("No token");
-          }
-          const client = new OAuth2Client();
-          const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience:
-              "313465714569-nq8gfim6in2iki8htj3t326vhbunl23a.apps.googleusercontent.com",
-          });
-          const payload = ticket.getPayload();
-          connection.send(JSON.stringify({ type: "token_success" }));
-          return {
-            email: payload.email,
-            name: payload.name,
-            picture: payload.picture,
-          };
-        } catch (error) {
-          request.log.error(error, "verify_token failed.");
-          connection.send(JSON.stringify({ type: "token_error" }));
+      function verify_session() {
+        const session = request.query.session;
+        if (!fastify.conf.session[session]) {
+          request.log.error(session, "Session not found");
+          connection.send(JSON.stringify({ type: "session_error" }));
           connection.close();
+        } else {
+          connection.send(JSON.stringify({ type: "session_success" }));
         }
+      }
+
+      function get_email_by_session() {
+        const session = request.query.session;
+        return fastify.conf.session[session];
+      }
+
+      function logout() {
+        const session = request.query.session;
+        delete fastify.conf.session[session];
       }
     }
   );

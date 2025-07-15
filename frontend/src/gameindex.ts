@@ -12,9 +12,16 @@ import { remove_friends_setup, remove_friends_popup } from "./friends.ts";
 
 import { localhost_game_setup, localhost_game_popup } from "./game.ts";
 
-const token = localStorage.getItem("token") || "";
-const socket = new WebSocket(`ws://localhost:3000/ws_profile?token=${token}`);
+const session = localStorage.getItem("session") || "";
+const socket = new WebSocket(
+  `ws://localhost:3000/ws_profile?session=${session}`
+);
 socket.addEventListener("message", process_msg_from_socket);
+socket.addEventListener("close", (event) => {
+  if (!event.wasClean) {
+    window.location.href = "/index.html";
+  }
+});
 
 let player: any;
 let friends_obj: any;
@@ -28,9 +35,9 @@ function process_msg_from_socket(message: MessageEvent) {
     init_player(msg_obj);
   } else if (msg_obj.type == "player_friends") {
     init_friends(msg_obj);
-  } else if (msg_obj.type == "token_success") {
+  } else if (msg_obj.type == "session_success") {
     socket.send(JSON.stringify({ type: "get_player_profile" }));
-  } else if (msg_obj.type == "token_error") {
+  } else if (msg_obj.type == "session_error") {
     window.location.href = "/index.html";
   }
 }
@@ -47,9 +54,8 @@ function init_friends(msg_obj: object) {
 
 //main logic
 
-function main_ft()
-{
-	const game = document.querySelector<HTMLButtonElement>("#index");
+function main_ft() {
+  const game = document.querySelector<HTMLButtonElement>("#index");
 
   if (!game) throw new Error("Game element not found");
   if (!player) throw new Error("Player element not found");
@@ -145,7 +151,7 @@ function main_ft()
 				
 				<div id="buttons" class="flex ml-auto px-[10px] py-[5px] gap-[10px]">
 					<button id="pf_config_button" class="text-white text-[14px] border border-white p-[3px]">Configure profile</button>
-					<button class="text-white text-[14px] border border-white p-[3px]">Logout</button>
+					<button id="logout_button" class="text-white text-[14px] border border-white p-[3px]">Logout</button>
 				</div>
 			
 			</div>
@@ -187,4 +193,12 @@ function main_ft()
   remove_friends_setup();
 
   localhost_game_setup();
+
+  document
+    .querySelector<HTMLButtonElement>("#logout_button")
+    ?.addEventListener("click", () => {
+      socket.send(JSON.stringify({ type: "logout" }));
+      localStorage.removeItem("session");
+      window.location.href = "/index.html";
+    });
 }

@@ -22,7 +22,19 @@ google_sign_in.innerHTML = `
 // @ts-expect-error - Function is used in data-callback hence not detected by ts as its in the template string
 window.handle_credential_response = function(response: google.accounts.id.CredentialResponse)
 {
-	localStorage.setItem("token", response.credential)
-	window.location.href = "/gameindex.html";
+	fetch(`${import.meta.env.VITE_BACKEND_API_HOST}/session`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      token: response.credential,
+    }),
+  })
+    .then((response) => response.json())
+    .then((json) => {
+      localStorage.setItem("session", json.session);
+      window.location.href = "/gameindex.html";
+    });
 };
 // wtf liddat oni oso need to do so much work just for ts ignore
