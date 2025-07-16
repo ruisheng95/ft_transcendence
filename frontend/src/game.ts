@@ -23,7 +23,7 @@ export const localhost_game_popup = `
     <div id="localhost_game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
         <div class="relative m-0 p-0 bg-black text-white">
             <button id="close_localhost_game" class="absolute top-[10px] right-[10px] text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
-            <h1 class="text-[5vh] font-semibold mt-[3vh] mb-[3vh]"><center>transcendence game bruh</center></h1>
+            <h1 class="text-[5vh] font-semibold mt-[3vh] mb-[3vh]"><center>localhost transcendence game bruh</center></h1>
             <div id="localhost_game"></div>
         </div>
     </div>

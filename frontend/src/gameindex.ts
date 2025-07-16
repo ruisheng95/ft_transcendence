@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import "./gameindex.css";
@@ -11,6 +10,7 @@ import { add_friends_setup, add_friends_popup } from "./friends.ts";
 import { remove_friends_setup, remove_friends_popup } from "./friends.ts";
 
 import { localhost_game_setup, localhost_game_popup } from "./game.ts";
+import { vs_AI_game_setup, vs_AI_game_popup } from "./vs_AI.ts";
 
 const session = localStorage.getItem("session") || "";
 const socket = new WebSocket(
@@ -65,7 +65,7 @@ function main_ft() {
 				<h1 class="text-white text-[25px] font-bold"> Enter game: </h1>
 				<button id="localhost_game_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Localhost play</button>
 				<button id="multiplayer" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Multiplayer</button>
-				<button id="vs_Ai" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">vs_Ai</button>
+				<button id="vs_AI_game_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">vs_Ai</button>
 			</div> `;
 
   //left sec
@@ -179,6 +179,7 @@ function main_ft() {
 			${remove_friends_popup}
 
 			${localhost_game_popup}
+			${vs_AI_game_popup}
 
 		</div>
 	`;
@@ -193,6 +194,7 @@ function main_ft() {
   remove_friends_setup();
 
   localhost_game_setup();
+  vs_AI_game_setup();
 
   document
     .querySelector<HTMLButtonElement>("#logout_button")
