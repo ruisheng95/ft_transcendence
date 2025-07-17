@@ -29,16 +29,26 @@ export function add_friends_setup()
 
 	addfriend_search_bar.addEventListener("input", () => {
 		if (addfriend_search_bar.value.length >= 5)
-		{
-			player_list_div.classList.remove("hidden");
 			socket.send(JSON.stringify({type: "get_server_players", name: addfriend_search_bar.value}));
-		}
 		else
 			player_list_div.classList.add("hidden");
 	});
 
 	function display_player_list(msg_obj : any)
 	{
+		const error_div = document.querySelector<HTMLDivElement>("#add_error");
+		if(!error_div || !player_list_div) throw new Error("display player list stuff not found");
+		if(msg_obj.error_msg)
+		{
+			player_list_div.innerHTML = "";
+			player_list_div.classList.add("hidden");
+			error_div.classList.remove("hidden");
+			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">${msg_obj.error_msg}</h1>`;
+			return;
+		}
+
+		error_div.classList.add("hidden");
+		player_list_div.classList.remove("hidden");
 		const player_list = msg_obj.players;
 
 		let name = "";
@@ -58,8 +68,8 @@ export function add_friends_setup()
 			}
 		}
 
-		if(player_list_div)
-			player_list_div.innerHTML = list_html;
+
+		player_list_div.innerHTML = list_html;
 
 		const add_buttons = document.querySelectorAll('#add_button');
 		for(const button of add_buttons)
@@ -90,7 +100,7 @@ export function add_friends_setup()
 export const add_friends_popup = `
 	<div id="add_friends_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0" style="background-color: rgba(0,0,0,0.9)">
 		<div id="add_friends_screen" class="relative bg-black h-[70vh] w-[35vw] flex flex-col items-center border border-2 border-white">
-			<h1 class="text-white text-[40px] font-bold my-[5vh]">Add Friends:</h1>
+			<h1 class="text-white text-[40px] font-bold my-[4vh]">Add Friends:</h1>
 
 			<div class="w-[80%]">
 				<input 
@@ -100,7 +110,8 @@ export const add_friends_popup = `
 					class="w-full px-4 py-2 border border-white text-white"
 				</input>
 			</div>
-
+			
+			<div id="add_error"></div>
 			<div id="player_list_container" class="border border-gray-300 w-[80%] h-[50%] mt-3">
 				<div id="players_list" class="overflow-y-auto hide-scrollbar flex flex-col items-center flex-1 w-[100%] h-[100%] hidden"></div>
 			</div>
@@ -139,11 +150,18 @@ export function remove_friends_setup()
 			player_friends_obj = msg_obj;
 			display_friends_list("");
 		}
+		else if(msg_obj.type === "rf_input_validation")
+			handle_validation_result(msg_obj)
 	});
 
 	removefriend_search_bar.addEventListener("input", () => {
-		display_friends_list(removefriend_search_bar.value);
+		verify_input(removefriend_search_bar.value);
 	})
+
+	function verify_input(input : string)
+	{
+		socket.send(JSON.stringify({type: "verify_rf_input", input: input}));
+	}
 
 	function display_friends_list(input : string)
 	{
@@ -162,7 +180,10 @@ export function remove_friends_setup()
 			}
 		}
 		if(friends_list_div)
+		{
+			friends_list_div.classList.remove("hidden");
 			friends_list_div.innerHTML = list_html;
+		}
 
 		const add_buttons = document.querySelectorAll('#remove_button');
 		for(const button of add_buttons)
@@ -187,12 +208,29 @@ export function remove_friends_setup()
 		button.classList.add("text-gray-500");
 		button.removeEventListener("click", handle_remove_friend);
 	}
+
+	function handle_validation_result(msg_obj : any)
+	{
+		const error_div = document.querySelector<HTMLDivElement>("#rem_error");
+		if(!error_div) throw new Error("Error div not found");
+		if(msg_obj.error_msg != "")
+		{
+			error_div.classList.remove("hidden");
+			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">${msg_obj.error_msg}</h1>`;
+			if(friends_list_div)
+				friends_list_div.classList.add("hidden");
+			return;
+		}
+
+		error_div.classList.add("hidden");
+		display_friends_list(msg_obj.input);
+	}
 }
 
 export const remove_friends_popup = `
 	<div id="remove_friends_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0" style="background-color: rgba(0,0,0,0.9)">
 		<div id="remove_friends_screen" class="relative bg-black h-[70vh] w-[35vw] flex flex-col items-center border border-2 border-white">
-			<h1 class="text-white text-[40px] font-bold my-[5vh]">Remove Friends:</h1>
+			<h1 class="text-white text-[40px] font-bold my-[4vh]">Remove Friends:</h1>
 
 			<div class="w-[80%]">
 				<input 
@@ -202,6 +240,8 @@ export const remove_friends_popup = `
 					class="w-full px-4 py-2 border border-white text-white"
 				</input>
 			</div>
+
+			<div id="rem_error" class="hidden"></div>
 
 			<div id="friends_list_container" class="border border-gray-300 w-[80%] h-[50%] mt-3">
 				<div id="friends_list" class="overflow-y-auto hide-scrollbar flex flex-col items-center flex-1 w-[100%] h-[100%]"></div>
