@@ -59,7 +59,7 @@ const root = async function (fastify) {
       //console.log("entered game loop wweeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
       set_starting_pos();
       clearInterval(game_interval_id);
-      game_interval_id = setInterval(frame, 10);
+      game_interval_id = setInterval(frame, 5);
 
       function frame() {
         change_player_pos();
@@ -85,7 +85,7 @@ const root = async function (fastify) {
             dx *= 1.1;
 
 			//control max speed
-			const MAXSPEED = 16;
+			const MAXSPEED = 18;
 			dx = dx < MAXSPEED ? dx : MAXSPEED;
 			console.log("speed: ", dx);
 

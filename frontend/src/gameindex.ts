@@ -9,8 +9,10 @@ import { help_setup, help_popup } from "./other_stuff.ts";
 import { add_friends_setup, add_friends_popup } from "./friends.ts";
 import { remove_friends_setup, remove_friends_popup } from "./friends.ts";
 
-import { localhost_game_setup, localhost_game_popup } from "./game.ts";
+// import { localhost_game_setup, localhost_game_popup } from "./game.ts";
 import { vs_AI_game_setup, vs_AI_game_popup } from "./vs_AI.ts";
+
+import {localhost_menus_setup, localhost_menus_popup} from "./pre_game.ts"
 
 const session = localStorage.getItem("session") || "";
 const socket = new WebSocket(
@@ -63,7 +65,7 @@ function main_ft() {
   const enter_game_sec = `
 			<div id="enter_game_sec" class="border-2 border-white border w-[500px] h-[450px] bg-black flex flex-col justify-center items-center gap-[20px]">
 				<h1 class="text-white text-[25px] font-bold"> Enter game: </h1>
-				<button id="localhost_game_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Localhost play</button>
+				<button id="localhost_menus_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Localhost play</button>
 				<button id="multiplayer" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Multiplayer</button>
 				<button id="vs_AI_game_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">vs_Ai</button>
 			</div> `;
@@ -178,8 +180,10 @@ function main_ft() {
 			${add_friends_popup}
 			${remove_friends_popup}
 
-			${localhost_game_popup}
+			${localhost_menus_popup}
 			${vs_AI_game_popup}
+
+			
 
 		</div>
 	`;
@@ -193,7 +197,7 @@ function main_ft() {
   add_friends_setup();
   remove_friends_setup();
 
-  localhost_game_setup();
+  localhost_menus_setup();
   vs_AI_game_setup();
 
   document

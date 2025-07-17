@@ -103,11 +103,7 @@ export const add_friends_popup = `
 			<h1 class="text-white text-[40px] font-bold my-[4vh]">Add Friends:</h1>
 
 			<div class="w-[80%]">
-				<input 
-					id="addfriend_search_bar" 
-					type="text" 
-					placeholder="Search for friends..." 
-					class="w-full px-4 py-2 border border-white text-white"
+				<input id="addfriend_search_bar" type="text" placeholder="Search for friends..." class="w-full px-4 py-2 border border-white text-white">
 				</input>
 			</div>
 			
@@ -233,11 +229,7 @@ export const remove_friends_popup = `
 			<h1 class="text-white text-[40px] font-bold my-[4vh]">Remove Friends:</h1>
 
 			<div class="w-[80%]">
-				<input 
-					id="removefriend_search_bar" 
-					type="text" 
-					placeholder="Search for friends..." 
-					class="w-full px-4 py-2 border border-white text-white"
+				<input id="removefriend_search_bar" type="text" placeholder="Search for friends..." class="w-full px-4 py-2 border border-white text-white">
 				</input>
 			</div>
 

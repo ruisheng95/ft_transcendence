@@ -67,8 +67,8 @@ function vs_AI_game_init()
 	const ball_len = ball.clientWidth;
 	let ballX = board.clientWidth / 2;
 	let ballY = board.clientHeight / 2;
-	let dy = 4;
-	let dx = 4;
+	let dy = 2;
+	let dx = 2;
 
 	//board stuff
 	const boardHeight = board.clientHeight;
@@ -78,7 +78,7 @@ function vs_AI_game_init()
 	//players settings
 	const block_height = rightplayer.clientHeight;
 	const block_width = rightplayer.clientWidth;
-	const player_speed = 10;
+	const player_speed = 5;
 	let rightplayerY = board.clientHeight / 2 - (block_height / 2);
 	const leftplayerY = board.clientHeight / 2 - (block_height / 2);
 	const player_indent = 20;
@@ -102,8 +102,8 @@ function vs_AI_game_init()
 	{
 		playing = true;
 
-		dx = 4;
-		dy = 4;
+		dx = 2;
+		dy = 2;
 
 		const config_obj = {
 			type: "game_init",
@@ -195,7 +195,7 @@ function vs_AI_game_init()
 		}
 	}
 
-
+	//AI stuff
 	function AI_movement()
 	{
 		let predicted_y = boardHeight / 2;
@@ -254,7 +254,7 @@ function vs_AI_game_init()
 		let sim_dy = dy;
 
 		while (sim_x < boardWidth - player_indent - block_width)
-		{
+		{	//need to create this separate one cuz
 			sim_x += sim_dx;
 			sim_y += sim_dy;
 			
@@ -268,6 +268,7 @@ function vs_AI_game_init()
 		return sim_y;
 	}
 
+	//need to create this separate one cuz the default handle keyboard functions have to ignore Arrowup and ArrowDown
 	function handleKeyDown_AI(key_pressed: KeyboardEvent)
 	{
 		if (socket.readyState === WebSocket.OPEN)

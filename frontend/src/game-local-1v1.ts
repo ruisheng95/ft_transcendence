@@ -1,9 +1,9 @@
 import "./gamestyle.css";
 
 //localhost_game
-export function localhost_game_setup ()
+export function localhost_game_setup_1v1()
 {
-	const localhost_game_button = document.querySelector<HTMLButtonElement>("#localhost_game_button");
+	const localhost_game_button = document.querySelector<HTMLButtonElement>("#localhost_start_button"); //changed to start button
 	const localhost_game_popup = document.querySelector<HTMLDivElement>("#localhost_game_popup");
 	const close_localhost_game = document.querySelector<HTMLButtonElement>("#close_localhost_game");
 
@@ -14,17 +14,24 @@ export function localhost_game_setup ()
 		localhost_game_popup.classList.remove("hidden");
 		localhost_game_init();
 	});
+
 	close_localhost_game.addEventListener("click", () => {
 		localhost_game_popup.classList.add("hidden");
 	});
 }
 
-export const localhost_game_popup = `
+export const localhost_game_popup_1v1= `
+<button id="localhost_start_button" class="hidden"></button>
     <div id="localhost_game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
         <div class="relative m-0 p-0 bg-black text-white">
             <button id="close_localhost_game" class="absolute top-[10px] right-[10px] text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
             <h1 class="text-[5vh] font-semibold mt-[3vh] mb-[3vh]"><center>localhost transcendence game bruh</center></h1>
-            <div id="localhost_game"></div>
+            
+			<div class="flex justify-center items-center">
+				<div id="player1_name_ingame" class="text-white text-[3vh] font-bold mr-[20px]"><h1>player1</h1></div>
+				<div id="localhost_game"></div>
+				<div id="player2_name_ingame" class="text-white text-[3vh] font-bold ml-[20px]"><h1>player2</h1></div>
+			</div>
         </div>
     </div>
 `;
@@ -69,8 +76,8 @@ function localhost_game_init()
 	const ball_len = ball.clientWidth;
 	const ballX = board.clientWidth / 2;
 	const ballY = board.clientHeight / 2;
-	const dy = 4;
-	const dx = 4;
+	const dy = 2;
+	const dx = 2;
 
 	//board stuff
 	const boardHeight = board.clientHeight;
@@ -80,7 +87,7 @@ function localhost_game_init()
 	//players settings
 	const block_height = rightplayer.clientHeight;
 	const block_width = rightplayer.clientWidth;
-	const player_speed = 10;
+	const player_speed = 5;
 	const rightplayerY = board.clientHeight / 2 - (block_height / 2);
 	const leftplayerY = board.clientHeight / 2 - (block_height / 2);
 	const player_indent = 20;
