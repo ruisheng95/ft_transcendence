@@ -1,6 +1,6 @@
 import "./gamestyle.css";
 
-import { localhost_game_popup_1v1, localhost_game_setup_1v1 } from "./game-local-1v1";
+import { local_1v1_game_popup, local_1v1_game_setup } from "./game-local-1v1";
 
 // localhost_menus	
 export function localhost_menus_setup()
@@ -76,7 +76,7 @@ export function localhost_menus_setup()
 		// Add tournament initialization logic here
 	});
 		//player names
-	localhost_game_setup_1v1();
+	local_1v1_game_setup();
 }
 
 export const localhost_menus_popup = `
@@ -101,19 +101,19 @@ export const localhost_menus_popup = `
 	<div id="localhost_1v1_registration" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0" style="background-color: rgba(0,0,0,0.9)">
 		<div class="relative bg-black h-[70vh] w-[50vw] flex flex-col items-center justify-center border border-2 border-white">
 			<h1 class="text-white text-[40px] font-bold mb-[6vh]">1v1 Player Registration</h1>
-			
 			<div class="flex flex-col gap-6 w-[60%]">
 				<div class="flex flex-col gap-2">
 					<h1 class="text-white text-[18px]">Player 1 Name:</h1>
-					<input id="player1_name" type="text" class="px-4 py-2 border border-white text-white">
+					<input id="local1v1_p1_name_input" type="text" class="px-4 py-2 border border-white text-white">
 				</div>
 				
 				<div class="flex flex-col gap-2">
 					<h1 class="text-white text-[18px]">Player 2 Name:</h1>
-					<input id="player2_name" type="text" class="px-4 py-2 border border-white text-white">
+					<input id="local1v1_p2_name_input" type="text" class="px-4 py-2 border border-white text-white">
 				</div>
 				
-				<button id="localhost_start_button" class="bg-black text-white text-[20px] font-semibold px-[2vw] py-[2vh] border border-white mt-4">
+				<div id="local1v1_error_msg" class="hidden"></div>
+				<button id="local_1v1_start_button" class="bg-black text-white text-[20px] font-semibold px-[2vw] py-[2vh] border border-white mt-4">
 					Start 1v1 Game
 				</button>
 			</div>
@@ -156,5 +156,5 @@ export const localhost_menus_popup = `
 		</div>
 	</div>
 
-	${localhost_game_popup_1v1}
+	${local_1v1_game_popup}
 `;
