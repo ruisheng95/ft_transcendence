@@ -44,6 +44,8 @@ export function add_friends_setup()
 			player_list_div.classList.add("hidden");
 			error_div.classList.remove("hidden");
 			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">${msg_obj.error_msg}</h1>`;
+			if(addfriend_search_bar)
+				addfriend_search_bar.value = "";
 			return;
 		}
 
@@ -215,6 +217,8 @@ export function remove_friends_setup()
 			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">${msg_obj.error_msg}</h1>`;
 			if(friends_list_div)
 				friends_list_div.classList.add("hidden");
+			if(removefriend_search_bar)
+				removefriend_search_bar.value = "";
 			return;
 		}
 

@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./gamestyle.css";
 
-// local_1v1_game
-export function local_1v1_game_setup()
+// local_tour_game
+export function local_tour_game_setup()
 {
-	const local_1v1_start_button = document.querySelector<HTMLButtonElement>("#local_1v1_start_button"); // changed to start button
-	const local_1v1_game_popup = document.querySelector<HTMLDivElement>("#local_1v1_game_popup");
-	const close_local_1v1_game = document.querySelector<HTMLButtonElement>("#close_local_1v1_game");
+	const local_tour_start_button = document.querySelector<HTMLButtonElement>("#local_tour_start_button"); // changed to start button
+	const local_tour_game_popup = document.querySelector<HTMLDivElement>("#local_tour_game_popup");
+	const close_local_tour_game = document.querySelector<HTMLButtonElement>("#close_local_tour_game");
 	const local1v1_regist_page = document.querySelector<HTMLDivElement>("#local1v1_registration");
 
-	const local_1v1_open_game = document.querySelector<HTMLButtonElement>("#local_1v1_open_game");
+	const local_tour_open_game = document.querySelector<HTMLButtonElement>("#local_tour_open_game");
 	const p1_name_input_element = document.querySelector<HTMLInputElement>("#local1v1_p1_name_input");
 	const p2_name_input_element = document.querySelector<HTMLInputElement>("#local1v1_p2_name_input");
 	
 	const close_local1v1_winner_popup = document.querySelector<HTMLButtonElement>("#close_local1v1_winner_popup");
 	const local1v1_winner_popup = document.querySelector<HTMLDivElement>("#local1v1_winner_popup");
 
-	if (!local1v1_regist_page || !local1v1_winner_popup || !close_local1v1_winner_popup || !p1_name_input_element || !p2_name_input_element || !local_1v1_open_game || !local_1v1_start_button || !local_1v1_game_popup || !close_local_1v1_game)
-		throw new Error("Error local_1v1_game buttons not found");
+	if (!local1v1_regist_page || !local1v1_winner_popup || !close_local1v1_winner_popup || !p1_name_input_element || !p2_name_input_element || !local_tour_open_game || !local_tour_start_button || !local_tour_game_popup || !close_local_tour_game)
+		throw new Error("Error local_tour_game buttons not found");
 
 	p1_name_input_element.addEventListener("input", (event : Event) => {
 		verify_name_input(event);
@@ -27,7 +27,7 @@ export function local_1v1_game_setup()
 		verify_name_input(event);
 	});
 
-	local_1v1_start_button.addEventListener("click", () => {
+	local_tour_start_button.addEventListener("click", () => {
 		const local1v1_p1_name_display = document.querySelector<HTMLDivElement>("#local1v1_p1_name_display");
 		const local1v1_p2_name_display = document.querySelector<HTMLDivElement>("#local1v1_p2_name_display");
 
@@ -44,16 +44,16 @@ export function local_1v1_game_setup()
 		local1v1_p2_name_display.innerHTML = `<h1>${p2_display_name.length < 10 ? p2_display_name : p2_display_name.substring(0, 7) + "..."}</h1>`;
 
 		local1v1_regist_page.classList.add("hidden");
-		local_1v1_open_game.click();
+		local_tour_open_game.click();
 	});
 
-	local_1v1_open_game.addEventListener("click", () => {
-		local_1v1_game_popup.classList.remove("hidden");
-		local_1v1_game_init();
+	local_tour_open_game.addEventListener("click", () => {
+		local_tour_game_popup.classList.remove("hidden");
+		local_tour_game_init();
 	});
 
-	close_local_1v1_game.addEventListener("click", () => {
-		local_1v1_game_popup.classList.add("hidden");
+	close_local_tour_game.addEventListener("click", () => {
+		local_tour_game_popup.classList.add("hidden");
 	});
 
 	close_local1v1_winner_popup.addEventListener("click", () => {
@@ -71,21 +71,21 @@ const local1v1_winner_popup = `
 				<div class="text-[50px] mb-6 text-white">Congratulations</div>
 			</div>
 
-			<button id="close_local1v1_winner_popup" class="border-1 border-white text-white text-[20px] px-[5px] py-[5px]">close</button>
+			<button id="close_local1v1_winner_popup" class="border-1 border-white text-white hover:text-red-400 text-[20px] px-[5px] py-[5px]">close</button>
 		</div>
 	</div>
 `
 
-export const local_1v1_game_popup = `
-	<button id="local_1v1_open_game" class="hidden"></button>
-	<div id="local_1v1_game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
+export const local_tour_game_popup = `
+	<button id="local_tour_open_game" class="hidden"></button>
+	<div id="local_tour_game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
 		<div class="relative m-0 p-0 bg-black text-white">
-			<button id="close_local_1v1_game" class="absolute top-[10px] right-[10px] text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
+			<button id="close_local_tour_game" class="absolute top-[10px] right-[10px] text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
 			<h1 class="text-[5vh] font-semibold mt-[3vh] mb-[3vh]"><center>Local 1v1 Game</center></h1>
 			
 			<div class="flex justify-center items-center">
 				<div id="local1v1_p1_name_display" class="text-white text-[3vh] font-bold mr-[20px]"><h1>player1</h1></div>
-				<div id="local_1v1_game"></div>
+				<div id="local_tour_game"></div>
 				<div id="local1v1_p2_name_display" class="text-white text-[3vh] font-bold ml-[20px]"><h1>player2</h1></div>
 			</div>
 		</div>
@@ -135,11 +135,10 @@ function verify_name_input(event : Event)
 	}
 }
 
-function local_1v1_game_init()
-{
+function local_tour_game_init() {
 	const socket = new WebSocket("ws://localhost:3000/ws");
 
-	const game_obj = document.querySelector<HTMLDivElement>("#local_1v1_game");
+	const game_obj = document.querySelector<HTMLDivElement>("#local_tour_game");
 
 	if (game_obj)
 		game_obj.innerHTML = `
@@ -294,17 +293,17 @@ function local_1v1_game_init()
 		const local1v1_winner_popup = document.querySelector<HTMLDivElement>("#local1v1_winner_popup");
 		const p1_name_input_element = document.querySelector<HTMLInputElement>("#local1v1_p1_name_input");
 		const p2_name_input_element = document.querySelector<HTMLInputElement>("#local1v1_p2_name_input");
-		const local_1v1_game_popup = document.querySelector<HTMLDivElement>("#local_1v1_game_popup");
+		const local_tour_game_popup = document.querySelector<HTMLDivElement>("#local_tour_game_popup");
 		
-		if(!local_1v1_game_popup || !local1v1_winner_popup || !local1v1_winner_div || !p1_name_input_element || !p2_name_input_element)
+		if(!local_tour_game_popup || !local1v1_winner_popup || !local1v1_winner_div || !p1_name_input_element || !p2_name_input_element)
 			throw new Error("Local1v1 winner display elements not found");
 
 		if(gameover_obj.winner == "leftplayer")
-			local1v1_winner_div.innerHTML = `<h1 class="text-white text-[40px]">${p1_name_input_element.value != "" ? p1_name_input_element.value : "Player1"}</h1>`;
+			local1v1_winner_div.innerHTML = `<h1 class="text-white text-[40px]">${p1_name_input_element.value}</h1>`;
 		else
-			local1v1_winner_div.innerHTML = `<h1 class="text-white text-[40px]">${p2_name_input_element.value != "" ? p2_name_input_element.value : "Player2"}</h1>`;
+			local1v1_winner_div.innerHTML = `<h1 class="text-white text-[40px]">${p2_name_input_element.value}</h1>`;
 		
 		local1v1_winner_popup.classList.remove("hidden");
-		local_1v1_game_popup.classList.add("hidden");
+		local_tour_game_popup.classList.add("hidden");
 	}
 }

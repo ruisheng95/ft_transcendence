@@ -65,8 +65,9 @@ const root = async function (fastify) {
         change_player_pos();
         if (ballX <= ball_len / 2 || ballX + ball_len >= boardWidth) {
           //game hit border, end game
+		  const winner_p = ballX <= ball_len / 2 ? "rightplayer" : "leftplayer";
           clearInterval(game_interval_id);
-          connection.send(JSON.stringify({ type: "game_over" }));
+          connection.send(JSON.stringify({ type: "game_over", winner: winner_p}));
         } else {
           if (
 			!game_hit_lock &&
