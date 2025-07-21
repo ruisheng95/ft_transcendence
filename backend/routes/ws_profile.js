@@ -1,7 +1,7 @@
 //currently import temp objects for frontend
 import {
   temp_player_obj,
-  temp_friends_obj,
+  // temp_friends_obj,
   temp_server_players,
 } from "./tempstuff.js";
 
@@ -53,21 +53,54 @@ const root = async function (fastify) {
         connection.send(JSON.stringify(player_profile));
       }
 
+      // function send_fren_list() {
+      //   /////////////////////////////////////////////////
+      //   //get the players frens hereeeeee///////////////
+      //   ///////////////////////////////////////////////
+
+
+      //   //steps:
+      //   //1) get the frenlist from database
+      //   //2) put the info in the JSON obj like in the example at the top and send back
+      //   //3) to do: create a handle to send the fren list whenever it changes (online status change / add / remove fren etc),
+      //   // 		my frontend will accept whenever there is incoming fren list and modify accordingly
+
+      //   const friends_obj = temp_friends_obj;
+      //   connection.send(JSON.stringify(friends_obj));
+      //   console.log(friends_obj);
+      // }
+
       function send_fren_list() {
-        /////////////////////////////////////////////////
-        //get the players frens hereeeeee///////////////
-        ///////////////////////////////////////////////
-
-        //steps:
-        //1) get the frenlist from database
-        //2) put the info in the JSON obj like in the example at the top and send back
-        //3) to do: create a handle to send the fren list whenever it changes (online status change / add / remove fren etc),
-        // 		my frontend will accept whenever there is incoming fren list and modify accordingly
-
-        const friends_obj = temp_friends_obj;
+        const userEmail = get_email_by_session();
+      
+        // Step 1: Get list of friend's emails
+        const friendRows = fastify.betterSqlite3
+          .prepare("SELECT FRIEND_EMAIL FROM FRIEND_LIST WHERE USER_EMAIL = ?")
+          .all(userEmail);
+      
+        // Step 2: For each friend's email, get their info from USER table
+        const friends = friendRows.map(row => {
+          const friend = fastify.betterSqlite3
+            .prepare("SELECT USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
+            .get(row.FRIEND_EMAIL);
+      
+          return {
+            username: friend.USERNAME,
+            pfp: friend.AVATAR,
+            status: "offline", // default; you can enhance this later
+          };
+        });
+      
+        // Step 3: Construct and send JSON
+        const friends_obj = {
+          type: "player_friends",
+          friends: friends,
+        };
+      
         connection.send(JSON.stringify(friends_obj));
         console.log(friends_obj);
       }
+      
 
       function send_server_players_for_addfrens(search_input_name) {
         ////////////////////////////////////////////////////
