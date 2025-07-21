@@ -12,7 +12,8 @@ const db = new Database('data.db');
 const sqlFiles = [
     '001.do.test-table.sql',
     '002.do.create-user-table.sql',
-    '003.do.friend-list.sql'
+    'friend-list.sql',
+    'pong-result.sql'
 ];
 
 sqlFiles.forEach(file => {
