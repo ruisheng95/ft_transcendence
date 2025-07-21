@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./gamestyle.css";
 
-// local_1v1_game
+//local 1v1 game
 export function local_1v1_game_setup()
 {
 	const local_1v1_start_button = document.querySelector<HTMLButtonElement>("#local_1v1_start_button"); // changed to start button
@@ -9,14 +9,13 @@ export function local_1v1_game_setup()
 	const close_local_1v1_game = document.querySelector<HTMLButtonElement>("#close_local_1v1_game");
 	const local1v1_regist_page = document.querySelector<HTMLDivElement>("#local1v1_registration");
 
-	const local_1v1_open_game = document.querySelector<HTMLButtonElement>("#local_1v1_open_game");
 	const p1_name_input_element = document.querySelector<HTMLInputElement>("#local1v1_p1_name_input");
 	const p2_name_input_element = document.querySelector<HTMLInputElement>("#local1v1_p2_name_input");
 	
 	const close_local1v1_winner_popup = document.querySelector<HTMLButtonElement>("#close_local1v1_winner_popup");
 	const local1v1_winner_popup = document.querySelector<HTMLDivElement>("#local1v1_winner_popup");
 
-	if (!local1v1_regist_page || !local1v1_winner_popup || !close_local1v1_winner_popup || !p1_name_input_element || !p2_name_input_element || !local_1v1_open_game || !local_1v1_start_button || !local_1v1_game_popup || !close_local_1v1_game)
+	if (!local1v1_regist_page || !local1v1_winner_popup || !close_local1v1_winner_popup || !p1_name_input_element || !p2_name_input_element || !local_1v1_start_button || !local_1v1_game_popup || !close_local_1v1_game)
 		throw new Error("Error local_1v1_game buttons not found");
 
 	p1_name_input_element.addEventListener("input", (event : Event) => {
@@ -44,10 +43,7 @@ export function local_1v1_game_setup()
 		local1v1_p2_name_display.innerHTML = `<h1>${p2_display_name.length < 10 ? p2_display_name : p2_display_name.substring(0, 7) + "..."}</h1>`;
 
 		local1v1_regist_page.classList.add("hidden");
-		local_1v1_open_game.click();
-	});
 
-	local_1v1_open_game.addEventListener("click", () => {
 		local_1v1_game_popup.classList.remove("hidden");
 		local_1v1_game_init();
 	});
@@ -77,7 +73,6 @@ const local1v1_winner_popup = `
 `
 
 export const local_1v1_game_popup = `
-	<button id="local_1v1_open_game" class="hidden"></button>
 	<div id="local_1v1_game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
 		<div class="relative m-0 p-0 bg-black text-white">
 			<button id="close_local_1v1_game" class="absolute top-[10px] right-[10px] text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
@@ -143,29 +138,25 @@ function local_1v1_game_init()
 
 	if (game_obj)
 		game_obj.innerHTML = `
-	<button id="start_game_button" type="button" class="bg-black text-white w-[10vw] h-[10vh] absolute top-[20px] left-[20px] text-lg border-2 border-white">Start game</button>
+	<button id="local1v1_start_game_button" type="button" class="bg-black text-white w-[10vw] h-[10vh] absolute top-[20px] left-[20px] text-lg border-2 border-white">Start game</button>
 	<center>
-	<div id="board" class="bg-black w-[80vw] h-[85vh] relative justify-center border-4 border-white">
-		<div id="ball" class="bg-white w-[15px] h-[15px] absolute top-[100px]"></div>
-		<div id="leftplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
-		<div id="rightplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
+	<div id="local1v1_board" class="bg-black w-[80vw] h-[85vh] relative justify-center border-4 border-white">
+		<div id="local1v1_ball" class="bg-white w-[15px] h-[15px] absolute top-[100px]"></div>
+		<div id="local1v1_leftplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
+		<div id="local1v1_rightplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
 	</div>
 	</center>
 	`;
 
-	const start_game_button = document.querySelector<HTMLButtonElement>("#start_game_button");
-	const board = document.querySelector<HTMLDivElement>("#board");
-	const rightplayer = document.querySelector<HTMLDivElement>("#rightplayer");
-	const leftplayer = document.querySelector<HTMLDivElement>("#leftplayer");
-	const ball = document.querySelector<HTMLDivElement>("#ball");
+	const start_game_button = document.querySelector<HTMLButtonElement>("#local1v1_start_game_button");
+	const board = document.querySelector<HTMLDivElement>("#local1v1_board");
+	const rightplayer = document.querySelector<HTMLDivElement>("#local1v1_rightplayer");
+	const leftplayer = document.querySelector<HTMLDivElement>("#local1v1_leftplayer");
+	const ball = document.querySelector<HTMLDivElement>("#local1v1_ball");
 
 	//bruh stupid ts
-	if (!board) throw new Error("board element not found");
-	if (!rightplayer) throw new Error("rightplayer element not found");
-	if (!leftplayer) throw new Error("leftplayer element not found");
-	if (!ball) throw new Error("ball element not found");
-	if (!start_game_button) throw new Error("start game button element not found");
-
+	if(!board || !rightplayer || !leftplayer || !ball || !start_game_button)
+		throw new Error("Required game elements not found");
 
 	//init them vars from the css / html
 

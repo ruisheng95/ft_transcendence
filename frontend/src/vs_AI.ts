@@ -38,21 +38,21 @@ function vs_AI_game_init()
 
 	if(game_obj)
 		game_obj.innerHTML = `
-	<button id="start_game_button" type="button" class="bg-black text-white w-[10vw] h-[10vh] absolute top-[20px] left-[20px] text-lg border-2 border-white">Start game</button>
+	<button id="VS_AI_start_game_button" type="button" class="bg-black text-white w-[10vw] h-[10vh] absolute top-[20px] left-[20px] text-lg border-2 border-white">Start game</button>
 	<center>
-	<div id="board" class="bg-black w-[80vw] h-[85vh] relative justify-center border-4 border-white">
-		<div id="ball" class="bg-white w-[15px] h-[15px] absolute top-[100px]"></div>
-		<div id="leftplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
-		<div id="rightplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
+	<div id="VS_AI_board" class="bg-black w-[80vw] h-[85vh] relative justify-center border-4 border-white">
+		<div id="VS_AI_ball" class="bg-white w-[15px] h-[15px] absolute top-[100px]"></div>
+		<div id="VS_AI_leftplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
+		<div id="VS_AI_rightplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
 	</div>
 	</center>
 	`;
 
-	const start_game_button = document.querySelector<HTMLButtonElement>("#start_game_button");
-	const board = document.querySelector<HTMLDivElement>("#board");
-	const rightplayer = document.querySelector<HTMLDivElement>("#rightplayer");
-	const leftplayer = document.querySelector<HTMLDivElement>("#leftplayer");
-	const ball = document.querySelector<HTMLDivElement>("#ball");
+	const start_game_button = document.querySelector<HTMLButtonElement>("#VS_AI_start_game_button");
+	const board = document.querySelector<HTMLDivElement>("#VS_AI_board");
+	const rightplayer = document.querySelector<HTMLDivElement>("#VS_AI_rightplayer");
+	const leftplayer = document.querySelector<HTMLDivElement>("#VS_AI_leftplayer");
+	const ball = document.querySelector<HTMLDivElement>("#VS_AI_ball");
 
 	//bruh stupid ts
 	if (!board) throw new Error("board element not found");

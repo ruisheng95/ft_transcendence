@@ -1,6 +1,7 @@
 import "./gamestyle.css";
 
 import { local_1v1_game_popup, local_1v1_game_setup } from "./game-local-1v1";
+import { local_tour_game_popup, local_tour_game_setup } from "./game-local-tournament";
 
 // local_play_menus	
 export function local_play_menus_setup()
@@ -13,17 +14,14 @@ export function local_play_menus_setup()
 	const local_1v1_button = document.querySelector<HTMLButtonElement>("#local_1v1_button");
 	const local_tournament_button = document.querySelector<HTMLButtonElement>("#local_tournament_button");
  	const registration_1v1 = document.querySelector<HTMLDivElement>("#local1v1_registration");
-	const registration_tournament = document.querySelector<HTMLDivElement>("#local_play_tournament_registration");
+	const registration_tournament = document.querySelector<HTMLDivElement>("#localTour_registration");
 	const close_1v1_registration = document.querySelector<HTMLButtonElement>("#close_1v1_registration");
 	const close_tournament_registration = document.querySelector<HTMLButtonElement>("#close_tournament_registration");
-	const start_tournament_game = document.querySelector<HTMLButtonElement>("#start_tournament_game");
 
 	if (!local_play_menus_button || !local_play_menus_popup || !close_local_play_menus ||
 		!local_1v1_button || !local_tournament_button || !registration_1v1 || 
-		!registration_tournament || !close_1v1_registration || !close_tournament_registration|| !start_tournament_game) {
-		console.error("Some navigation elements not found");
-		return;
-	}
+		!registration_tournament || !close_1v1_registration || !close_tournament_registration)
+		throw new Error("some navigation stuff not found");
 
 	local_play_menus_button.addEventListener("click", () => {
 		local_play_menus_popup.classList.remove("hidden");
@@ -53,8 +51,8 @@ export function local_play_menus_setup()
 		local_play_menus_popup.classList.remove("hidden");
 	});
 
-	//player names
 	local_1v1_game_setup();
+	local_tour_game_setup();
 }
 
 export const local_play_menus_popup = `
@@ -100,7 +98,7 @@ export const local_play_menus_popup = `
 		</div>
 	</div>
 
-	<div id="local_play_tournament_registration" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0" style="background-color: rgba(0,0,0,0.9)">
+	<div id="localTour_registration" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0" style="background-color: rgba(0,0,0,0.9)">
 		<div class="relative bg-black h-[80vh] w-[50vw] flex flex-col items-center justify-center border border-2 border-white">
 			<h1 class="text-white text-[40px] font-bold mb-[4vh]">Tournament Registration</h1>
 			
@@ -125,7 +123,8 @@ export const local_play_menus_popup = `
 					<input id="localTour_p4_name_input" type="text" class=" px-[2vh] py-[1vh] border border-white text-white">
 				</div>
 				
-				<button id="start_tournament_game" class="bg-black text-white text-[20px] font-semibold px-[2vw] py-[1vh] border border-white hover:bg-white hover:text-black transition-colors mt-4">
+				<div id="localTour_error_msg" class="hidden"></div>
+				<button id="local_tour_main_start_button" class="bg-black text-white text-[20px] font-semibold px-[2vw] py-[1vh] border border-white">
 					Start Tournament
 				</button>
 			</div>
@@ -135,4 +134,5 @@ export const local_play_menus_popup = `
 	</div>
 
 	${local_1v1_game_popup}
+	${local_tour_game_popup}
 `;
