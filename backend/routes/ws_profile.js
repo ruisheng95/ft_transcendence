@@ -38,6 +38,8 @@ const root = async function (fastify) {
         else if (message_obj.type === "remove_friend_name")
           remove_friend(message_obj.name);
         else if (message_obj.type === "logout") logout();
+		else if (message_obj.type === "verify_rf_input")
+			check_remove_fren_input(message_obj.input);
       }
 
       function send_player_profile() {
@@ -80,6 +82,23 @@ const root = async function (fastify) {
         //	3) get the players that are not their current frens
 
         console.log("entered the mf function");
+
+		//sanity check
+		let error_str = "";
+		if(search_input_name != "")
+		{
+			error_str = check_valid_input(search_input_name);
+			if(error_str != "")
+			{
+				const ret_obj = {
+					type: "matching_server_players",
+					error_msg: error_str
+				}
+				connection.send(JSON.stringify(ret_obj));
+				return;
+			}
+		}
+
         const ret_obj = {
           type: "matching_server_players",
           players: [],
@@ -102,7 +121,7 @@ const root = async function (fastify) {
         let error_str;
 
         if (name === null) error_str = "please enter a name";
-        else error_str = check_valid_name(name);
+        else error_str = check_valid_input(name);
 
         if (error_str != "") {
           const ret_obj = {
@@ -143,7 +162,7 @@ const root = async function (fastify) {
         }
       }
 
-      function check_valid_name(name) {
+      function check_valid_input(name) {
         if (name.length < 5) return "name must be minimum 5 characters";
 
         if (name.length > 30) return "name must be maximum 30 characters";
@@ -196,6 +215,44 @@ const root = async function (fastify) {
         //2)remove the fren with the name
         console.log("remove friend name: ", remove_friend_name);
       }
+
+	  function check_remove_fren_input(input) {
+
+		let error_str = "";
+		for (let i = 0; i < input.length; i++) {
+          const code = input.charCodeAt(i);
+          if (
+            !(
+              (
+                (code >= 48 && code <= 57) || // nums 0-9
+                (code >= 65 && code <= 90) || // big chars A-Z
+                (code >= 97 && code <= 122) || // small chars a-z
+                code === 95
+              ) // underscore _
+            )
+          )
+            error_str = "only letters, numbers, and '_' allowed";
+        }
+
+		if(error_str != "")
+		{
+			const ret_obj = {
+				type: "rf_input_validation",
+				error_msg: error_str,
+				input: input
+			}
+			connection.send(JSON.stringify(ret_obj));
+		}
+		else
+		{
+			const ret_obj = {
+				type: "rf_input_validation",
+				error_msg: "",
+				input: input
+			}
+			connection.send(JSON.stringify(ret_obj));
+		}
+	  }
 
       function verify_session() {
         const session = request.query.session;

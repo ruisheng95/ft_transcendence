@@ -59,32 +59,39 @@ const root = async function (fastify) {
       //console.log("entered game loop wweeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
       set_starting_pos();
       clearInterval(game_interval_id);
-      game_interval_id = setInterval(frame, 10);
+      game_interval_id = setInterval(frame, 5);
 
       function frame() {
         change_player_pos();
         if (ballX <= ball_len / 2 || ballX + ball_len >= boardWidth) {
           //game hit border, end game
+		  const winner_p = ballX <= ball_len / 2 ? "rightplayer" : "leftplayer";
           clearInterval(game_interval_id);
-          connection.send(JSON.stringify({ type: "game_over" }));
+          connection.send(JSON.stringify({ type: "game_over", winner: winner_p}));
         } else {
           if (
-            !game_hit_lock &&
-            //left paddle hit
-            ((ballX <= player_indent + block_width + 2 &&
-              ballX >= player_indent - 2 &&
-              ballY + ball_len >= leftplayerY - 2 &&
-              ballY <= leftplayerY + block_height + 2) ||
-              //right paddle hit
-              (ballX + ball_len >=
-                boardWidth - player_indent - block_width - 2 &&
-                ballX + ball_len <= boardWidth - player_indent + 2 &&
-                ballY + ball_len >= rightplayerY - 2 &&
-                ballY <= rightplayerY + block_height + 2))
-          ) {
+			!game_hit_lock &&
+			//Math.abs to make detection area bigger to counter ball jump bug
+			((ballX <= player_indent + block_width + Math.abs(dx) &&
+				ballX >= player_indent - Math.abs(dx) &&
+				ballY + ball_len >= leftplayerY - 2 &&
+				ballY <= leftplayerY + block_height + 2) ||
+				//same thing applied here also
+				(ballX + ball_len >= boardWidth - player_indent - block_width - Math.abs(dx) &&
+				ballX + ball_len <= boardWidth - player_indent + Math.abs(dx) &&
+				ballY + ball_len >= rightplayerY - 2 &&
+				ballY <= rightplayerY + block_height + 2))
+			) {
             dx = -dx;
             dx *= 1.1;
-            dy *= 1.1;
+
+			//control max speed
+			const MAXSPEED = 16;
+			dx = dx < MAXSPEED ? dx : MAXSPEED;
+			console.log("speed: ", dx);
+
+            dy *= 1 + (Math.random() * 0.2 + (-0.1)); //randomnes for dy
+			//dy *= 1.1;
             game_hit_lock = true;
             setTimeout(() => {
               game_hit_lock = false;
@@ -104,6 +111,8 @@ const root = async function (fastify) {
             ballY: ballY,
             leftplayerY: leftplayerY,
             rightplayerY: rightplayerY,
+			speed_x: dx,
+			speed_y: dy
           };
           connection.send(JSON.stringify(gameState));
         }
