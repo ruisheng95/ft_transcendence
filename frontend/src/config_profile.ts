@@ -90,15 +90,10 @@ export function pf_config_setup()
             const base64 = btoa(binaryString); // convert to base64 string
             const dataURL = `data:${file.type};base64,${base64}`; //conver to dataurl to store, later can display immediately
 			send_obj.pfp = dataURL;
-
-			header_pfp.src = dataURL;
 		}
 
 		if(name_input.value)
-		{
 			send_obj.name = name_input.value;
-			header_name.innerHTML = `<h1 class="text-white text-[18px] pl-[1vw]">${name_input.value}</h1>`
-		}
 
 		socket.send(JSON.stringify(send_obj)); //send to backend to verify the pf config shit
 	});

@@ -36,8 +36,8 @@ export function local_1v1_game_setup()
 		if(!local1v1_p1_name_display || !local1v1_p2_name_display || !p1_name_input_element ||  !p2_name_input_element)
 			throw new Error("Error: local1v1 start game elements not found");
 
-		const p1_display_name = p1_name_input_element.value;
-		const p2_display_name = p2_name_input_element.value;
+		const p1_display_name = p1_name_input_element.value || "player1";
+		const p2_display_name = p2_name_input_element.value || "player2";
 		
 		local1v1_p1_name_display.innerHTML = `<h1>${p1_display_name.length < 10 ? p1_display_name : p1_display_name.substring(0, 7) + "..."}</h1>`;
 		local1v1_p2_name_display.innerHTML = `<h1>${p2_display_name.length < 10 ? p2_display_name : p2_display_name.substring(0, 7) + "..."}</h1>`;

@@ -66,7 +66,7 @@ function main_ft() {
 			<div id="enter_game_sec" class="border-2 border-white border w-[500px] h-[450px] bg-black flex flex-col justify-center items-center gap-[20px]">
 				<h1 class="text-white text-[25px] font-bold"> Enter game: </h1>
 				<button id="local_play_menus_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">local play</button>
-				<button id="multiplayer" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">Multiplayer</button>
+				<button id="online_play" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">online play</button>
 				<button id="vs_AI_game_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">vs_Ai</button>
 			</div> `;
 
