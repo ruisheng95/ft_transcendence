@@ -87,7 +87,7 @@ const root = async function (fastify) {
           return {
             username: friend.USERNAME,
             pfp: friend.AVATAR,
-            status: "offline", // default; you can enhance this later
+            status: "offline", // default; can enhance this later
           };
         });
       
@@ -240,6 +240,21 @@ const root = async function (fastify) {
           connection.send(JSON.stringify({ type: "session_success" }));
         }
       }
+      // function verify_session() {
+      //   // Temporarily skip real session validation for testing
+      //   const session = request.query.session;
+
+      //   // Simulate a successful session
+      //   request.log.info(session, "✅ Bypassing session check for testing");
+      //   connection.send(JSON.stringify({ type: "session_success" }));
+
+      //   // set a fake user on request
+      //   request.user = {
+      //     email: "friend1@example.com",
+      //     username: "FriendOne",
+      //   };
+      // }
+
 
       function get_email_by_session() {
         const session = request.query.session;
