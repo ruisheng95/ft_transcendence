@@ -297,5 +297,9 @@ function local_1v1_game_init()
 		
 		local1v1_winner_popup.classList.remove("hidden");
 		local_1v1_game_popup.classList.add("hidden");
+
+		//remove the registration stuff for next use
+		p1_name_input_element.value = "";
+		p2_name_input_element.value = "";
 	}
 }
