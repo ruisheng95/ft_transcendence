@@ -46,6 +46,10 @@ function process_msg_from_socket(message: MessageEvent) {
 
 function init_player(msg_obj: object) {
   player = msg_obj;
+
+  if(player.username.includes('@'))
+	localStorage.setItem("new_player_flag", "true");
+
   socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
 }
 

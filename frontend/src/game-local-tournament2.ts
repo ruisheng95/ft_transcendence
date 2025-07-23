@@ -5,6 +5,7 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 	p3_name = p3_name || "player3";
 	p4_name = p4_name || "player4";
 
+	
 	const Tournament_state = {
 		players : [p1_name, p2_name, p3_name, p4_name],
 		match_winners: ["", ""],
@@ -157,7 +158,7 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 		winner1_bracket.innerHTML = "?";
 		winner2_bracket.innerHTML = "?";
 		finalwinner_name_display.innerHTML = "?";
-		
+
 		loser1_bracket.innerHTML = "?";
 		loser2_bracket.innerHTML = "?";
 		loser_final.innerHTML = "?";

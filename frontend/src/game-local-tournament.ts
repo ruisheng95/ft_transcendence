@@ -221,11 +221,11 @@ function verify_name_input(event : Event)
 
 		}
 
-		if(input.length > 20)
+		if(input.length > 9)
 		{
 			localTour_error_msg_div.classList.remove("hidden");
 			localTour_error_msg_div.innerHTML = `<h1 class="text-red-500 text-[15px]"> Input too long </h1>`;
-			clean_input = clean_input.substring(0, 20);
+			clean_input = clean_input.substring(0, 9);
 		}
 		else if (invalid_char == true)
 		{
