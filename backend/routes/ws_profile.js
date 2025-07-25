@@ -55,19 +55,6 @@ const root = async function (fastify) {
         connection.send(JSON.stringify(player_profile));
       }
 
-      // function send_fren_list() {
-      //   /////////////////////////////////////////////////
-      //   //get the players frens hereeeeee///////////////
-      //   ///////////////////////////////////////////////
-
-
-      //   //steps:
-      //   //1) get the frenlist from database
-      //   //2) put the info in the JSON obj like in the example at the top and send back
-      //   //3) to do: create a handle to send the fren list whenever it changes (online status change / add / remove fren etc),
-      //   // 		my frontend will accept whenever there is incoming fren list and modify accordingly
-
-
       function send_fren_list() {
         const userEmail = get_email_by_session();
       
@@ -258,27 +245,153 @@ const root = async function (fastify) {
         return "";
       }
 
+
       function add_friend(add_friend_name) {
-        //////////////////////////////////////////////
-        //////process add fren hereee/////////////////
-        ///////////////////////////////////////////////
-
-        //steps:
-        //1)find the profile of the name added in the database
-        //2)add the profile to the frens list of the current player's profile
-
         console.log("added friend name: ", add_friend_name);
-      }
+        
+        try {
+            const userEmail = get_email_by_session();
+            
+            if (!userEmail) {
+                const error_obj = {
+                    type: "add_friend_response",
+                    success: false,
+                    error_msg: "Invalid session"
+                };
+                connection.send(JSON.stringify(error_obj));
+                return;
+            }
+            
+            const friendProfile = fastify.betterSqlite3
+                .prepare("SELECT EMAIL FROM USER WHERE USERNAME = ?")
+                .get(add_friend_name);
+            
+            if (!friendProfile) {
+                const error_obj = {
+                    type: "add_friend_response",
+                    success: false,
+                    error_msg: "User not found"
+                };
+                connection.send(JSON.stringify(error_obj));
+                return;
+            }
+            
+            const friendEmail = friendProfile.EMAIL;
+            
+            const existingFriendship = fastify.betterSqlite3
+                .prepare("SELECT * FROM FRIEND_LIST WHERE USER_EMAIL = ? AND FRIEND_EMAIL = ?")
+                .get(userEmail, friendEmail);
+            
+            if (existingFriendship) {
+                const error_obj = {
+                    type: "add_friend_response",
+                    success: false,
+                    error_msg: "Already friends with this user"
+                };
+                connection.send(JSON.stringify(error_obj));
+                return;
+            }
+            
+            const insertFriend = fastify.betterSqlite3.prepare(
+                "INSERT INTO FRIEND_LIST (USER_EMAIL, FRIEND_EMAIL) VALUES (?, ?)"
+            );
+            
+            insertFriend.run(userEmail, friendEmail);
+            insertFriend.run(friendEmail, userEmail);
+            
+            console.log(`Added friendship: ${userEmail} <-> ${friendEmail}`);
+            
+            const success_obj = {
+                type: "add_friend_response",
+                success: true,
+                message: `Successfully added ${add_friend_name} as friend`,
+                friend_username: add_friend_name
+            };
+            connection.send(JSON.stringify(success_obj));
+            
+        } catch (error) {
+            console.error('Error adding friend:', error);
+            const error_obj = {
+                type: "add_friend_response",
+                success: false,
+                error_msg: "Database error occurred"
+            };
+            connection.send(JSON.stringify(error_obj));
+        }
+    }
 
       function remove_friend(remove_friend_name) {
-        //////////////////////////////////////////////
-        //////process remove fren hereee/////////////////
-        ///////////////////////////////////////////////
-
-        //steps:
-        //1)find the current player profile in the frens table
-        //2)remove the fren with the name
-        console.log("remove friend name: ", remove_friend_name);
+          console.log("remove friend name: ", remove_friend_name);
+          
+          try {
+              const userEmail = get_email_by_session();
+              
+              if (!userEmail) {
+                  const error_obj = {
+                      type: "remove_friend_response",
+                      success: false,
+                      error_msg: "Invalid session"
+                  };
+                  connection.send(JSON.stringify(error_obj));
+                  return;
+              }
+              
+              const friendProfile = fastify.betterSqlite3
+                  .prepare("SELECT EMAIL FROM USER WHERE USERNAME = ?")
+                  .get(remove_friend_name);
+              
+              if (!friendProfile) {
+                  const error_obj = {
+                      type: "remove_friend_response",
+                      success: false,
+                      error_msg: "User not found"
+                  };
+                  connection.send(JSON.stringify(error_obj));
+                  return;
+              }
+              
+              const friendEmail = friendProfile.EMAIL;
+              
+              const existingFriendship = fastify.betterSqlite3
+                  .prepare("SELECT * FROM FRIEND_LIST WHERE USER_EMAIL = ? AND FRIEND_EMAIL = ?")
+                  .get(userEmail, friendEmail);
+              
+              if (!existingFriendship) {
+                  const error_obj = {
+                      type: "remove_friend_response",
+                      success: false,
+                      error_msg: "You are not friends with this user"
+                  };
+                  connection.send(JSON.stringify(error_obj));
+                  return;
+              }
+              
+              const removeFriend = fastify.betterSqlite3.prepare(
+                  "DELETE FROM FRIEND_LIST WHERE USER_EMAIL = ? AND FRIEND_EMAIL = ?"
+              );
+              
+              removeFriend.run(userEmail, friendEmail);
+              removeFriend.run(friendEmail, userEmail);
+              
+              console.log(`Removed friendship: ${userEmail} <-> ${friendEmail}`);
+              
+              const success_obj = {
+                  type: "remove_friend_response",
+                  success: true,
+                  message: `Successfully removed ${remove_friend_name} from friends`,
+                  removed_friend: remove_friend_name
+              };
+              connection.send(JSON.stringify(success_obj));
+              
+          } catch (error) {
+              console.error('Error removing friend:', error);
+              const error_obj = {
+                  type: "remove_friend_response",
+                  success: false,
+                  error_msg: "Database error occurred"
+              };
+              connection.send(JSON.stringify(error_obj));
+          }
       }
 
 	  function check_remove_fren_input(input) {
@@ -329,21 +442,6 @@ const root = async function (fastify) {
           connection.send(JSON.stringify({ type: "session_success" }));
         }
       }
-      // function verify_session() {
-      //   // Temporarily skip real session validation for testing
-      //   const session = request.query.session;
-
-      //   // Simulate a successful session
-      //   request.log.info(session, "✅ Bypassing session check for testing");
-      //   connection.send(JSON.stringify({ type: "session_success" }));
-
-      //   // set a fake user on request
-      //   request.user = {
-      //     email: "friend1@example.com",
-      //     username: "FriendOne",
-      //   };
-      // }
-
 
       function get_email_by_session() {
         const session = request.query.session;
