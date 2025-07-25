@@ -157,64 +157,80 @@ const root = async function (fastify) {
         }
       }
 
-      // function modify_profile(message_obj) {
-      //   console.log(message_obj);
+      function modify_profile(message_obj) {
+        console.log(message_obj);
 
-      //   const name = message_obj.name;
-      //   const pfp = message_obj.pfp;
+        const name = message_obj.name;
+        const pfp = message_obj.pfp;
 
-      //   let error_str;
+        let error_str = "";
 
-      //   if (name === null) error_str = "please enter a name";
-      //   else error_str = check_valid_input(name);
+        if (name !== null && name !== undefined && name !== "") {
+            error_str = check_valid_input(name);
+        } else if (name === "" || (name === null && (pfp === null || pfp === undefined))) {
+            error_str = "please provide either a name or avatar to update";
+        }
 
-      //   if (error_str != "") {
-      //     const ret_obj = {
-      //       type: "modify_profile_status",
-      //       status: "failure",
-      //       error_msg: error_str,
-      //       name: message_obj.name,
-      //       pfp: message_obj.pfp,
-      //     };
-      //     connection.send(JSON.stringify(ret_obj));
-      //   } else {
-      //     ///////////////////////////////////////
-      //     ///////store pfp and name config///////
-      //     ///////////////////////////////////////
+        if (error_str != "") {
+          const ret_obj = {
+            type: "modify_profile_status",
+            status: "failure",
+            error_msg: error_str,
+            name: message_obj.name,
+            pfp: message_obj.pfp,
+          };
+          connection.send(JSON.stringify(ret_obj));
+        } else {
 
-      //     const email = get_email_by_session();
+          const email = get_email_by_session();
 
-      //     try {
-      //       console.log("Updating user:", email);
+          try {
+            // console.log("Updating user:", email);
 
-      //       const stmt = fastify.betterSqlite3.prepare(`UPDATE USER SET USERNAME = ?, AVATAR = ? WHERE EMAIL = ?`);
-      //       stmt.run(name, pfp, email);
+            const currentUser = fastify.betterSqlite3
+                .prepare("SELECT USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
+                .get(email);
 
-      //       const ret_obj = {
-      //         type: "modify_profile_status",
-      //         status: "success",
-      //         error_msg: "",
-      //         name: name,
-      //         pfp: pfp,
-      //       };
+            if (!currentUser) {
+                throw new Error("User not found");
+            }
 
-      //       connection.send(JSON.stringify(ret_obj));
-      //     } catch (err) {
-      //       console.error("DB Error:", err.message);
+            const newUsername = name || currentUser.USERNAME;
+            const newAvatar = (pfp !== null && pfp !== undefined) ? pfp : currentUser.AVATAR;
 
-      //       const ret_obj = {
-      //         type: "modify_profile_status",
-      //         status: "failure",
-      //         error_msg: "server error",
-      //         name: name,
-      //         pfp: pfp,
-      //       };
+            // console.log("Current data:", currentUser);
+            // console.log("New data:", { username: newUsername, avatar: newAvatar });
 
-      //       connection.send(JSON.stringify(ret_obj));
-      //     }
-      //   }
-      // }
+            const stmt = fastify.betterSqlite3.prepare(
+                `UPDATE USER SET USERNAME = ?, AVATAR = ? WHERE EMAIL = ?`
+            );
+            stmt.run(newUsername, newAvatar, email);
 
+            const ret_obj = {
+                type: "modify_profile_status",
+                status: "success",
+                error_msg: "",
+                name: newUsername,
+                pfp: newAvatar,
+            };
+
+            connection.send(JSON.stringify(ret_obj));
+
+          } catch (err) {
+              console.error("DB Error:", err.message);
+
+              const ret_obj = {
+                  type: "modify_profile_status",
+                  status: "failure",
+                  error_msg: "server error",
+                  name: name,
+                  pfp: pfp,
+              };
+
+              connection.send(JSON.stringify(ret_obj));
+          }
+        }
+      }
 
       function check_valid_input(name) {
         if (name.length < 5) return "name must be minimum 5 characters";
