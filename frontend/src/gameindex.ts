@@ -187,8 +187,8 @@ function main_ft() {
 			${remove_friends_popup}
 
 			${local_play_menus_popup}
-			${vs_AI_game_popup}
-
+  			${vs_AI_game_popup}
+			
 			${game_popup}
 		</div>
 	`;

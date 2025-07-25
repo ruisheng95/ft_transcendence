@@ -2,7 +2,7 @@
 // => void means return value is void
 //AI flag is optional arg wif default value set as false
 
-export function display_game(handle_game_end : (msg_obj : object) => void)
+export function display_game(handle_game_end : (msg_obj : object) => void, AI_flag = false)
 {
 	const socket = new WebSocket("ws://localhost:3000/ws");
 
@@ -39,10 +39,10 @@ export function display_game(handle_game_end : (msg_obj : object) => void)
 
 	//ball stuff
 	const ball_len = ball.clientWidth;
-	const ballX = board.clientWidth / 2;
-	const ballY = board.clientHeight / 2;
-	const dy = 2;
-	const dx = 2;
+	let ballX = board.clientWidth / 2;
+	let ballY = board.clientHeight / 2;
+	let dy = 2;
+	let dx = 2;
 
 	//board stuff
 	const boardHeight = board.clientHeight;
@@ -53,8 +53,8 @@ export function display_game(handle_game_end : (msg_obj : object) => void)
 	const block_height = rightplayer.clientHeight;
 	const block_width = rightplayer.clientWidth;
 	const player_speed = 5;
-	const rightplayerY = board.clientHeight / 2 - (block_height / 2);
-	const leftplayerY = board.clientHeight / 2 - (block_height / 2);
+	let rightplayerY = board.clientHeight / 2 - (block_height / 2);
+	let leftplayerY = board.clientHeight / 2 - (block_height / 2);
 	const player_indent = 20;
 
 	//key binds
@@ -65,13 +65,19 @@ export function display_game(handle_game_end : (msg_obj : object) => void)
 	key_binds.set("ArrowDown", "rightplayer_down");
 
 
-	render_positions(ballX, ballY, leftplayerY, rightplayerY);
+	render_positions();
 	socket.addEventListener("message", process_msg_from_socket);
 	document.addEventListener('keydown', handleKeyDown);
 	document.addEventListener('keyup', handleKeyUp);
 	start_game_button.addEventListener("click", start_the_fkin_game)
 	close_game_button.addEventListener("click", () => { game_popup.classList.add("hidden"); });
 
+
+	// AI STUFF
+
+	let playing = true;
+	if(AI_flag == true)
+		AI_movement();
 
 	//functions
 
@@ -116,16 +122,25 @@ export function display_game(handle_game_end : (msg_obj : object) => void)
 		const msg_obj = JSON.parse(message.data);
 			
 		if(msg_obj.type == "game_update")
-			render_positions(msg_obj.ballX, msg_obj.ballY, msg_obj.leftplayerY, msg_obj.rightplayerY);
+		{
+			ballX = msg_obj.ballX;
+			ballY = msg_obj.ballY;
+			leftplayerY = msg_obj.leftplayerY;
+			rightplayerY = msg_obj.rightplayerY;
+			dx = msg_obj.speed_x;
+			dy = msg_obj.speed_y;
+			render_positions();
+		}
 		else if(msg_obj.type == "game_over")
 		{
 			if (start_game_button)
 				start_game_button.style.display = "block";
+			playing = false;
 			handle_game_end(msg_obj);
 		}
 	}
 
-	function render_positions(ballX: number, ballY: number, leftplayerY: number, rightplayerY: number)
+	function render_positions()
 	{
 		if (ball && leftplayer && rightplayer)
 		{
@@ -142,6 +157,9 @@ export function display_game(handle_game_end : (msg_obj : object) => void)
 
 	function handleKeyDown(key_pressed: KeyboardEvent)
 	{
+		if(AI_flag == true && (key_pressed.key == "ArrowUp" || key_pressed.key == "ArrowDown"))
+			return ;
+		
 		if (socket.readyState === WebSocket.OPEN)
 		{
 			const keydown_obj = {
@@ -153,6 +171,108 @@ export function display_game(handle_game_end : (msg_obj : object) => void)
 	}
 
 	function handleKeyUp(key_pressed: KeyboardEvent)
+	{
+		if(AI_flag == true && (key_pressed.key == "ArrowUp" || key_pressed.key == "ArrowDown"))
+			return ;
+
+		if (socket.readyState === WebSocket.OPEN)
+		{
+			const keyup_obj = {
+				type: "keyup",
+				action: key_binds.get(key_pressed.key)
+			}
+			socket.send(JSON.stringify(keyup_obj));
+		}
+	}
+
+	//AI functions
+
+	function AI_movement()
+	{
+		let predicted_y = boardHeight / 2;
+		let last_key_press = "";
+		
+		//predict pos every sec
+		setInterval(() => {
+			if (playing == false)
+				return;
+			predicted_y = predict_ball_landing_spot() + Math.floor(Math.random() * 141) - 70; // ±70px to simulate prediction error
+		}, 1000); //this function sets in ms so 1000ms = 1s (as requested by the subj)
+
+		//move towards predicted target
+		setInterval(() => {
+			if (playing == false)
+				return;
+			
+			if(Math.random() < 0.9) //simulate human distractions lol and slow reaction
+				return;
+
+			const paddle_center = rightplayerY + block_height / 2;
+			let current_key_press = "";
+			const buffer = Math.floor(Math.random() * 21) + 20; // 20-40px simulate eye error from center of the paddle (between 18-22 px)
+			
+			if(paddle_center > predicted_y + buffer)
+				current_key_press = "ArrowUp";
+			else if(paddle_center < predicted_y - buffer)
+				current_key_press = "ArrowDown";
+			
+			//simulating key presses
+			if (current_key_press !== last_key_press)
+			{
+				if (last_key_press)
+				{
+					const keyup_event = new KeyboardEvent('keyup', { key: last_key_press });
+					handleKeyUp_AI(keyup_event);
+				}
+				
+				if (current_key_press)
+				{
+					const keydown_event = new KeyboardEvent('keydown', { key: current_key_press });
+					handleKeyDown_AI(keydown_event);
+				}
+				
+				last_key_press = current_key_press;
+			}
+		}, 15);
+	}
+
+	function predict_ball_landing_spot()
+	{
+		let sim_x = ballX;
+		let sim_y = ballY;
+		let sim_dx = dx;
+		let sim_dy = dy;
+
+		while (sim_x < boardWidth - player_indent - block_width)
+		{
+			sim_x += sim_dx;
+			sim_y += sim_dy;
+			
+			if (sim_y <= 0 || sim_y + ball_len >= boardHeight)
+				sim_dy = -sim_dy;
+
+			if (sim_x <= 0)
+            	sim_dx = -sim_dx;
+		}
+		
+		return sim_y;
+	}
+
+	//need to create this separate one cuz the default handle keyboard functions have to ignore Arrowup and ArrowDown
+	function handleKeyDown_AI(key_pressed: KeyboardEvent)
+	{
+		if (socket.readyState === WebSocket.OPEN)
+		{
+			const keydown_obj = {
+				type: "keydown",
+				action: key_binds.get(key_pressed.key)
+			}
+
+			socket.send(JSON.stringify(keydown_obj));
+		}
+	}
+
+	function handleKeyUp_AI(key_pressed: KeyboardEvent)
 	{
 		if (socket.readyState === WebSocket.OPEN)
 		{
