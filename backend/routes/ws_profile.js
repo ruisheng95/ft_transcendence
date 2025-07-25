@@ -85,7 +85,7 @@ const root = async function (fastify) {
         let error_str = "";
         if(search_input_name != "")
         {
-          error_str = check_valid_input(search_input_name);
+          error_str = check_valid_input_for_search(search_input_name);
           if(error_str != "")
           {
             const ret_obj = {
@@ -166,7 +166,7 @@ const root = async function (fastify) {
         let error_str = "";
 
         if (name !== null && name !== undefined && name !== "") {
-            error_str = check_valid_input(name);
+            error_str = check_valid_input_for_update(name);
         } else if (name === "" || (name === null && (pfp === null || pfp === undefined))) {
             error_str = "please provide either a name or avatar to update";
         }
@@ -232,7 +232,7 @@ const root = async function (fastify) {
         }
       }
 
-      function check_valid_input(name) {
+      function check_valid_input_for_update(name) {
         if (name.length < 5) return "name must be minimum 5 characters";
 
         if (name.length > 30) return "name must be maximum 30 characters";
@@ -252,19 +252,41 @@ const root = async function (fastify) {
             return "only letters, numbers, and '_' allowed";
         }
 
-        // try {
-        //   const stmt = fastify.betterSqlite3.prepare(`SELECT EMAIL FROM USER WHERE USERNAME = ?`);
-        //   const result = stmt.get(name);
-        //   if (result) {
-        //     return "username already exists";
-        //   }
-        // } catch (err) {
-        //   console.error("Error checking duplicate username:", err);
-        //   return "internal server error";
-        // }
+        try {
+          const stmt = fastify.betterSqlite3.prepare(`SELECT EMAIL FROM USER WHERE USERNAME = ?`);
+          const result = stmt.get(name);
+          if (result) {
+            return "username already exists";
+          }
+        } catch (err) {
+          console.error("Error checking duplicate username:", err);
+          return "internal server error";
+        }
 
         return "";
       }
+
+      function check_valid_input_for_search(name) {
+        if (name.length < 1) return "search input too short";
+        if (name.length > 30) return "search input too long";
+
+        for (let i = 0; i < name.length; i++) {
+          const code = name.charCodeAt(i);
+          if (
+            !(
+              (code >= 48 && code <= 57) ||
+              (code >= 65 && code <= 90) ||
+              (code >= 97 && code <= 122) ||
+              code === 95
+            )
+          ) {
+            return "invalid character in search input";
+          }
+        }
+
+        return "";
+      }
+
 
       function add_friend(add_friend_name) {
         console.log("added friend name: ", add_friend_name);
