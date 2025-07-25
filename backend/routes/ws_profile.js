@@ -67,33 +67,30 @@ const root = async function (fastify) {
       //   //3) to do: create a handle to send the fren list whenever it changes (online status change / add / remove fren etc),
       //   // 		my frontend will accept whenever there is incoming fren list and modify accordingly
 
-      //   const friends_obj = temp_friends_obj;
-      //   connection.send(JSON.stringify(friends_obj));
-      //   console.log(friends_obj);
-      // }
 
       function send_fren_list() {
         const userEmail = get_email_by_session();
       
-        // Step 1: Get list of friend's emails
         const friendRows = fastify.betterSqlite3
           .prepare("SELECT FRIEND_EMAIL FROM FRIEND_LIST WHERE USER_EMAIL = ?")
           .all(userEmail);
-      
-        // Step 2: For each friend's email, get their info from USER table
+
+        const onlineEmails = new Set(Object.values(fastify.conf.session));
+
         const friends = friendRows.map(row => {
           const friend = fastify.betterSqlite3
             .prepare("SELECT USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
             .get(row.FRIEND_EMAIL);
+          
+          const isOnline = onlineEmails.has(row.FRIEND_EMAIL);
       
           return {
             username: friend.USERNAME,
             pfp: friend.AVATAR,
-            status: "offline", // default; can enhance this later
+            status: isOnline ? "online" : "offline",
           };
         });
       
-        // Step 3: Construct and send JSON
         const friends_obj = {
           type: "player_friends",
           friends: friends,
