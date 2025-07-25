@@ -252,16 +252,16 @@ const root = async function (fastify) {
             return "only letters, numbers, and '_' allowed";
         }
 
-        // try {
-        //   const stmt = fastify.betterSqlite3.prepare(`SELECT EMAIL FROM USER WHERE USERNAME = ?`);
-        //   const result = stmt.get(name);
-        //   if (result) {
-        //     return "username already exists";
-        //   }
-        // } catch (err) {
-        //   console.error("Error checking duplicate username:", err);
-        //   return "internal server error";
-        // }
+        try {
+          const stmt = fastify.betterSqlite3.prepare(`SELECT EMAIL FROM USER WHERE USERNAME = ?`);
+          const result = stmt.get(name);
+          if (result) {
+            return "username already exists";
+          }
+        } catch (err) {
+          console.error("Error checking duplicate username:", err);
+          return "internal server error";
+        }
 
         return "";
       }
