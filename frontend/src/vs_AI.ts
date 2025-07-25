@@ -83,6 +83,13 @@ function vs_AI_game_init()
 	const leftplayerY = board.clientHeight / 2 - (block_height / 2);
 	const player_indent = 20;
 
+	//key binds
+	const key_binds = new Map();
+	key_binds.set("w", "leftplayer_up");
+	key_binds.set("s", "leftplayer_down");
+	key_binds.set("ArrowUp", "rightplayer_up");
+	key_binds.set("ArrowDown", "rightplayer_down");
+
 	//gamestatus
 	let playing = true;
 
@@ -174,7 +181,7 @@ function vs_AI_game_init()
 		{
 			const keydown_obj = {
 				type: "keydown",
-				key: key_pressed.key
+				action: key_binds.get(key_pressed.key)
 			}
 
 			socket.send(JSON.stringify(keydown_obj));
@@ -189,7 +196,7 @@ function vs_AI_game_init()
 		{
 			const keyup_obj = {
 				type: "keyup",
-				key: key_pressed.key
+				action: key_binds.get(key_pressed.key)
 			}
 			socket.send(JSON.stringify(keyup_obj));
 		}
@@ -275,7 +282,7 @@ function vs_AI_game_init()
 		{
 			const keydown_obj = {
 				type: "keydown",
-				key: key_pressed.key
+				action: key_binds.get(key_pressed.key)
 			}
 
 			socket.send(JSON.stringify(keydown_obj));
@@ -288,7 +295,7 @@ function vs_AI_game_init()
 		{
 			const keyup_obj = {
 				type: "keyup",
-				key: key_pressed.key
+				action: key_binds.get(key_pressed.key)
 			}
 			socket.send(JSON.stringify(keyup_obj));
 		}
