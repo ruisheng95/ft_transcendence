@@ -1,9 +1,9 @@
 //currently import temp objects for frontend
-import {
-  temp_player_obj,
-  // temp_friends_obj,
-  // temp_server_players,
-} from "./tempstuff.js";
+// import {
+//   temp_player_obj,
+//   // temp_friends_obj,
+//   // temp_server_players,
+// } from "./tempstuff.js";
 
 // current to do list:
 // JWT token processing and profile initialisation
@@ -44,12 +44,12 @@ const root = async function (fastify) {
 
       function send_player_profile() {
         const email = get_email_by_session();
-        const { EMAIL, AVATAR } = fastify.betterSqlite3
+        const { USERNAME, AVATAR } = fastify.betterSqlite3
           .prepare("SELECT EMAIL, USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
           .get(email);
         const player_profile = {
-          ...temp_player_obj,
-          username: EMAIL,
+          type: "player_profile",
+          username: USERNAME,
           pfp: AVATAR,
         };
         connection.send(JSON.stringify(player_profile));
