@@ -1,10 +1,3 @@
-//currently import temp objects for frontend
-import {
-  temp_player_obj,
-  // temp_friends_obj,
-  temp_server_players,
-} from "./tempstuff.js";
-
 // current to do list:
 // JWT token processing and profile initialisation
 // getting and sending player profile JSON object
@@ -44,56 +37,40 @@ const root = async function (fastify) {
 
       function send_player_profile() {
         const email = get_email_by_session();
-        const { EMAIL, AVATAR } = fastify.betterSqlite3
+        const { USERNAME, AVATAR } = fastify.betterSqlite3
           .prepare("SELECT EMAIL, USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
           .get(email);
         const player_profile = {
-          ...temp_player_obj,
-          username: EMAIL,
+          type: "player_profile",
+          username: USERNAME,
           pfp: AVATAR,
         };
         connection.send(JSON.stringify(player_profile));
       }
 
-      // function send_fren_list() {
-      //   /////////////////////////////////////////////////
-      //   //get the players frens hereeeeee///////////////
-      //   ///////////////////////////////////////////////
-
-
-      //   //steps:
-      //   //1) get the frenlist from database
-      //   //2) put the info in the JSON obj like in the example at the top and send back
-      //   //3) to do: create a handle to send the fren list whenever it changes (online status change / add / remove fren etc),
-      //   // 		my frontend will accept whenever there is incoming fren list and modify accordingly
-
-      //   const friends_obj = temp_friends_obj;
-      //   connection.send(JSON.stringify(friends_obj));
-      //   console.log(friends_obj);
-      // }
-
       function send_fren_list() {
         const userEmail = get_email_by_session();
       
-        // Step 1: Get list of friend's emails
         const friendRows = fastify.betterSqlite3
           .prepare("SELECT FRIEND_EMAIL FROM FRIEND_LIST WHERE USER_EMAIL = ?")
           .all(userEmail);
-      
-        // Step 2: For each friend's email, get their info from USER table
+
+        const onlineEmails = new Set(Object.values(fastify.conf.session));
+
         const friends = friendRows.map(row => {
           const friend = fastify.betterSqlite3
             .prepare("SELECT USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
             .get(row.FRIEND_EMAIL);
+          
+          const isOnline = onlineEmails.has(row.FRIEND_EMAIL);
       
           return {
             username: friend.USERNAME,
             pfp: friend.AVATAR,
-            status: "offline", // default; can enhance this later
+            status: isOnline ? "online" : "offline",
           };
         });
       
-        // Step 3: Construct and send JSON
         const friends_obj = {
           type: "player_friends",
           friends: friends,
@@ -105,44 +82,79 @@ const root = async function (fastify) {
       
 
       function send_server_players_for_addfrens(search_input_name) {
-        ////////////////////////////////////////////////////
-        ///////get server players hereeeeee////////////////
-        ///////////////////////////////////////////////////
-
-        //	steps:
-        //	1) get all players
-        //	2) compare them wif the players current frens
-        //	3) get the players that are not their current frens
-
-        console.log("entered the mf function");
-
-		//sanity check
-		let error_str = "";
-		if(search_input_name != "")
-		{
-			error_str = check_valid_input(search_input_name);
-			if(error_str != "")
-			{
-				const ret_obj = {
-					type: "matching_server_players",
-					error_msg: error_str
-				}
-				connection.send(JSON.stringify(ret_obj));
-				return;
-			}
-		}
-
-        const ret_obj = {
-          type: "matching_server_players",
-          players: [],
-        };
-
-        for (let i = 0; i < temp_server_players.length; i++) {
-          if (temp_server_players[i].username.startsWith(search_input_name))
-            ret_obj.players.push(temp_server_players[i]);
+        let error_str = "";
+        if(search_input_name != "")
+        {
+          error_str = check_valid_input(search_input_name);
+          if(error_str != "")
+          {
+            const ret_obj = {
+              type: "matching_server_players",
+              error_msg: error_str
+            }
+            connection.send(JSON.stringify(ret_obj));
+            return;
+          }
         }
 
+        try {
+        const userEmail = get_email_by_session();
+        
+        if (!userEmail) {
+            const ret_obj = {
+                type: "matching_server_players",
+                error_msg: "Invalid session"
+            }
+            connection.send(JSON.stringify(ret_obj));
+            return;
+        }
+
+        let allMatchingPlayers;
+        
+        if (search_input_name === "") {
+            allMatchingPlayers = fastify.betterSqlite3
+                .prepare("SELECT EMAIL, USERNAME, AVATAR FROM USER WHERE EMAIL != ?")
+                .all(userEmail);
+        } else {
+            allMatchingPlayers = fastify.betterSqlite3
+                .prepare("SELECT EMAIL, USERNAME, AVATAR FROM USER WHERE USERNAME LIKE ? AND EMAIL != ?")
+                .all(search_input_name + '%', userEmail);
+        }
+
+        const currentFriends = fastify.betterSqlite3
+            .prepare("SELECT FRIEND_EMAIL FROM FRIEND_LIST WHERE USER_EMAIL = ?")
+            .all(userEmail);
+        
+        const friendEmails = new Set(currentFriends.map(friend => friend.FRIEND_EMAIL));
+
+        const availablePlayers = allMatchingPlayers
+            .filter(player => !friendEmails.has(player.EMAIL))
+            .map(player => {
+              console.log('Player data from DB:', player);
+              return {
+                username: player.USERNAME,
+                pfp: player.AVATAR,
+              };
+            });
+
+        const ret_obj = {
+            type: "matching_server_players",
+            players: availablePlayers,
+        };
+
+        console.log('Final object being sent:', JSON.stringify(ret_obj, null, 2));
         connection.send(JSON.stringify(ret_obj));
+        console.log(`Found ${availablePlayers.length} matching players for search: "${search_input_name}"`);
+        console.log('Sending to frontend:', ret_obj); 
+
+        } catch (error) {
+            console.error('Error fetching server players:', error);
+            const ret_obj = {
+                type: "matching_server_players",
+                error_msg: "Database error occurred"
+            }
+            connection.send(JSON.stringify(ret_obj));
+        }
       }
 
       function modify_profile(message_obj) {
@@ -151,10 +163,13 @@ const root = async function (fastify) {
         const name = message_obj.name;
         const pfp = message_obj.pfp;
 
-        let error_str;
+        let error_str = "";
 
-        if (name === null) error_str = "please enter a name";
-        else error_str = check_valid_input(name);
+        if (name !== null && name !== undefined && name !== "") {
+            error_str = check_valid_input(name);
+        } else if (name === "" || (name === null && (pfp === null || pfp === undefined))) {
+            error_str = "please provide either a name or avatar to update";
+        }
 
         if (error_str != "") {
           const ret_obj = {
@@ -166,32 +181,54 @@ const root = async function (fastify) {
           };
           connection.send(JSON.stringify(ret_obj));
         } else {
-          ///////////////////////////////////////
-          ///////store pfp and name config///////
-          ///////////////////////////////////////
 
-          // JSON parsed to backend:
-          // {
-          //		type: "modify profile"
-          //		name: "inserted name"
-          //		pfp: "dataurl link" <- (dw just store this string i will handle the processing and rendering for now)
-          // }
+          const email = get_email_by_session();
 
-          //steps:
-          // 1) find the profile associated wif the login email
-          // 2) update the pfp and name in the Database
+          try {
+            // console.log("Updating user:", email);
 
-          pfp; //void this first if not compiler will complain
+            const currentUser = fastify.betterSqlite3
+                .prepare("SELECT USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
+                .get(email);
 
-          const ret_obj = {
-            type: "modify_profile_status",
-            status: "success",
-            error_msg: "",
-            name: message_obj.name,
-            pfp: message_obj.pfp,
-          };
+            if (!currentUser) {
+                throw new Error("User not found");
+            }
 
-          connection.send(JSON.stringify(ret_obj));
+            const newUsername = name || currentUser.USERNAME;
+            const newAvatar = (pfp !== null && pfp !== undefined) ? pfp : currentUser.AVATAR;
+
+            // console.log("Current data:", currentUser);
+            // console.log("New data:", { username: newUsername, avatar: newAvatar });
+
+            const stmt = fastify.betterSqlite3.prepare(
+                `UPDATE USER SET USERNAME = ?, AVATAR = ? WHERE EMAIL = ?`
+            );
+            stmt.run(newUsername, newAvatar, email);
+
+            const ret_obj = {
+                type: "modify_profile_status",
+                status: "success",
+                error_msg: "",
+                name: newUsername,
+                pfp: newAvatar,
+            };
+
+            connection.send(JSON.stringify(ret_obj));
+
+          } catch (err) {
+              console.error("DB Error:", err.message);
+
+              const ret_obj = {
+                  type: "modify_profile_status",
+                  status: "failure",
+                  error_msg: "server error",
+                  name: name,
+                  pfp: pfp,
+              };
+
+              connection.send(JSON.stringify(ret_obj));
+          }
         }
       }
 
@@ -215,38 +252,166 @@ const root = async function (fastify) {
             return "only letters, numbers, and '_' allowed";
         }
 
-        /////////////////////////////////////////////////////////
-        ///////////check for duplicate names hereeeee////////////
-        /////////////////////////////////////////////////////////
-
-        //steps:
-        //1) get list of all the players in the game
-        //2) compare
+        try {
+          const stmt = fastify.betterSqlite3.prepare(`SELECT EMAIL FROM USER WHERE USERNAME = ?`);
+          const result = stmt.get(name);
+          if (result) {
+            return "username already exists";
+          }
+        } catch (err) {
+          console.error("Error checking duplicate username:", err);
+          return "internal server error";
+        }
 
         return "";
       }
 
       function add_friend(add_friend_name) {
-        //////////////////////////////////////////////
-        //////process add fren hereee/////////////////
-        ///////////////////////////////////////////////
-
-        //steps:
-        //1)find the profile of the name added in the database
-        //2)add the profile to the frens list of the current player's profile
-
         console.log("added friend name: ", add_friend_name);
-      }
+        
+        try {
+            const userEmail = get_email_by_session();
+            
+            if (!userEmail) {
+                const error_obj = {
+                    type: "add_friend_response",
+                    success: false,
+                    error_msg: "Invalid session"
+                };
+                connection.send(JSON.stringify(error_obj));
+                return;
+            }
+            
+            const friendProfile = fastify.betterSqlite3
+                .prepare("SELECT EMAIL FROM USER WHERE USERNAME = ?")
+                .get(add_friend_name);
+            
+            if (!friendProfile) {
+                const error_obj = {
+                    type: "add_friend_response",
+                    success: false,
+                    error_msg: "User not found"
+                };
+                connection.send(JSON.stringify(error_obj));
+                return;
+            }
+            
+            const friendEmail = friendProfile.EMAIL;
+            
+            const existingFriendship = fastify.betterSqlite3
+                .prepare("SELECT * FROM FRIEND_LIST WHERE USER_EMAIL = ? AND FRIEND_EMAIL = ?")
+                .get(userEmail, friendEmail);
+            
+            if (existingFriendship) {
+                const error_obj = {
+                    type: "add_friend_response",
+                    success: false,
+                    error_msg: "Already friends with this user"
+                };
+                connection.send(JSON.stringify(error_obj));
+                return;
+            }
+            
+            const insertFriend = fastify.betterSqlite3.prepare(
+                "INSERT INTO FRIEND_LIST (USER_EMAIL, FRIEND_EMAIL) VALUES (?, ?)"
+            );
+            
+            insertFriend.run(userEmail, friendEmail);
+            insertFriend.run(friendEmail, userEmail);
+            
+            console.log(`Added friendship: ${userEmail} <-> ${friendEmail}`);
+            
+            const success_obj = {
+                type: "add_friend_response",
+                success: true,
+                message: `Successfully added ${add_friend_name} as friend`,
+                friend_username: add_friend_name
+            };
+            connection.send(JSON.stringify(success_obj));
+            
+        } catch (error) {
+            console.error('Error adding friend:', error);
+            const error_obj = {
+                type: "add_friend_response",
+                success: false,
+                error_msg: "Database error occurred"
+            };
+            connection.send(JSON.stringify(error_obj));
+        }
+    }
 
       function remove_friend(remove_friend_name) {
-        //////////////////////////////////////////////
-        //////process remove fren hereee/////////////////
-        ///////////////////////////////////////////////
-
-        //steps:
-        //1)find the current player profile in the frens table
-        //2)remove the fren with the name
-        console.log("remove friend name: ", remove_friend_name);
+          console.log("remove friend name: ", remove_friend_name);
+          
+          try {
+              const userEmail = get_email_by_session();
+              
+              if (!userEmail) {
+                  const error_obj = {
+                      type: "remove_friend_response",
+                      success: false,
+                      error_msg: "Invalid session"
+                  };
+                  connection.send(JSON.stringify(error_obj));
+                  return;
+              }
+              
+              const friendProfile = fastify.betterSqlite3
+                  .prepare("SELECT EMAIL FROM USER WHERE USERNAME = ?")
+                  .get(remove_friend_name);
+              
+              if (!friendProfile) {
+                  const error_obj = {
+                      type: "remove_friend_response",
+                      success: false,
+                      error_msg: "User not found"
+                  };
+                  connection.send(JSON.stringify(error_obj));
+                  return;
+              }
+              
+              const friendEmail = friendProfile.EMAIL;
+              
+              const existingFriendship = fastify.betterSqlite3
+                  .prepare("SELECT * FROM FRIEND_LIST WHERE USER_EMAIL = ? AND FRIEND_EMAIL = ?")
+                  .get(userEmail, friendEmail);
+              
+              if (!existingFriendship) {
+                  const error_obj = {
+                      type: "remove_friend_response",
+                      success: false,
+                      error_msg: "You are not friends with this user"
+                  };
+                  connection.send(JSON.stringify(error_obj));
+                  return;
+              }
+              
+              const removeFriend = fastify.betterSqlite3.prepare(
+                  "DELETE FROM FRIEND_LIST WHERE USER_EMAIL = ? AND FRIEND_EMAIL = ?"
+              );
+              
+              removeFriend.run(userEmail, friendEmail);
+              removeFriend.run(friendEmail, userEmail);
+              
+              console.log(`Removed friendship: ${userEmail} <-> ${friendEmail}`);
+              
+              const success_obj = {
+                  type: "remove_friend_response",
+                  success: true,
+                  message: `Successfully removed ${remove_friend_name} from friends`,
+                  removed_friend: remove_friend_name
+              };
+              connection.send(JSON.stringify(success_obj));
+              
+          } catch (error) {
+              console.error('Error removing friend:', error);
+              const error_obj = {
+                  type: "remove_friend_response",
+                  success: false,
+                  error_msg: "Database error occurred"
+              };
+              connection.send(JSON.stringify(error_obj));
+          }
       }
 
 	  function check_remove_fren_input(input) {
@@ -297,21 +462,6 @@ const root = async function (fastify) {
           connection.send(JSON.stringify({ type: "session_success" }));
         }
       }
-      // function verify_session() {
-      //   // Temporarily skip real session validation for testing
-      //   const session = request.query.session;
-
-      //   // Simulate a successful session
-      //   request.log.info(session, "✅ Bypassing session check for testing");
-      //   connection.send(JSON.stringify({ type: "session_success" }));
-
-      //   // set a fake user on request
-      //   request.user = {
-      //     email: "friend1@example.com",
-      //     username: "FriendOne",
-      //   };
-      // }
-
 
       function get_email_by_session() {
         const session = request.query.session;
