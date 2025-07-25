@@ -1,10 +1,3 @@
-//currently import temp objects for frontend
-// import {
-//   temp_player_obj,
-//   // temp_friends_obj,
-//   // temp_server_players,
-// } from "./tempstuff.js";
-
 // current to do list:
 // JWT token processing and profile initialisation
 // getting and sending player profile JSON object
@@ -243,20 +236,19 @@ const root = async function (fastify) {
             return "only letters, numbers, and '_' allowed";
         }
 
-        try {
-          const stmt = fastify.betterSqlite3.prepare(`SELECT EMAIL FROM USER WHERE USERNAME = ?`);
-          const result = stmt.get(name);
-          if (result) {
-            return "username already exists";
-          }
-        } catch (err) {
-          console.error("Error checking duplicate username:", err);
-          return "internal server error";
-        }
+        // try {
+        //   const stmt = fastify.betterSqlite3.prepare(`SELECT EMAIL FROM USER WHERE USERNAME = ?`);
+        //   const result = stmt.get(name);
+        //   if (result) {
+        //     return "username already exists";
+        //   }
+        // } catch (err) {
+        //   console.error("Error checking duplicate username:", err);
+        //   return "internal server error";
+        // }
 
         return "";
       }
-
 
       function add_friend(add_friend_name) {
         console.log("added friend name: ", add_friend_name);
