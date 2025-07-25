@@ -164,55 +164,64 @@ const root = async function (fastify) {
         }
       }
 
-      function modify_profile(message_obj) {
-        console.log(message_obj);
+      // function modify_profile(message_obj) {
+      //   console.log(message_obj);
 
-        const name = message_obj.name;
-        const pfp = message_obj.pfp;
+      //   const name = message_obj.name;
+      //   const pfp = message_obj.pfp;
 
-        let error_str;
+      //   let error_str;
 
-        if (name === null) error_str = "please enter a name";
-        else error_str = check_valid_input(name);
+      //   if (name === null) error_str = "please enter a name";
+      //   else error_str = check_valid_input(name);
 
-        if (error_str != "") {
-          const ret_obj = {
-            type: "modify_profile_status",
-            status: "failure",
-            error_msg: error_str,
-            name: message_obj.name,
-            pfp: message_obj.pfp,
-          };
-          connection.send(JSON.stringify(ret_obj));
-        } else {
-          ///////////////////////////////////////
-          ///////store pfp and name config///////
-          ///////////////////////////////////////
+      //   if (error_str != "") {
+      //     const ret_obj = {
+      //       type: "modify_profile_status",
+      //       status: "failure",
+      //       error_msg: error_str,
+      //       name: message_obj.name,
+      //       pfp: message_obj.pfp,
+      //     };
+      //     connection.send(JSON.stringify(ret_obj));
+      //   } else {
+      //     ///////////////////////////////////////
+      //     ///////store pfp and name config///////
+      //     ///////////////////////////////////////
 
-          // JSON parsed to backend:
-          // {
-          //		type: "modify profile"
-          //		name: "inserted name"
-          //		pfp: "dataurl link" <- (dw just store this string i will handle the processing and rendering for now)
-          // }
+      //     const email = get_email_by_session();
 
-          //steps:
-          // 1) find the profile associated wif the login email
-          // 2) update the pfp and name in the Database
+      //     try {
+      //       console.log("Updating user:", email);
 
-          pfp; //void this first if not compiler will complain
+      //       const stmt = fastify.betterSqlite3.prepare(`UPDATE USER SET USERNAME = ?, AVATAR = ? WHERE EMAIL = ?`);
+      //       stmt.run(name, pfp, email);
 
-          const ret_obj = {
-            type: "modify_profile_status",
-            status: "success",
-            error_msg: "",
-            name: message_obj.name,
-            pfp: message_obj.pfp,
-          };
+      //       const ret_obj = {
+      //         type: "modify_profile_status",
+      //         status: "success",
+      //         error_msg: "",
+      //         name: name,
+      //         pfp: pfp,
+      //       };
 
-          connection.send(JSON.stringify(ret_obj));
-        }
-      }
+      //       connection.send(JSON.stringify(ret_obj));
+      //     } catch (err) {
+      //       console.error("DB Error:", err.message);
+
+      //       const ret_obj = {
+      //         type: "modify_profile_status",
+      //         status: "failure",
+      //         error_msg: "server error",
+      //         name: name,
+      //         pfp: pfp,
+      //       };
+
+      //       connection.send(JSON.stringify(ret_obj));
+      //     }
+      //   }
+      // }
+
 
       function check_valid_input(name) {
         if (name.length < 5) return "name must be minimum 5 characters";
@@ -234,13 +243,16 @@ const root = async function (fastify) {
             return "only letters, numbers, and '_' allowed";
         }
 
-        /////////////////////////////////////////////////////////
-        ///////////check for duplicate names hereeeee////////////
-        /////////////////////////////////////////////////////////
-
-        //steps:
-        //1) get list of all the players in the game
-        //2) compare
+        try {
+          const stmt = fastify.betterSqlite3.prepare(`SELECT EMAIL FROM USER WHERE USERNAME = ?`);
+          const result = stmt.get(name);
+          if (result) {
+            return "username already exists";
+          }
+        } catch (err) {
+          console.error("Error checking duplicate username:", err);
+          return "internal server error";
+        }
 
         return "";
       }
