@@ -2,7 +2,7 @@
 import {
   temp_player_obj,
   // temp_friends_obj,
-  temp_server_players,
+  // temp_server_players,
 } from "./tempstuff.js";
 
 // current to do list:
@@ -102,44 +102,79 @@ const root = async function (fastify) {
       
 
       function send_server_players_for_addfrens(search_input_name) {
-        ////////////////////////////////////////////////////
-        ///////get server players hereeeeee////////////////
-        ///////////////////////////////////////////////////
-
-        //	steps:
-        //	1) get all players
-        //	2) compare them wif the players current frens
-        //	3) get the players that are not their current frens
-
-        console.log("entered the mf function");
-
-		//sanity check
-		let error_str = "";
-		if(search_input_name != "")
-		{
-			error_str = check_valid_input(search_input_name);
-			if(error_str != "")
-			{
-				const ret_obj = {
-					type: "matching_server_players",
-					error_msg: error_str
-				}
-				connection.send(JSON.stringify(ret_obj));
-				return;
-			}
-		}
-
-        const ret_obj = {
-          type: "matching_server_players",
-          players: [],
-        };
-
-        for (let i = 0; i < temp_server_players.length; i++) {
-          if (temp_server_players[i].username.startsWith(search_input_name))
-            ret_obj.players.push(temp_server_players[i]);
+        let error_str = "";
+        if(search_input_name != "")
+        {
+          error_str = check_valid_input(search_input_name);
+          if(error_str != "")
+          {
+            const ret_obj = {
+              type: "matching_server_players",
+              error_msg: error_str
+            }
+            connection.send(JSON.stringify(ret_obj));
+            return;
+          }
         }
 
+        try {
+        const userEmail = get_email_by_session();
+        
+        if (!userEmail) {
+            const ret_obj = {
+                type: "matching_server_players",
+                error_msg: "Invalid session"
+            }
+            connection.send(JSON.stringify(ret_obj));
+            return;
+        }
+
+        let allMatchingPlayers;
+        
+        if (search_input_name === "") {
+            allMatchingPlayers = fastify.betterSqlite3
+                .prepare("SELECT EMAIL, USERNAME, AVATAR FROM USER WHERE EMAIL != ?")
+                .all(userEmail);
+        } else {
+            allMatchingPlayers = fastify.betterSqlite3
+                .prepare("SELECT EMAIL, USERNAME, AVATAR FROM USER WHERE USERNAME LIKE ? AND EMAIL != ?")
+                .all(search_input_name + '%', userEmail);
+        }
+
+        const currentFriends = fastify.betterSqlite3
+            .prepare("SELECT FRIEND_EMAIL FROM FRIEND_LIST WHERE USER_EMAIL = ?")
+            .all(userEmail);
+        
+        const friendEmails = new Set(currentFriends.map(friend => friend.FRIEND_EMAIL));
+
+        const availablePlayers = allMatchingPlayers
+            .filter(player => !friendEmails.has(player.EMAIL))
+            .map(player => {
+              console.log('Player data from DB:', player);
+              return {
+                username: player.USERNAME,
+                pfp: player.AVATAR,
+              };
+            });
+
+        const ret_obj = {
+            type: "matching_server_players",
+            players: availablePlayers,
+        };
+
+        console.log('Final object being sent:', JSON.stringify(ret_obj, null, 2));
         connection.send(JSON.stringify(ret_obj));
+        console.log(`Found ${availablePlayers.length} matching players for search: "${search_input_name}"`);
+        console.log('Sending to frontend:', ret_obj); 
+
+        } catch (error) {
+            console.error('Error fetching server players:', error);
+            const ret_obj = {
+                type: "matching_server_players",
+                error_msg: "Database error occurred"
+            }
+            connection.send(JSON.stringify(ret_obj));
+        }
       }
 
       function modify_profile(message_obj) {
