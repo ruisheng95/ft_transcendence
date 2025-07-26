@@ -48,38 +48,42 @@ const root = async function (fastify) {
         connection.send(JSON.stringify(player_profile));
       }
 
-      function send_fren_list() {
-        const userEmail = get_email_by_session();
-      
+      function get_friend_list_data(userEmail) {
         const friendRows = fastify.betterSqlite3
-          .prepare("SELECT FRIEND_EMAIL FROM FRIEND_LIST WHERE USER_EMAIL = ?")
-          .all(userEmail);
+            .prepare("SELECT FRIEND_EMAIL FROM FRIEND_LIST WHERE USER_EMAIL = ?")
+            .all(userEmail);
 
         const onlineEmails = new Set(Object.values(fastify.conf.session));
 
         const friends = friendRows.map(row => {
-          const friend = fastify.betterSqlite3
-            .prepare("SELECT USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
-            .get(row.FRIEND_EMAIL);
-          
-          const isOnline = onlineEmails.has(row.FRIEND_EMAIL);
-      
-          return {
-            username: friend.USERNAME,
-            pfp: friend.AVATAR,
-            status: isOnline ? "online" : "offline",
-          };
+            const friend = fastify.betterSqlite3
+                .prepare("SELECT USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
+                .get(row.FRIEND_EMAIL);
+            
+            const isOnline = onlineEmails.has(row.FRIEND_EMAIL);
+        
+            return {
+                username: friend.USERNAME,
+                pfp: friend.AVATAR,
+                status: isOnline ? "online" : "offline",
+            };
         });
-      
-        const friends_obj = {
-          type: "player_friends",
-          friends: friends,
-        };
-      
-        connection.send(JSON.stringify(friends_obj));
-        console.log(friends_obj);
+          return friends;
       }
-      
+
+      function send_fren_list() {
+          const userEmail = get_email_by_session();
+          const friends = get_friend_list_data(userEmail);
+          
+          const friends_obj = {
+              type: "player_friends",
+              friends: friends,
+          };
+          
+          connection.send(JSON.stringify(friends_obj));
+          console.log('Sent friend list:', friends_obj);
+      }
+
 
       function send_server_players_for_addfrens(search_input_name) {
         let error_str = "";
@@ -342,12 +346,15 @@ const root = async function (fastify) {
             insertFriend.run(friendEmail, userEmail);
             
             console.log(`Added friendship: ${userEmail} <-> ${friendEmail}`);
-            
+
+            const updatedFriends = get_friend_list_data(userEmail);
+
             const success_obj = {
                 type: "add_friend_response",
                 success: true,
                 message: `Successfully added ${add_friend_name} as friend`,
-                friend_username: add_friend_name
+                friend_username: add_friend_name,
+                update_friends: updatedFriends
             };
             connection.send(JSON.stringify(success_obj));
             
@@ -417,14 +424,16 @@ const root = async function (fastify) {
               
               console.log(`Removed friendship: ${userEmail} <-> ${friendEmail}`);
               
+              const updatedFriends = get_friend_list_data(userEmail);
+              
               const success_obj = {
                   type: "remove_friend_response",
                   success: true,
                   message: `Successfully removed ${remove_friend_name} from friends`,
-                  removed_friend: remove_friend_name
+                  removed_friend: remove_friend_name,
+                  update_friends: updatedFriends
               };
               connection.send(JSON.stringify(success_obj));
-              
           } catch (error) {
               console.error('Error removing friend:', error);
               const error_obj = {
