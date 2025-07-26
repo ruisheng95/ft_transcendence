@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+
+//notes
+//only init - ing the webpage after i recv JSON of profile from socket
+
 import "./gameindex.css";
 import { pf_config_setup, pf_config_popup } from "./config_profile.ts";
 import { playerstats_setup, playerstats_popup } from "./other_stuff.ts";
