@@ -14,6 +14,8 @@ import { vs_AI_game_setup, vs_AI_game_popup } from "./vs_AI.ts";
 
 import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_game.ts"
 
+import { game_popup } from "./display_game.ts";
+
 const session = localStorage.getItem("session") || "";
 const socket = new WebSocket(
   `ws://localhost:3000/ws_profile?session=${session}`
@@ -46,6 +48,10 @@ function process_msg_from_socket(message: MessageEvent) {
 
 function init_player(msg_obj: object) {
   player = msg_obj;
+
+  if(player.username.includes('@'))
+	localStorage.setItem("new_player_flag", "true");
+
   socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
 }
 
@@ -181,8 +187,9 @@ function main_ft() {
 			${remove_friends_popup}
 
 			${local_play_menus_popup}
-			${vs_AI_game_popup}
-
+  			${vs_AI_game_popup}
+			
+			${game_popup}
 		</div>
 	`;
 

@@ -6,8 +6,6 @@ import { local_tour_manager } from "./game-local-tournament2.ts";
 export function local_tour_game_setup()
 {
 	const local_tour_start_button = document.querySelector<HTMLButtonElement>("#local_tour_main_start_button"); // changed to start button
-	const local_tour_game_popup = document.querySelector<HTMLDivElement>("#local_tour_game_popup");
-	const close_local_tour_game = document.querySelector<HTMLButtonElement>("#close_local_tour_game");
 	const localTour_regist_page = document.querySelector<HTMLDivElement>("#localTour_registration");
 
 	const p1_name_input_element = document.querySelector<HTMLInputElement>("#localTour_p1_name_input");
@@ -18,7 +16,7 @@ export function local_tour_game_setup()
 	const close_localTour_winner_popup = document.querySelector<HTMLButtonElement>("#close_localTour_winner_popup");
 	const localTour_winner_popup = document.querySelector<HTMLDivElement>("#localTour_winner_popup");
 
-	if (!localTour_regist_page || !localTour_winner_popup || !close_localTour_winner_popup || !p1_name_input_element || !p2_name_input_element || !p3_name_input_element || !p4_name_input_element || !local_tour_start_button || !local_tour_game_popup || !close_local_tour_game)
+	if (!localTour_regist_page || !localTour_winner_popup || !close_localTour_winner_popup || !p1_name_input_element || !p2_name_input_element || !p3_name_input_element || !p4_name_input_element || !local_tour_start_button)
 		throw new Error("Error local_tour_game buttons not found");
 
 	p1_name_input_element.addEventListener("input", (event : Event) => {
@@ -69,10 +67,6 @@ export function local_tour_game_setup()
 
 		localTour_regist_page.classList.add("hidden");
 		local_tour_manager(player_names[rand_p1], player_names[rand_p2], player_names[rand_p3], player_names[rand_p4]);
-	});
-
-	close_local_tour_game.addEventListener("click", () => {
-		local_tour_game_popup.classList.add("hidden");
 	});
 
 	close_localTour_winner_popup.addEventListener("click", () => {
@@ -181,18 +175,6 @@ const localTour_matchmaking_popup = `
 `
 
 export const local_tour_game_popup = `
-	<div id="local_tour_game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
-		<div class="relative m-0 p-0 bg-black text-white">
-			<button id="close_local_tour_game" class="absolute top-[10px] right-[10px] text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
-			<h1 class="text-[5vh] font-semibold mt-[3vh] mb-[3vh]"><center>Tournement 1v1 Game</center></h1>
-			
-			<div class="flex justify-center items-center">
-				<div id="localTour_p1_name_display" class="text-white text-[3vh] font-bold mr-[20px]"><h1>player1</h1></div>
-				<div id="local_tour_game"></div>
-				<div id="localTour_p2_name_display" class="text-white text-[3vh] font-bold ml-[20px]"><h1>player2</h1></div>
-			</div>
-		</div>
-	</div>
 
 	${localTour_matchmaking_popup}
 	${localTour_winner_popup}
@@ -221,11 +203,11 @@ function verify_name_input(event : Event)
 
 		}
 
-		if(input.length > 20)
+		if(input.length > 9)
 		{
 			localTour_error_msg_div.classList.remove("hidden");
 			localTour_error_msg_div.innerHTML = `<h1 class="text-red-500 text-[15px]"> Input too long </h1>`;
-			clean_input = clean_input.substring(0, 20);
+			clean_input = clean_input.substring(0, 9);
 		}
 		else if (invalid_char == true)
 		{

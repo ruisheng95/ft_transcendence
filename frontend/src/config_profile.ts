@@ -29,7 +29,15 @@ export function pf_config_setup()
 	close_pf_config.addEventListener("click", () => {pf_config_popup.classList.add("hidden");});
 
 	pfp_button.addEventListener("click", () => { input_pfp.click();});
-	
+
+	//REMEMBER TO UNCOMMENT THIS FOR NEW PLAYER CONFIG TO POPUP (commented this cuz very mafan during testing)
+	// if(localStorage.getItem("new_player_flag") === "true")
+	// {
+	// 	pf_config_button.click();
+	// 	close_pf_config.classList.add("hidden");
+	// 	localStorage.setItem("new_player_flag", "false");
+	// }
+
 	socket.addEventListener('message', (event) => {
 
 		console.log(event.data);
@@ -39,6 +47,7 @@ export function pf_config_setup()
 			if (response.status === "success")
 			{
 				pf_config_popup.classList.add("hidden");
+				close_pf_config.classList.remove("hidden"); // cuz i hid the button if new player, so after they succesfully login can add back dy
 				if (response.name)
 					header_name.innerHTML = `<h1 class="text-white text-[18px] pl-[1vw]">${response.name}</h1>`;
 				if (response.pfp)

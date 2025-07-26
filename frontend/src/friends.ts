@@ -14,12 +14,14 @@ export function add_friends_setup()
 	const close_add_friends = document.querySelector<HTMLButtonElement>("#close_add_friends");
 	const addfriend_search_bar = document.querySelector<HTMLInputElement>("#addfriend_search_bar");
 	const player_list_div = document.querySelector<HTMLDivElement>("#players_list");
+	const error_div = document.querySelector<HTMLDivElement>("#add_error");
 
 	if(!player_list_div || !addfriend_search_bar || !add_friends_button || !add_friends_popup || !close_add_friends)
 		throw new Error("Error add_friends buttons not found");
 
 	add_friends_button.addEventListener("click", () => {add_friends_popup.classList.remove("hidden")});
 	close_add_friends.addEventListener("click", () => {add_friends_popup.classList.add("hidden")});
+	
 	socket.addEventListener("message", (message) => {
 		const msg_obj = JSON.parse(message.data);
 		console.log(msg_obj);
@@ -28,7 +30,21 @@ export function add_friends_setup()
 	});
 
 	addfriend_search_bar.addEventListener("input", () => {
-		if (addfriend_search_bar.value.length >= 5)
+
+		if(!error_div) throw new Error("error div not found");
+		const input_str = addfriend_search_bar.value;
+		const valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+
+		if(!valid_chars.includes(input_str[input_str.length - 1]))
+		{
+			player_list_div.innerHTML = "";
+			player_list_div.classList.add("hidden");
+			error_div.classList.remove("hidden");
+			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">Alphabets, numbers or '_' only</h1>`;
+			addfriend_search_bar.value = input_str.substr(0, input_str.length - 1);
+		}
+
+		if (input_str.length >= 5)
 			socket.send(JSON.stringify({type: "get_server_players", name: addfriend_search_bar.value}));
 		else
 			player_list_div.classList.add("hidden");
@@ -36,7 +52,6 @@ export function add_friends_setup()
 
 	function display_player_list(msg_obj : any)
 	{
-		const error_div = document.querySelector<HTMLDivElement>("#add_error");
 		if(!error_div || !player_list_div) throw new Error("display player list stuff not found");
 		if(msg_obj.error_msg)
 		{

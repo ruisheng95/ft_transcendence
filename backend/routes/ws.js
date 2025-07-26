@@ -25,7 +25,7 @@ const root = async function (fastify) {
       leftplayerY,
       player_indent;
     let game_interval_id, game_hit_lock;
-    const key_down = { ArrowUp: false, ArrowDown: false, w: false, s: false };
+    const player_movement = { rightplayer_up: false, rightplayer_down: false, leftplayer_up: false, leftplayer_down: false };
 
     connection.on("message", recv_msg);
     //connection.on('close', handle_close_socket);
@@ -39,18 +39,18 @@ const root = async function (fastify) {
     }
 
     function change_player_pos() {
-      if (key_down["ArrowDown"] == true) {
+      if (player_movement["rightplayer_down"] == true) {
         if (rightplayerY + block_height + board_border_width <= boardHeight)
           rightplayerY += player_speed;
       }
-      if (key_down["ArrowUp"] == true) {
+      if (player_movement["rightplayer_up"] == true) {
         if (rightplayerY - board_border_width > 0) rightplayerY -= player_speed;
       }
-      if (key_down["s"] == true) {
+      if (player_movement["leftplayer_down"] == true) {
         if (leftplayerY + block_height + board_border_width <= boardHeight)
           leftplayerY += player_speed;
       }
-      if (key_down["w"] == true) {
+      if (player_movement["leftplayer_up"] == true) {
         if (leftplayerY - board_border_width > 0) leftplayerY -= player_speed;
       }
     }
@@ -86,7 +86,7 @@ const root = async function (fastify) {
             dx *= 1.1;
 
 			//control max speed
-			const MAXSPEED = 16;
+			const MAXSPEED = 12;
 			dx = dx < MAXSPEED ? dx : MAXSPEED;
 			console.log("speed: ", dx);
 
@@ -138,8 +138,8 @@ const root = async function (fastify) {
 
         //start the game
         game_loop();
-      } else if (message_obj.type == "keyup") key_down[message_obj.key] = false;
-      else if (message_obj.type == "keydown") key_down[message_obj.key] = true;
+      } else if (message_obj.type == "keyup") player_movement[message_obj.action] = false;
+      else if (message_obj.type == "keydown") player_movement[message_obj.action] = true;
     }
 
     // function handle_close_socket()
