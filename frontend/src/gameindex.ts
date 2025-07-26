@@ -50,18 +50,21 @@ function process_msg_from_socket(message: MessageEvent) {
   }
 }
 
-function init_player(msg_obj: object) {
+function init_player(msg_obj: any) {
   player = msg_obj;
 
   if(player.username.includes('@'))
 	localStorage.setItem("new_player_flag", "true");
+
+  localStorage.setItem("current_username", player.username);
+  main_ft();
 
   socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
 }
 
 function init_friends(msg_obj: object) {
   friends_obj = msg_obj;
-  main_ft();
+  modify_friends_list();
 }
 
 //main logic
@@ -90,57 +93,12 @@ function main_ft() {
 		</div>
 	`;
 
-  //right sec (fren lists)
-
-  let online_frens = "";
-  let offline_frens = "";
-
-  let i = 0;
-  while (i < friends_obj.friends.length) {
-    const friend = friends_obj.friends[i];
-    const display_name =
-      friend.username.length > 15
-        ? friend.username.substring(0, 15) + "..."
-        : friend.username;
-
-    const friend_html = `
-			<div class="flex items-center text-white text-[14px] w-full h-[35px] px-[5px] py-[2px]">
-				<img src="${
-          friend.pfp ? friend.pfp : "/src/defaultpfp.png"
-        }" class="w-[20px] h-[20px]">
-				<h1 class="text-white ml-[5px]">${display_name}</h1>
-				<div class="ml-auto w-[8px] h-[8px] rounded-full ${
-          friend.status === "online" ? "bg-green-400" : "bg-gray-500"
-        }"></div>
-			</div>
-		`;
-
-    if (friend.status === "online") online_frens += friend_html;
-    else offline_frens += friend_html;
-
-    i++;
-  }
-
+  //right sec (fren lists, empty until we get frens list from socket)
   const right_sec = `
 		<div id="right_sec" class="flex flex-col border-2 border-white border w-[200px] h-[450px] bg-black">
 			<h1 class="text-white text-[20px] font-bold text-center mb-[10px]"> Friends </h1>
 			
-			<div class="flex-1 overflow-y-auto hide-scrollbar p-[10px]">
-				<div id="online_frens" class="mb-[15px]">
-					<h2 class="text-white text-[16px] mb-[5px]"> Online: </h2>
-					<div class="w-full border-b-1 border-white mb-[10px]"></div>
-					<div class="space-y-[5px]">
-						${online_frens}
-					</div>
-				</div>
-				
-				<div id="offline_frens" class="mb-[15px]">
-					<h2 class="text-white text-[16px] mb-[5px]"> Offline: </h2>
-					<div class="w-full border-b-1 border-white mb-[10px]"></div>
-					<div class="space-y-[5px]">
-						${offline_frens}
-					</div>
-				</div>
+			<div id="friends_list_div" class="flex-1 overflow-y-auto hide-scrollbar p-[10px]">
 			</div>
 			<div id="fren_buttons" class="flex w-full">
 				<button id="add_friends_button" class="flex-1 text-white text-[14px] border-white border-1 p-[3px]">Add friend</button>
@@ -216,4 +174,57 @@ function main_ft() {
       localStorage.removeItem("session");
       window.location.href = "/index.html";
     });
+}
+
+
+function modify_friends_list()
+{
+  let online_frens = "";
+  let offline_frens = "";
+
+  let i = 0;
+  while (i < friends_obj.friends.length) {
+    const friend = friends_obj.friends[i];
+    const display_name =
+      friend.username.length > 15
+        ? friend.username.substring(0, 15) + "..."
+        : friend.username;
+
+    const friend_html = `
+			<div class="flex items-center text-white text-[14px] w-full h-[35px] px-[5px] py-[2px]">
+				<img src="${
+          friend.pfp ? friend.pfp : "/src/defaultpfp.png"
+        }" class="w-[20px] h-[20px]">
+				<h1 class="text-white ml-[5px]">${display_name}</h1>
+				<div class="ml-auto w-[8px] h-[8px] rounded-full ${
+          friend.status === "online" ? "bg-green-400" : "bg-gray-500"
+        }"></div>
+			</div>
+		`;
+
+    if (friend.status === "online") online_frens += friend_html;
+    else offline_frens += friend_html;
+
+    i++;
+  }
+
+  const friends_list_div = document.querySelector<HTMLDivElement>("#friends_list_div");
+  if(!friends_list_div) throw new Error("modify frens elements not found");
+
+  friends_list_div.innerHTML = `
+  <div id="online_frens" class="mb-[15px]">
+	<h2 class="text-white text-[16px] mb-[5px]"> Online: </h2>
+	<div class="w-full border-b-1 border-white mb-[10px]"></div>
+		<div class="space-y-[5px]">
+			${online_frens}
+	</div>
+  </div>
+				
+  <div id="offline_frens" class="mb-[15px]">
+	<h2 class="text-white text-[16px] mb-[5px]"> Offline: </h2>
+	<div class="w-full border-b-1 border-white mb-[10px]"></div>
+		<div class="space-y-[5px]">
+			${offline_frens}
+	</div>
+  </div>`
 }

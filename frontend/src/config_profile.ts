@@ -1,4 +1,5 @@
 //pf config
+
 const session = localStorage.getItem("session") || "";
 const socket = new WebSocket(
   `ws://localhost:3000/ws_profile?session=${session}`
@@ -25,7 +26,11 @@ export function pf_config_setup()
 	if(!error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config || !pfp_button || !input_pfp || !file_name_display || !pfp_img_preview || !pfp_empty)
 		throw new Error("Error pf_config stuff not found");
 
-	pf_config_button.addEventListener("click", () => {pf_config_popup.classList.remove("hidden");});
+	pf_config_button.addEventListener("click", () => {
+		error_display.innerHTML = "";
+		name_input.value = "";
+		pf_config_popup.classList.remove("hidden");
+	});
 	close_pf_config.addEventListener("click", () => {pf_config_popup.classList.add("hidden");});
 
 	pfp_button.addEventListener("click", () => { input_pfp.click();});
@@ -49,7 +54,10 @@ export function pf_config_setup()
 				pf_config_popup.classList.add("hidden");
 				close_pf_config.classList.remove("hidden"); // cuz i hid the button if new player, so after they succesfully login can add back dy
 				if (response.name)
+				{
 					header_name.innerHTML = `<h1 class="text-white text-[18px] pl-[1vw]">${response.name}</h1>`;
+					localStorage.setItem("current_username", response.name);
+				}
 				if (response.pfp)
 					header_pfp.src = response.pfp;
 			}
@@ -102,7 +110,12 @@ export function pf_config_setup()
 		}
 
 		if(name_input.value)
-			send_obj.name = name_input.value;
+		{
+			if(name_input.value == localStorage.getItem("current_username")) //temporary fix to ensure that if the name input is the same as the current name then still can save
+				send_obj.name = null;
+			else
+				send_obj.name = name_input.value;
+		}
 
 		socket.send(JSON.stringify(send_obj)); //send to backend to verify the pf config shit
 	});
