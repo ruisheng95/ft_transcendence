@@ -20,6 +20,7 @@ import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_g
 
 import { game_popup } from "./display_game.ts";
 
+
 const session = localStorage.getItem("session") || "";
 const socket = new WebSocket(
   `ws://localhost:3000/ws_profile?session=${session}`
@@ -49,6 +50,10 @@ function process_msg_from_socket(message: MessageEvent) {
     window.location.href = "/index.html";
   }
 }
+
+setInterval( async () => {
+	socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
+}, 1000);
 
 function init_player(msg_obj: any) {
   player = msg_obj;

@@ -97,6 +97,13 @@ export function pf_config_setup()
 		if (input_pfp.files && input_pfp.files.length > 0)
 		{
         	const file = input_pfp.files[0]; //get file
+			
+			if (!file.type.startsWith('image/')) //checks the MIME type for image files only
+			{
+				error_display.innerHTML = `<p class="text-red-500">Error: Please choose an image file only!</p>`;
+				return;
+			}
+			
 			const buffer = await file.arrayBuffer(); // get the binary data of the file (useless one cannot read or modify)
             const bytes = new Uint8Array(buffer); // convert this to Unicode (smth like ascii but more numbers) [255, 216, 255, 224, 0, 16, ...]
             
@@ -150,5 +157,6 @@ export const pf_config_popup = `
 		</div>
 	</div>
 `
+
 // in the pfp config above need to hide the <input> and do a custom button instead then link the custom button to the input using js cuz the input button very hard to style
 // im not rly gud at ts so i trying use the arrow ft so my code doesnt look so cpp lmao
