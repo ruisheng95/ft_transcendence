@@ -26,13 +26,5 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 	<div id="google_sign_in"></div>
   </div>
 `;
-fetch(`http://127.0.0.1:3000`)
-  .then((response) => response.json())
-  .then((json) => {
-    const testDiv = document.querySelector<HTMLDivElement>("#test");
-    if (testDiv) {
-      testDiv.innerHTML = json.root;
-    }
-  });
 
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
