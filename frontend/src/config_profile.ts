@@ -1,6 +1,13 @@
 //pf config
 import { WS } from "./class/WS.ts";
 const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
+socket.addEventListener("close", (event) => {
+  // If invalid session, redirect home page
+  if (!event.wasClean) {
+    localStorage.removeItem("session");
+    window.location.href = "/index.html";
+  }
+});
 
 export function pf_config_setup()
 {

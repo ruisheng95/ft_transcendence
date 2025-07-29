@@ -1,0 +1,6 @@
+#Copy this to .env
+#Do not delete this! :(
+
+VITE_SOCKET_URL=ws://localhost:3000
+VITE_BACKEND_API_HOST=http://localhost:3000
+VITE_ENV=dev

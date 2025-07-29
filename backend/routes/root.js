@@ -1,29 +1,35 @@
 import { OAuth2Client } from "google-auth-library";
 
 const root = async function (fastify) {
-  fastify.get("/", async function () {
-    fastify.betterSqlite3
-      .prepare("UPDATE TEST SET COUNT = COUNT + 1 WHERE ID = 1")
-      .run();
-    const { count } = fastify.betterSqlite3
-      .prepare("SELECT count FROM TEST WHERE ID = 1")
-      .get();
-    return { root: count };
-  });
-
   fastify.post("/session", async function (request) {
     const token = request.body.token;
     try {
+      let payload = undefined;
       if (!token) {
-        throw new Error("No token");
+        if (fastify.conf.env.ENV !== "dev") {
+          throw new Error("No token");
+        }
+        // Dummy sign in
+        const playerEmails = Object.values(fastify.conf.session);
+        let i = 1;
+        let email;
+        while (!email) {
+          if (!playerEmails.includes(`friend${i}@example.com`)) {
+            email = `friend${i}@example.com`;
+          }
+          i++;
+        }
+        payload = {};
+        payload.email = email;
+      } else {
+        const client = new OAuth2Client();
+        const ticket = await client.verifyIdToken({
+          idToken: token,
+          audience:
+            "313465714569-nq8gfim6in2iki8htj3t326vhbunl23a.apps.googleusercontent.com",
+        });
+        payload = ticket.getPayload();
       }
-      const client = new OAuth2Client();
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience:
-          "313465714569-nq8gfim6in2iki8htj3t326vhbunl23a.apps.googleusercontent.com",
-      });
-      const payload = ticket.getPayload();
 
       const { count } = fastify.betterSqlite3
         .prepare("SELECT COUNT(*) AS count FROM USER WHERE EMAIL = ?")
