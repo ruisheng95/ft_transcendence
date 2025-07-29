@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./gamestyle.css";
 import { display_game } from "./display_game";
+import { add_history } from "./spa-navigation";
 
 //local 1v1 game
 export function local_1v1_game_setup()
@@ -50,6 +51,7 @@ export function local_1v1_game_setup()
 
 	close_local1v1_winner_popup.addEventListener("click", () => {
 		local1v1_winner_popup.classList.add("hidden");
+		add_history("");
 	});
 }
 

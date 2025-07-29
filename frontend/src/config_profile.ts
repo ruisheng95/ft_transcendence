@@ -1,5 +1,7 @@
 //pf config
 
+import { add_history } from "./spa-navigation";
+
 const session = localStorage.getItem("session") || "";
 const socket = new WebSocket(
   `ws://localhost:3000/ws_profile?session=${session}`
@@ -30,8 +32,12 @@ export function pf_config_setup()
 		error_display.innerHTML = "";
 		name_input.value = "";
 		pf_config_popup.classList.remove("hidden");
+		add_history("profile_config");
 	});
-	close_pf_config.addEventListener("click", () => {pf_config_popup.classList.add("hidden");});
+	close_pf_config.addEventListener("click", () => {
+		pf_config_popup.classList.add("hidden");
+		add_history("");
+	});
 
 	pfp_button.addEventListener("click", () => { input_pfp.click();});
 
@@ -125,6 +131,7 @@ export function pf_config_setup()
 		}
 
 		socket.send(JSON.stringify(send_obj)); //send to backend to verify the pf config shit
+		add_history("");
 	});
 }
 

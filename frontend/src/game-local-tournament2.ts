@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { display_game } from "./display_game";
+import { add_history } from "./spa-navigation";
 
 export function local_tour_manager(p1_name: string, p2_name : string, p3_name : string, p4_name : string)
 {
@@ -210,6 +211,7 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 		close_finalwinner_popup_button.addEventListener("click", () =>{
 			if(localTour_matchmaking_popup)
 				localTour_matchmaking_popup.classList.add("hidden");
+			add_history("");
 		});
 
 		currentbattle_div.classList.add("hidden");

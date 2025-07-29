@@ -2,6 +2,13 @@
 // => void means return value is void
 //AI flag is optional arg wif default value set as false
 
+import { terminate_history } from "./spa-navigation";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+let stop_game_ft = () => {};
+
+let first_call_flag = false; // to prevent add event listeners to add event multiple times to the buttons
+
 export function display_game(handle_game_end : (msg_obj : object) => void, AI_flag = false)
 {
 	const socket = new WebSocket("ws://localhost:3000/ws");
@@ -64,22 +71,37 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	key_binds.set("ArrowUp", "rightplayer_up");
 	key_binds.set("ArrowDown", "rightplayer_down");
 
-
+	//playing status
+	let playing = true;
+	
 	render_positions();
 	socket.addEventListener("message", process_msg_from_socket);
 	document.addEventListener('keydown', handleKeyDown);
 	document.addEventListener('keyup', handleKeyUp);
 	start_game_button.addEventListener("click", start_the_fkin_game)
-	close_game_button.addEventListener("click", () => { game_popup.classList.add("hidden"); });
+
+	if(first_call_flag == false)
+	{
+		first_call_flag = true;
+		close_game_button.addEventListener("click", () => {
+			game_popup.classList.add("hidden");
+			playing = false;
+			terminate_history();
+		});
+	}
 
 
 	// AI STUFF
-
-	let playing = true;
 	if(AI_flag == true)
 		AI_movement();
 
 	//functions
+
+	const stop_game = () => {
+		game_popup.classList.add("hidden");
+		playing = false;
+	};
+	stop_game_ft = stop_game;
 
 	function start_the_fkin_game()
 	{
@@ -123,6 +145,8 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 			
 		if(msg_obj.type == "game_update")
 		{
+			if(playing == false)
+				return ;
 			ballX = msg_obj.ballX;
 			ballY = msg_obj.ballY;
 			leftplayerY = msg_obj.leftplayerY;
@@ -133,6 +157,8 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		}
 		else if(msg_obj.type == "game_over")
 		{
+			if(playing == false)
+				return ;
 			if (start_game_button)
 				start_game_button.style.display = "block";
 			playing = false;
@@ -196,7 +222,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		setInterval(() => {
 			if (playing == false)
 				return;
-			predicted_y = predict_ball_landing_spot() + Math.floor(Math.random() * 141) - 70; // ±70px to simulate prediction error
+			predicted_y = predict_ball_landing_spot() + Math.floor(Math.random() * 41) - 20; // ±20px to simulate prediction error
 		}, 1000); //this function sets in ms so 1000ms = 1s (as requested by the subj)
 
 		//move towards predicted target
@@ -204,7 +230,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 			if (playing == false)
 				return;
 			
-			if(Math.random() < 0.9) //simulate human distractions lol and slow reaction
+			if(Math.random() < 0.95) //simulate human distractions lol and slow reaction
 				return;
 
 			const paddle_center = rightplayerY + block_height / 2;
@@ -300,6 +326,10 @@ export const game_popup = `
 	</div>
 `;
 
+export function exported_stop_game_ft()
+{
+	stop_game_ft();
+}
 
 //notes:
 //gamepopup obj needs to be taken and manually remove hidden outside here when wanna play the game

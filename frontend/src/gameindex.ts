@@ -20,6 +20,8 @@ import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_g
 
 import { game_popup } from "./display_game.ts";
 
+import { add_history } from "./spa-navigation.ts";
+
 
 const session = localStorage.getItem("session") || "";
 const socket = new WebSocket(
@@ -32,6 +34,10 @@ socket.addEventListener("close", (event) => {
   }
 });
 
+//
+//push the main gameindex to history, since all my verification of tokens is done before this, i can check if the history has this index page to verify if a person is logged in
+//
+//
 let player: any;
 let friends_obj: any;
 
@@ -64,6 +70,7 @@ function init_player(msg_obj: any) {
   localStorage.setItem("current_username", player.username);
   main_ft();
 
+  add_history(""); //temporarily add /gameindex.html/ to history cuz wanna have the popstate effect
   socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
 }
 

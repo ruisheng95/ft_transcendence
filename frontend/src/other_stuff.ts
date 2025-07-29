@@ -1,3 +1,5 @@
+import { add_history} from "./spa-navigation";
+
 //help
 export function help_setup()
 {
@@ -8,8 +10,14 @@ export function help_setup()
 	if(!help_button || !help_popup || !close_help)
 		throw new Error("Error help buttons not found");
 
-	help_button.addEventListener("click", () => {help_popup.classList.remove("hidden")});
-	close_help.addEventListener("click", () => {help_popup.classList.add("hidden")});
+	help_button.addEventListener("click", () => {
+		help_popup.classList.remove("hidden")
+		add_history("help");
+	});
+	close_help.addEventListener("click", () => {
+		help_popup.classList.add("hidden")
+		add_history("");
+	});
 }
 
 
@@ -32,8 +40,15 @@ export function playerstats_setup ()
 	if(!playerstats_button || !playerstats_popup || !close_playerstats)
 		throw new Error("Error playerstats buttons not found");
 
-	playerstats_button.addEventListener("click", () => {playerstats_popup.classList.remove("hidden")});
-	close_playerstats.addEventListener("click", () => {playerstats_popup.classList.add("hidden")});
+	playerstats_button.addEventListener("click", () => {
+		playerstats_popup.classList.remove("hidden");
+		add_history("playerstats");
+	});
+
+	close_playerstats.addEventListener("click", () => {
+		playerstats_popup.classList.add("hidden");
+		add_history("");
+	});
 }
 
 
@@ -57,8 +72,14 @@ export function settings_setup ()
 	if(!settings_button || !settings_popup || !close_settings)
 		throw new Error("Error settings buttons not found");
 
-	settings_button.addEventListener("click", () => {settings_popup.classList.remove("hidden")});
-	close_settings.addEventListener("click", () => {settings_popup.classList.add("hidden")});
+	settings_button.addEventListener("click", () => {
+		settings_popup.classList.remove("hidden");
+		add_history("settings");
+	});
+	close_settings.addEventListener("click", () => {
+		settings_popup.classList.add("hidden");
+		add_history("");
+	});
 }
 
 

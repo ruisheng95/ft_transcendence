@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./gamestyle.css";
+import { add_history } from "./spa-navigation";
 
 //local 2v2 game
 export function local_2v2_game_setup()
@@ -66,6 +67,7 @@ export function local_2v2_game_setup()
 
 	close_local2v2_winner_popup.addEventListener("click", () => {
 		local2v2_winner_popup.classList.add("hidden");
+		add_history("");
 	});
 }
 
