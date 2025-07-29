@@ -1,3 +1,18 @@
+import { MsgType } from "./MessageType.js";
+
+export const defaultGameSetting = {
+  boardWidth: 1000,
+  boardHeight: 500,
+  board_border_width: 4,
+  block_height: 150,
+  block_width: 10,
+  player_speed: 10,
+  player_indent: 20,
+  ball_len: 15,
+  dy: 4,
+  dx: 4,
+};
+
 export class GameInstance {
   #connectionArray = [];
   #boardHeight = 0;
@@ -20,6 +35,12 @@ export class GameInstance {
     { ArrowUp: false, ArrowDown: false, w: false, s: false },
     { ArrowUp: false, ArrowDown: false, w: false, s: false },
   ];
+  #player_movement = {
+    rightplayer_up: false,
+    rightplayer_down: false,
+    leftplayer_up: false,
+    leftplayer_down: false,
+  };
 
   #sendJson(json) {
     this.#connectionArray.forEach((connection) =>
@@ -27,6 +48,33 @@ export class GameInstance {
     );
   }
 
+  #change_player_pos2() {
+    if (this.#player_movement["rightplayer_down"] == true) {
+      if (
+        this.#rightplayerY + this.#block_height + this.#board_border_width <=
+        this.#boardHeight
+      )
+        this.#rightplayerY += this.#player_speed;
+    }
+    if (this.#player_movement["rightplayer_up"] == true) {
+      if (this.#rightplayerY - this.#board_border_width > 0)
+        this.#rightplayerY -= this.#player_speed;
+    }
+    if (this.#player_movement["leftplayer_down"] == true) {
+      if (
+        this.#leftplayerY + this.#block_height + this.#board_border_width <=
+        this.#boardHeight
+      )
+        this.#leftplayerY += this.#player_speed;
+    }
+    if (this.#player_movement["leftplayer_up"] == true) {
+      if (this.#leftplayerY - this.#board_border_width > 0)
+        this.#leftplayerY -= this.#player_speed;
+    }
+  }
+
+  // Old function. Remove in future
+  // eslint-disable-next-line no-unused-private-class-members
   #change_player_pos() {
     this.#keyDownArray.forEach((keyDown, index) => {
       if (index === 0) {
@@ -86,28 +134,34 @@ export class GameInstance {
   }
 
   #frame() {
-    this.#change_player_pos();
+    this.#change_player_pos2();
     if (
-      this.#ballX <= 0 ||
-      this.#ballX + this.#ball_len + this.#board_border_width * 2 >=
-        this.#boardWidth
+      this.#ballX <= this.#ball_len / 2 ||
+      this.#ballX + this.#ball_len >= this.#boardWidth
     ) {
       //game hit border, end game
+      const winner_p =
+        this.#ballX <= this.#ball_len / 2 ? "rightplayer" : "leftplayer";
       clearInterval(this.#game_interval_id);
-      this.#sendJson({ type: "game_over" });
+      this.#sendJson({ type: MsgType.GAME_OVER, winner: winner_p });
     } else {
       if (
         !this.#game_hit_lock &&
         //left paddle hit
-        ((this.#ballX <= this.#player_indent + this.#block_width + 2 &&
-          this.#ballX >= this.#player_indent - 2 &&
+        //Math.abs to make detection area bigger to counter ball jump bug
+        ((this.#ballX <=
+          this.#player_indent + this.#block_width + Math.abs(this.#dx) &&
+          this.#ballX >= this.#player_indent - Math.abs(this.#dx) &&
           this.#ballY + this.#ball_len >= this.#leftplayerY - 2 &&
           this.#ballY <= this.#leftplayerY + this.#block_height + 2) ||
-          //right paddle hit
+          //same thing applied here also
           (this.#ballX + this.#ball_len >=
-            this.#boardWidth - this.#player_indent - this.#block_width - 2 &&
+            this.#boardWidth -
+              this.#player_indent -
+              this.#block_width -
+              Math.abs(this.#dx) &&
             this.#ballX + this.#ball_len <=
-              this.#boardWidth - this.#player_indent + 2 &&
+              this.#boardWidth - this.#player_indent + Math.abs(this.#dx) &&
             this.#ballY + this.#ball_len >= this.#rightplayerY - 2 &&
             this.#ballY <= this.#rightplayerY + this.#block_height + 2))
       ) {
@@ -117,15 +171,11 @@ export class GameInstance {
         this.#game_hit_lock = true;
         setTimeout(() => {
           this.#game_hit_lock = false;
-        }, 1000); //does exactly wat i want damnnn non blocks and later sets gamelock to false
+        }, 200); //does exactly wat i want damnnn non blocks and later sets gamelock to false
       }
 
       //check collision wif horizontal walls
-      if (
-        this.#ballY + this.#ball_len + this.#board_border_width * 2 >=
-          this.#boardHeight ||
-        this.#ballY <= 0
-      )
+      if (this.#ballY + this.#ball_len >= this.#boardHeight || this.#ballY <= 0)
         this.#dy = -this.#dy;
 
       this.#ballX += this.#dx;
@@ -133,26 +183,24 @@ export class GameInstance {
 
       //send game state to frontend
       const gameState = {
-        type: "game_update",
+        type: MsgType.GAME_UPDATE,
         ballX: this.#ballX,
         ballY: this.#ballY,
         leftplayerY: this.#leftplayerY,
         rightplayerY: this.#rightplayerY,
+        speed_x: this.#dx,
+        speed_y: this.#dy,
       };
       this.#sendJson(gameState);
     }
   }
 
   registerPlayer(connection) {
+    // Hardcode max 2 players for now
     if (this.#connectionArray.length == 2) {
-      connection.close();
       return -1;
     }
     this.#connectionArray.push(connection);
-    this.#sendJson({
-      type: "player_count",
-      count: this.#connectionArray.length,
-    });
     return this.#connectionArray.length;
   }
 
@@ -190,7 +238,21 @@ export class GameInstance {
           key === "ArrowUp" ||
           key === "ArrowDown"
         ) {
-          this.#keyDownArray[index][key] = type === "keydown";
+          if (index === 0) {
+            // Left
+            if (key === "w" || key === "ArrowUp") {
+              this.#player_movement.leftplayer_up = type === "keydown";
+            } else if (key === "s" || key === "ArrowDown") {
+              this.#player_movement.leftplayer_down = type === "keydown";
+            }
+          } else {
+            // Right
+            if (key === "w" || key === "ArrowUp") {
+              this.#player_movement.rightplayer_up = type === "keydown";
+            } else if (key === "s" || key === "ArrowDown") {
+              this.#player_movement.rightplayer_down = type === "keydown";
+            }
+          }
         }
       }
     });
@@ -205,5 +267,83 @@ export class GameInstance {
   isGamePlayer(connection) {
     const found = this.#connectionArray.some((conn) => conn === connection);
     return found;
+  }
+}
+
+class Player {
+  email;
+  connection;
+  gameNoOfPlayers; // gameNoOfPlayers of 2 (1v1) or 4 (2v2)
+  gameInstance;
+  request;
+
+  constructor(email, connection, gameNoOfPlayers, request) {
+    this.email = email;
+    this.connection = connection;
+    this.gameNoOfPlayers = gameNoOfPlayers;
+    this.request = request;
+  }
+}
+
+export class OnlineMatchmaking {
+  #playerArray = [];
+
+  registerPlayer(email, connection, gameNoOfPlayers, request) {
+    this.#playerArray.push(
+      new Player(email, connection, gameNoOfPlayers, request)
+    );
+    request.log.info("OnlineMatchmaking registered: " + email);
+    const nonPlayingPlayers = this.#playerArray.filter(
+      (player) => !player.gameInstance
+    );
+    const pendingPlayerLobby = [nonPlayingPlayers[0]];
+    const gameLobbySize = nonPlayingPlayers[0].gameNoOfPlayers;
+    for (let i = 1; i < nonPlayingPlayers.length; i++) {
+      if (
+        nonPlayingPlayers[i].gameNoOfPlayers === gameLobbySize &&
+        pendingPlayerLobby.length !== gameLobbySize
+      ) {
+        pendingPlayerLobby.push(nonPlayingPlayers[i]);
+      }
+    }
+    if (pendingPlayerLobby.length === gameLobbySize) {
+      // Start game
+      const gameInstance = new GameInstance();
+      pendingPlayerLobby.forEach((player) => {
+        player.gameInstance = gameInstance;
+        const playerId = gameInstance.registerPlayer(player.connection);
+        request.log.info("GameInstance registered player: " + playerId);
+        player.connection.send(
+          JSON.stringify({
+            type: MsgType.GAME_INIT,
+            ...defaultGameSetting,
+            playerId,
+          })
+        );
+      });
+    } else {
+      // push pending status
+      connection.send(
+        JSON.stringify({
+          type: MsgType.MATCHMAKING_STATUS,
+          status:
+            "Waiting for players..." +
+            JSON.stringify(pendingPlayerLobby.map((player) => player.email)),
+        })
+      );
+    }
+  }
+
+  getPlayerByConnection(connection) {
+    return this.#playerArray.find((player) => player.connection === connection);
+  }
+
+  removePlayerByConnection(connection) {
+    const index = this.#playerArray.findIndex(
+      (player) => player.connection === connection
+    );
+    if (index > -1) {
+      this.#playerArray.splice(index, 1);
+    }
   }
 }

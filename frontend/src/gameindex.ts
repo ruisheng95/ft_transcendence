@@ -16,15 +16,17 @@ import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_g
 
 import { game_popup } from "./display_game.ts";
 
-const session = localStorage.getItem("session") || "";
-const socket = new WebSocket(
-  `ws://localhost:3000/ws_profile?session=${session}`
-);
+import { WS } from "./class/WS.ts";
+
+const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
 socket.addEventListener("message", process_msg_from_socket);
 socket.addEventListener("close", (event) => {
   if (!event.wasClean) {
     window.location.href = "/index.html";
   }
+});
+socket.addEventListener("open", () => {
+  socket.send(JSON.stringify({ type: "get_player_profile" }));
 });
 
 let player: any;
@@ -39,10 +41,6 @@ function process_msg_from_socket(message: MessageEvent) {
     init_player(msg_obj);
   } else if (msg_obj.type == "player_friends") {
     init_friends(msg_obj);
-  } else if (msg_obj.type == "session_success") {
-    socket.send(JSON.stringify({ type: "get_player_profile" }));
-  } else if (msg_obj.type == "session_error") {
-    window.location.href = "/index.html";
   }
 }
 
