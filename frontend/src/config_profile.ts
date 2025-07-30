@@ -1,6 +1,7 @@
 //pf config
 
 import { WS } from "./class/WS.ts";
+import { add_history } from "./spa-navigation.ts";
 const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 socket.addEventListener("close", (event) => {
   // If invalid session, redirect home page
