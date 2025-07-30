@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+
+//notes
+//only init - ing the webpage after i recv JSON of profile from socket
+
 import "./gameindex.css";
 import { pf_config_setup, pf_config_popup } from "./config_profile.ts";
 import { playerstats_setup, playerstats_popup } from "./other_stuff.ts";
@@ -16,9 +20,13 @@ import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_g
 
 import { game_popup } from "./display_game.ts";
 
+
+import { add_history } from "./spa-navigation.ts";
+
 import { WS } from "./class/WS.ts";
 
 const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
+
 socket.addEventListener("message", process_msg_from_socket);
 socket.addEventListener("close", (event) => {
   if (!event.wasClean) {
@@ -29,6 +37,10 @@ socket.addEventListener("open", () => {
   socket.send(JSON.stringify({ type: "get_player_profile" }));
 });
 
+//
+//push the main gameindex to history, since all my verification of tokens is done before this, i can check if the history has this index page to verify if a person is logged in
+//
+//
 let player: any;
 let friends_obj: any;
 
@@ -44,18 +56,26 @@ function process_msg_from_socket(message: MessageEvent) {
   }
 }
 
-function init_player(msg_obj: object) {
+setInterval( async () => {
+	socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
+}, 1000);
+
+function init_player(msg_obj: any) {
   player = msg_obj;
 
   if(player.username.includes('@'))
 	localStorage.setItem("new_player_flag", "true");
 
+  localStorage.setItem("current_username", player.username);
+  main_ft();
+
+  add_history(""); //temporarily add /gameindex.html/ to history cuz wanna have the popstate effect
   socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
 }
 
 function init_friends(msg_obj: object) {
   friends_obj = msg_obj;
-  main_ft();
+  modify_friends_list();
 }
 
 //main logic
@@ -84,57 +104,12 @@ function main_ft() {
 		</div>
 	`;
 
-  //right sec (fren lists)
-
-  let online_frens = "";
-  let offline_frens = "";
-
-  let i = 0;
-  while (i < friends_obj.friends.length) {
-    const friend = friends_obj.friends[i];
-    const display_name =
-      friend.username.length > 15
-        ? friend.username.substring(0, 15) + "..."
-        : friend.username;
-
-    const friend_html = `
-			<div class="flex items-center text-white text-[14px] w-full h-[35px] px-[5px] py-[2px]">
-				<img src="${
-          friend.pfp ? friend.pfp : "/src/defaultpfp.png"
-        }" class="w-[20px] h-[20px]">
-				<h1 class="text-white ml-[5px]">${display_name}</h1>
-				<div class="ml-auto w-[8px] h-[8px] rounded-full ${
-          friend.status === "online" ? "bg-green-400" : "bg-gray-500"
-        }"></div>
-			</div>
-		`;
-
-    if (friend.status === "online") online_frens += friend_html;
-    else offline_frens += friend_html;
-
-    i++;
-  }
-
+  //right sec (fren lists, empty until we get frens list from socket)
   const right_sec = `
 		<div id="right_sec" class="flex flex-col border-2 border-white border w-[200px] h-[450px] bg-black">
 			<h1 class="text-white text-[20px] font-bold text-center mb-[10px]"> Friends </h1>
 			
-			<div class="flex-1 overflow-y-auto hide-scrollbar p-[10px]">
-				<div id="online_frens" class="mb-[15px]">
-					<h2 class="text-white text-[16px] mb-[5px]"> Online: </h2>
-					<div class="w-full border-b-1 border-white mb-[10px]"></div>
-					<div class="space-y-[5px]">
-						${online_frens}
-					</div>
-				</div>
-				
-				<div id="offline_frens" class="mb-[15px]">
-					<h2 class="text-white text-[16px] mb-[5px]"> Offline: </h2>
-					<div class="w-full border-b-1 border-white mb-[10px]"></div>
-					<div class="space-y-[5px]">
-						${offline_frens}
-					</div>
-				</div>
+			<div id="friends_list_div" class="flex-1 overflow-y-auto hide-scrollbar p-[10px]">
 			</div>
 			<div id="fren_buttons" class="flex w-full">
 				<button id="add_friends_button" class="flex-1 text-white text-[14px] border-white border-1 p-[3px]">Add friend</button>
@@ -210,4 +185,57 @@ function main_ft() {
       localStorage.removeItem("session");
       window.location.href = "/index.html";
     });
+}
+
+
+function modify_friends_list()
+{
+  let online_frens = "";
+  let offline_frens = "";
+
+  let i = 0;
+  while (i < friends_obj.friends.length) {
+    const friend = friends_obj.friends[i];
+    const display_name =
+      friend.username.length > 15
+        ? friend.username.substring(0, 15) + "..."
+        : friend.username;
+
+    const friend_html = `
+			<div class="flex items-center text-white text-[14px] w-full h-[35px] px-[5px] py-[2px]">
+				<img src="${
+          friend.pfp ? friend.pfp : "/src/defaultpfp.png"
+        }" class="w-[20px] h-[20px]">
+				<h1 class="text-white ml-[5px]">${display_name}</h1>
+				<div class="ml-auto w-[8px] h-[8px] rounded-full ${
+          friend.status === "online" ? "bg-green-400" : "bg-gray-500"
+        }"></div>
+			</div>
+		`;
+
+    if (friend.status === "online") online_frens += friend_html;
+    else offline_frens += friend_html;
+
+    i++;
+  }
+
+  const friends_list_div = document.querySelector<HTMLDivElement>("#friends_list_div");
+  if(!friends_list_div) throw new Error("modify frens elements not found");
+
+  friends_list_div.innerHTML = `
+  <div id="online_frens" class="mb-[15px]">
+	<h2 class="text-white text-[16px] mb-[5px]"> Online: </h2>
+	<div class="w-full border-b-1 border-white mb-[10px]"></div>
+		<div class="space-y-[5px]">
+			${online_frens}
+	</div>
+  </div>
+				
+  <div id="offline_frens" class="mb-[15px]">
+	<h2 class="text-white text-[16px] mb-[5px]"> Offline: </h2>
+	<div class="w-full border-b-1 border-white mb-[10px]"></div>
+		<div class="space-y-[5px]">
+			${offline_frens}
+	</div>
+  </div>`
 }

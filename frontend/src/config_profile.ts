@@ -1,4 +1,5 @@
 //pf config
+
 import { WS } from "./class/WS.ts";
 const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 socket.addEventListener("close", (event) => {
@@ -8,6 +9,7 @@ socket.addEventListener("close", (event) => {
     window.location.href = "/index.html";
   }
 });
+
 
 export function pf_config_setup()
 {
@@ -30,8 +32,16 @@ export function pf_config_setup()
 	if(!error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config || !pfp_button || !input_pfp || !file_name_display || !pfp_img_preview || !pfp_empty)
 		throw new Error("Error pf_config stuff not found");
 
-	pf_config_button.addEventListener("click", () => {pf_config_popup.classList.remove("hidden");});
-	close_pf_config.addEventListener("click", () => {pf_config_popup.classList.add("hidden");});
+	pf_config_button.addEventListener("click", () => {
+		error_display.innerHTML = "";
+		name_input.value = "";
+		pf_config_popup.classList.remove("hidden");
+		add_history("profile_config");
+	});
+	close_pf_config.addEventListener("click", () => {
+		pf_config_popup.classList.add("hidden");
+		add_history("");
+	});
 
 	pfp_button.addEventListener("click", () => { input_pfp.click();});
 
@@ -54,7 +64,10 @@ export function pf_config_setup()
 				pf_config_popup.classList.add("hidden");
 				close_pf_config.classList.remove("hidden"); // cuz i hid the button if new player, so after they succesfully login can add back dy
 				if (response.name)
+				{
 					header_name.innerHTML = `<h1 class="text-white text-[18px] pl-[1vw]">${response.name}</h1>`;
+					localStorage.setItem("current_username", response.name);
+				}
 				if (response.pfp)
 					header_pfp.src = response.pfp;
 			}
@@ -94,6 +107,13 @@ export function pf_config_setup()
 		if (input_pfp.files && input_pfp.files.length > 0)
 		{
         	const file = input_pfp.files[0]; //get file
+			
+			if (!file.type.startsWith('image/')) //checks the MIME type for image files only
+			{
+				error_display.innerHTML = `<p class="text-red-500">Error: Please choose an image file only!</p>`;
+				return;
+			}
+			
 			const buffer = await file.arrayBuffer(); // get the binary data of the file (useless one cannot read or modify)
             const bytes = new Uint8Array(buffer); // convert this to Unicode (smth like ascii but more numbers) [255, 216, 255, 224, 0, 16, ...]
             
@@ -107,9 +127,15 @@ export function pf_config_setup()
 		}
 
 		if(name_input.value)
-			send_obj.name = name_input.value;
+		{
+			if(name_input.value == localStorage.getItem("current_username")) //temporary fix to ensure that if the name input is the same as the current name then still can save
+				send_obj.name = null;
+			else
+				send_obj.name = name_input.value;
+		}
 
 		socket.send(JSON.stringify(send_obj)); //send to backend to verify the pf config shit
+		add_history("");
 	});
 }
 
@@ -142,5 +168,6 @@ export const pf_config_popup = `
 		</div>
 	</div>
 `
+
 // in the pfp config above need to hide the <input> and do a custom button instead then link the custom button to the input using js cuz the input button very hard to style
 // im not rly gud at ts so i trying use the arrow ft so my code doesnt look so cpp lmao

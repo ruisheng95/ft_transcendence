@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { add_history } from "./spa-navigation";
+
 //add fren
 
 import { WS } from "./class/WS.ts";
@@ -17,8 +19,15 @@ export function add_friends_setup()
 	if(!player_list_div || !addfriend_search_bar || !add_friends_button || !add_friends_popup || !close_add_friends)
 		throw new Error("Error add_friends buttons not found");
 
-	add_friends_button.addEventListener("click", () => {add_friends_popup.classList.remove("hidden")});
-	close_add_friends.addEventListener("click", () => {add_friends_popup.classList.add("hidden")});
+	add_friends_button.addEventListener("click", () => {
+		add_friends_popup.classList.remove("hidden");
+		add_history("add_friend");
+	});
+	
+	close_add_friends.addEventListener("click", () => {
+		add_friends_popup.classList.add("hidden");
+		add_history("");
+	});
 	
 	socket.addEventListener("message", (message) => {
 		const msg_obj = JSON.parse(message.data);
@@ -145,10 +154,15 @@ export function remove_friends_setup()
 	if(!removefriend_search_bar || !remove_friends_button || !remove_friends_popup || !close_remove_friends)
 		throw new Error("Error remove_friends buttons not found");
 
-	close_remove_friends.addEventListener("click", () => { remove_friends_popup.classList.add("hidden") });
+	close_remove_friends.addEventListener("click", () => {
+		remove_friends_popup.classList.add("hidden");
+		add_history("");
+	});
+
 	remove_friends_button.addEventListener("click", () => { 
 		remove_friends_popup.classList.remove("hidden")
 		socket.send(JSON.stringify({type: "get_player_friends"})); //get friends list
+		add_history("remove_friend");
 	});
 
 

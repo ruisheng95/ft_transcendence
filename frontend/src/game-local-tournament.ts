@@ -13,10 +13,8 @@ export function local_tour_game_setup()
 	const p3_name_input_element = document.querySelector<HTMLInputElement>("#localTour_p3_name_input");
 	const p4_name_input_element = document.querySelector<HTMLInputElement>("#localTour_p4_name_input");
 	
-	const close_localTour_winner_popup = document.querySelector<HTMLButtonElement>("#close_localTour_winner_popup");
-	const localTour_winner_popup = document.querySelector<HTMLDivElement>("#localTour_winner_popup");
 
-	if (!localTour_regist_page || !localTour_winner_popup || !close_localTour_winner_popup || !p1_name_input_element || !p2_name_input_element || !p3_name_input_element || !p4_name_input_element || !local_tour_start_button)
+	if (!localTour_regist_page || !p1_name_input_element || !p2_name_input_element || !p3_name_input_element || !p4_name_input_element || !local_tour_start_button)
 		throw new Error("Error local_tour_game buttons not found");
 
 	p1_name_input_element.addEventListener("input", (event : Event) => {
@@ -69,25 +67,8 @@ export function local_tour_game_setup()
 		local_tour_manager(player_names[rand_p1], player_names[rand_p2], player_names[rand_p3], player_names[rand_p4]);
 	});
 
-	close_localTour_winner_popup.addEventListener("click", () => {
-		localTour_winner_popup.classList.add("hidden");
-	});
 }
 
-const localTour_winner_popup = `
-	<div id="localTour_winner_popup" class="border border-2 border-white flex flex-col justify-center items-center hidden fixed bg-black bg-opacity-90 inset-0" style="background-color: rgba(0,0,0,0.9)">
-		<div id="localTour_winner_popup_screen" class="bg-black border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center">
-
-			<div class="text-center">
-				<h1 class="text-[50px] text-white">WINNER! 🎉:</h1>
-				<div id="localTour_winner_name" class="text-[40px] font-bold mb-6 text-white"></div>
-				<div class="text-[50px] mb-6 text-white">Congratulations</div>
-			</div>
-
-			<button id="close_localTour_winner_popup" class="border-1 border-white text-white">close</button>
-		</div>
-	</div>
-`
 const localTour_matchmaking_popup = `
 	<div id="localTour_matchmaking_popup" class="flex flex-col justify-center items-center hidden fixed bg-black bg-opacity-90 inset-0" style="background-color: rgba(0,0,0,0.9)">
 		<div id="localTour_matchmaking_popup_screen" class="bg-black border border-2 border-white w-[70%] h-[70%] flex flex-col justify-center items-center">
@@ -177,7 +158,6 @@ const localTour_matchmaking_popup = `
 export const local_tour_game_popup = `
 
 	${localTour_matchmaking_popup}
-	${localTour_winner_popup}
 `;
 
 function verify_name_input(event : Event)

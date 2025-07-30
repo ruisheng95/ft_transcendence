@@ -3,6 +3,7 @@ import "./gamestyle.css";
 import { local_1v1_game_popup, local_1v1_game_setup } from "./game-local-1v1";
 import { local_2v2_game_popup, local_2v2_game_setup } from "./game-local-2v2";
 import { local_tour_game_popup, local_tour_game_setup } from "./game-local-tournament";
+import { add_history } from "./spa-navigation";
 
 // local_play_menus	
 export function local_play_menus_setup()
@@ -29,40 +30,48 @@ export function local_play_menus_setup()
 
 	local_play_menus_button.addEventListener("click", () => {
 		local_play_menus_popup.classList.remove("hidden");
+		add_history("localgame");
 	 });
 
 	close_local_play_menus.addEventListener("click", () => {
 		local_play_menus_popup.classList.add("hidden");
+		add_history("")
 	});
 
 	local_1v1_button.addEventListener("click", () => {
 		local_play_menus_popup.classList.add("hidden");
 		registration_1v1.classList.remove("hidden");
+		add_history("localgame/1v1");
 	});
 
 	local_2v2_button.addEventListener("click", () => {
 		local_play_menus_popup.classList.add("hidden");
 		registration_2v2.classList.remove("hidden");
+		add_history("localgame/2v2");
 	});
 
 	local_tournament_button.addEventListener("click", () => {
 		local_play_menus_popup.classList.add("hidden");
 		registration_tournament.classList.remove("hidden");
+		add_history("localgame/tournament");
 	});
 
 	close_1v1_registration.addEventListener("click", () => {
 		registration_1v1.classList.add("hidden");
 		local_play_menus_popup.classList.remove("hidden");
+		add_history("localgame");
 	});
 
 	close_2v2_registration.addEventListener("click", () => {
 		registration_2v2.classList.add("hidden");
 		local_play_menus_popup.classList.remove("hidden");
+		add_history("localgame");
 	});
 
 	close_tournament_registration.addEventListener("click", () => {
 		registration_tournament.classList.add("hidden");
 		local_play_menus_popup.classList.remove("hidden");
+		add_history("localgame");
 	});
 
 	local_1v1_game_setup();
