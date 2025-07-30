@@ -37,4 +37,32 @@ window.handle_credential_response = function(response: google.accounts.id.Creden
       window.location.href = "/gameindex.html";
     });
 };
+// If session exist, redirect
+if (localStorage.getItem("session")) {
+   window.location.href = "/gameindex.html";
+}
+
+if (import.meta.env.VITE_ENV === "dev") {
+  const dummySignInButton = document.createElement("button");
+  dummySignInButton.textContent = "Dummy account sign in";
+  dummySignInButton.style.backgroundColor = "lightblue"
+  dummySignInButton.addEventListener("click", async () => {
+    await fetch(`${import.meta.env.VITE_BACKEND_API_HOST}/session`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        localStorage.setItem("session", json.session);
+        window.location.href = "/gameindex.html";
+      });
+  });
+  google_sign_in.parentNode?.insertBefore(
+    dummySignInButton,
+    google_sign_in.nextSibling
+  );
+}
 // wtf liddat oni oso need to do so much work just for ts ignore

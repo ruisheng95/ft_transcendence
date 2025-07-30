@@ -1,10 +1,10 @@
 import "./game-online.css";
+import { WS } from "./class/WS.ts";
+import { MsgType } from "./class/MessageType.ts";
 
 //prep stuffssss
-const id = new URLSearchParams(window.location.search).get("id");
-let socket: WebSocket | undefined = undefined;
 let reconnectCount = 0;
-
+let socket: WebSocket | null = null;
 const game_obj = document.querySelector<HTMLDivElement>("#game");
 
 if (game_obj)
@@ -75,26 +75,29 @@ function start_the_fkin_game() {
 
   //send Start Game JSON to backend
   if (socket?.readyState === WebSocket.OPEN)
-    socket.send(JSON.stringify({ type: "game_start" }));
+    socket.send(JSON.stringify({ type: MsgType.GAME_START }));
 }
 
 function process_msg_from_socket(message: MessageEvent) {
   const msg_obj = JSON.parse(message.data);
 
-  if (msg_obj.type === "game_update")
+  if (msg_obj.type === MsgType.GAME_UPDATE)
     render_positions(
       msg_obj.ballX,
       msg_obj.ballY,
       msg_obj.leftplayerY,
       msg_obj.rightplayerY
     );
-  else if (msg_obj.type === "game_over") {
+  else if (msg_obj.type === MsgType.GAME_OVER) {
     if (start_game_button && playerId === 1) {
       start_game_button.disabled = false;
       start_game_button.style.color = "white";
       start_game_button.style.borderColor = "white";
     }
-  } else if (msg_obj.type === "game_init") {
+    if (status) {
+      status.innerHTML = `Winner is ${msg_obj.winner}`;
+    }
+  } else if (msg_obj.type === MsgType.GAME_INIT) {
     if (board && rightplayer && status) {
       board.style.height = `${msg_obj.boardHeight}px`;
       board.style.width = `${msg_obj.boardWidth}px`;
@@ -106,14 +109,17 @@ function process_msg_from_socket(message: MessageEvent) {
         msg_obj.playerId === 1 ? "left" : "right"
       })`;
       playerId = msg_obj.playerId;
+      if (playerId === 1 && start_game_button) {
+        start_game_button.disabled = false;
+        start_game_button.style.color = "white";
+        start_game_button.style.borderColor = "white";
+      }
       initVariables();
       render_positions(ballX, ballY, leftplayerY, rightplayerY);
     }
-  } else if (msg_obj.type === "player_count") {
-    if (msg_obj.count === 2 && start_game_button && playerId === 1) {
-      start_game_button.disabled = false;
-      start_game_button.style.color = "white";
-      start_game_button.style.borderColor = "white";
+  } else if (msg_obj.type === MsgType.MATCHMAKING_STATUS) {
+    if (status) {
+      status.innerHTML = `${msg_obj.status}`;
     }
   }
 }
@@ -157,11 +163,12 @@ function handleKeyUp(key_pressed: KeyboardEvent) {
 }
 
 function connectWebsocket() {
-  socket = new WebSocket(import.meta.env.VITE_SOCKET_URL + (id ? `?id=${id}` : ""));
+  socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
   socket.addEventListener("message", process_msg_from_socket);
   socket.addEventListener("close", () => {
     // Reconnect on socket close
     if (status) {
+      WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
       status.innerHTML = "Connecting...";
       if (start_game_button) {
         start_game_button.disabled = true;

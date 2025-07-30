@@ -1,19 +1,11 @@
-import { GameInstance } from "../objects/GameInstance.js";
+import {
+  OnlineMatchmaking,
+  defaultGameSetting,
+} from "../class/GameInstance.js";
+import { MsgType } from "../class/MessageType.js";
 
 const root = async function (fastify) {
-	  const gameLobby = {};
-  const defaultGameSetting = {
-    boardWidth: 1120,
-    boardHeight: 630,
-    board_border_width: 4,
-    block_height: 150,
-    block_width: 10,
-    player_speed: 10,
-    player_indent: 20,
-    ball_len: 15,
-    dy: 4,
-    dx: 4,
-  };
+  const onlineMatchmaking = new OnlineMatchmaking();
   fastify.get("/ws", { websocket: true }, (connection) => {
     //declare vars
     let boardHeight, boardWidth, board_border_width;
@@ -25,7 +17,12 @@ const root = async function (fastify) {
       leftplayerY,
       player_indent;
     let game_interval_id, game_hit_lock;
-    const player_movement = { rightplayer_up: false, rightplayer_down: false, leftplayer_up: false, leftplayer_down: false };
+    const player_movement = {
+      rightplayer_up: false,
+      rightplayer_down: false,
+      leftplayer_up: false,
+      leftplayer_down: false,
+    };
 
     connection.on("message", recv_msg);
     //connection.on('close', handle_close_socket);
@@ -65,33 +62,36 @@ const root = async function (fastify) {
         change_player_pos();
         if (ballX <= ball_len / 2 || ballX + ball_len >= boardWidth) {
           //game hit border, end game
-		  const winner_p = ballX <= ball_len / 2 ? "rightplayer" : "leftplayer";
+          const winner_p = ballX <= ball_len / 2 ? "rightplayer" : "leftplayer";
           clearInterval(game_interval_id);
-          connection.send(JSON.stringify({ type: "game_over", winner: winner_p}));
+          connection.send(
+            JSON.stringify({ type: "game_over", winner: winner_p })
+          );
         } else {
           if (
-			!game_hit_lock &&
-			//Math.abs to make detection area bigger to counter ball jump bug
-			((ballX <= player_indent + block_width + Math.abs(dx) &&
-				ballX >= player_indent - Math.abs(dx) &&
-				ballY + ball_len >= leftplayerY - 2 &&
-				ballY <= leftplayerY + block_height + 2) ||
-				//same thing applied here also
-				(ballX + ball_len >= boardWidth - player_indent - block_width - Math.abs(dx) &&
-				ballX + ball_len <= boardWidth - player_indent + Math.abs(dx) &&
-				ballY + ball_len >= rightplayerY - 2 &&
-				ballY <= rightplayerY + block_height + 2))
-			) {
+            !game_hit_lock &&
+            //Math.abs to make detection area bigger to counter ball jump bug
+            ((ballX <= player_indent + block_width + Math.abs(dx) &&
+              ballX >= player_indent - Math.abs(dx) &&
+              ballY + ball_len >= leftplayerY - 2 &&
+              ballY <= leftplayerY + block_height + 2) ||
+              //same thing applied here also
+              (ballX + ball_len >=
+                boardWidth - player_indent - block_width - Math.abs(dx) &&
+                ballX + ball_len <= boardWidth - player_indent + Math.abs(dx) &&
+                ballY + ball_len >= rightplayerY - 2 &&
+                ballY <= rightplayerY + block_height + 2))
+          ) {
             dx = -dx;
             dx *= 1.1;
 
-			//control max speed
-			const MAXSPEED = 12;
-			dx = dx < MAXSPEED ? dx : MAXSPEED;
-			console.log("speed: ", dx);
+            //control max speed
+            const MAXSPEED = 12;
+            dx = dx < MAXSPEED ? dx : MAXSPEED;
+            console.log("speed: ", dx);
 
-            dy *= 1 + (Math.random() * 0.2 + (-0.1)); //randomnes for dy
-			//dy *= 1.1;
+            dy *= 1 + (Math.random() * 0.2 + -0.1); //randomnes for dy
+            //dy *= 1.1;
             game_hit_lock = true;
             setTimeout(() => {
               game_hit_lock = false;
@@ -111,8 +111,8 @@ const root = async function (fastify) {
             ballY: ballY,
             leftplayerY: leftplayerY,
             rightplayerY: rightplayerY,
-			speed_x: dx,
-			speed_y: dy
+            speed_x: dx,
+            speed_y: dy,
           };
           connection.send(JSON.stringify(gameState));
         }
@@ -138,8 +138,10 @@ const root = async function (fastify) {
 
         //start the game
         game_loop();
-      } else if (message_obj.type == "keyup") player_movement[message_obj.action] = false;
-      else if (message_obj.type == "keydown") player_movement[message_obj.action] = true;
+      } else if (message_obj.type == "keyup")
+        player_movement[message_obj.action] = false;
+      else if (message_obj.type == "keydown")
+        player_movement[message_obj.action] = true;
     }
 
     // function handle_close_socket()
@@ -148,58 +150,46 @@ const root = async function (fastify) {
     // }
   });
 
-  fastify.get("/ws-online", { websocket: true }, (connection, request) => {
-    const id = request.query.id || "123";
-    if (!gameLobby[id]) {
-      gameLobby[id] = new GameInstance();
-    }
-    const playerId = gameLobby[id].registerPlayer(connection);
-    if (playerId > 0) {
-      request.log.info("Registered player " + playerId);
-      setTimeout(function () {
-        connection.send(
-          JSON.stringify({
-            type: "game_init",
-            ...defaultGameSetting,
-            playerId,
-          })
-        );
-      }, 200);
-    }
+  fastify.get(
+    "/ws-online",
+    { websocket: true, onRequest: fastify.verify_session },
+    (connection, request) => {
+      onlineMatchmaking.registerPlayer(
+        fastify.get_email_by_session(request),
+        connection,
+        2,
+        request
+      );
 
-    connection.on("message", recv_msg);
-    function recv_msg(message) {
-      const message_obj = JSON.parse(message.toString());
-
-      if (message_obj.type == "game_start") {
-        if (gameLobby[id]) {
-          gameLobby[id].startGame(defaultGameSetting);
-        }
-      } else if (message_obj.type == "keyup" || message_obj.type == "keydown") {
-        if (gameLobby[id]) {
-          gameLobby[id].performKeyPress(
+      connection.on("message", (message) => {
+        const message_obj = JSON.parse(message.toString());
+        const player = onlineMatchmaking.getPlayerByConnection(connection);
+        if (message_obj.type == MsgType.GAME_START) {
+          player.gameInstance?.startGame(defaultGameSetting);
+        } else if (
+          message_obj.type == "keyup" ||
+          message_obj.type == "keydown"
+        ) {
+          player.gameInstance?.performKeyPress(
             message_obj.type,
             message_obj.key,
             connection
           );
         }
-      }
-    }
+      });
 
-    connection.on("close", () => {
-      // id need to redeclare here due to closure
-      const id = request.query.id || "123";
-      const game = gameLobby[id];
-      if (game) {
-        // Stop game if any one player disconnected
-        if (game.isGamePlayer(connection)) {
-          game.stopGame();
-          delete gameLobby[id];
+      connection.on("close", () => {
+        const player = onlineMatchmaking.getPlayerByConnection(connection);
+        if (player.gameInstance) {
+          // Stop game if any one player disconnected
+          player.gameInstance.stopGame();
+          player.gameInstance = null;
         }
-      }
-    });
-  });
-
+        onlineMatchmaking.removePlayerByConnection(connection);
+        request.log.info("Socket disconnect: " + player.email);
+      });
+    }
+  );
 };
 
 export default root;

@@ -10,9 +10,8 @@
 const root = async function (fastify) {
   fastify.get(
     "/ws_profile",
-    { websocket: true },
+    { websocket: true, onRequest: fastify.verify_session },
     async (connection, request) => {
-      verify_session();
       connection.on("message", recv_msg);
       //functions
 
@@ -36,7 +35,7 @@ const root = async function (fastify) {
       }
 
       function send_player_profile() {
-        const email = get_email_by_session();
+        const email = fastify.get_email_by_session(request);
         const { USERNAME, AVATAR } = fastify.betterSqlite3
           .prepare("SELECT EMAIL, USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
           .get(email);
@@ -49,7 +48,7 @@ const root = async function (fastify) {
       }
 
       function send_fren_list() {
-        const userEmail = get_email_by_session();
+        const userEmail = fastify.get_email_by_session(request);
       
         const friendRows = fastify.betterSqlite3
           .prepare("SELECT FRIEND_EMAIL FROM FRIEND_LIST WHERE USER_EMAIL = ?")
@@ -98,7 +97,7 @@ const root = async function (fastify) {
         }
 
         try {
-        const userEmail = get_email_by_session();
+        const userEmail = fastify.get_email_by_session(request);
         
         if (!userEmail) {
             const ret_obj = {
@@ -182,7 +181,7 @@ const root = async function (fastify) {
           connection.send(JSON.stringify(ret_obj));
         } else {
 
-          const email = get_email_by_session();
+          const email = fastify.get_email_by_session(request);
 
           try {
             // console.log("Updating user:", email);
@@ -292,7 +291,7 @@ const root = async function (fastify) {
         console.log("added friend name: ", add_friend_name);
         
         try {
-            const userEmail = get_email_by_session();
+            const userEmail = fastify.get_email_by_session(request);
             
             if (!userEmail) {
                 const error_obj = {
@@ -366,7 +365,7 @@ const root = async function (fastify) {
           console.log("remove friend name: ", remove_friend_name);
           
           try {
-              const userEmail = get_email_by_session();
+              const userEmail = fastify.get_email_by_session(request);
               
               if (!userEmail) {
                   const error_obj = {
@@ -473,23 +472,7 @@ const root = async function (fastify) {
 			connection.send(JSON.stringify(ret_obj));
 		}
 	  }
-
-      function verify_session() {
-        const session = request.query.session;
-        if (!fastify.conf.session[session]) {
-          request.log.error(session, "Session not found");
-          connection.send(JSON.stringify({ type: "session_error" }));
-          connection.close();
-        } else {
-          connection.send(JSON.stringify({ type: "session_success" }));
-        }
-      }
-
-      function get_email_by_session() {
-        const session = request.query.session;
-        return fastify.conf.session[session];
-      }
-
+    
       function logout() {
         const session = request.query.session;
         delete fastify.conf.session[session];

@@ -4,10 +4,8 @@ import { add_history } from "./spa-navigation";
 
 //add fren
 
-const session = localStorage.getItem("session") || "";
-const socket = new WebSocket(
-  `ws://localhost:3000/ws_profile?session=${session}`
-);
+import { WS } from "./class/WS.ts";
+const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 
 export function add_friends_setup()
 {
