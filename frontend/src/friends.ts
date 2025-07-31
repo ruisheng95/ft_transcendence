@@ -16,8 +16,11 @@ export function add_friends_setup()
 	const player_list_div = document.querySelector<HTMLDivElement>("#players_list");
 	const error_div = document.querySelector<HTMLDivElement>("#add_error");
 
-	if(!player_list_div || !addfriend_search_bar || !add_friends_button || !add_friends_popup || !close_add_friends)
+	if(!error_div || !player_list_div || !addfriend_search_bar || !add_friends_button || !add_friends_popup || !close_add_friends)
 		throw new Error("Error add_friends buttons not found");
+
+	//clear error div
+	error_div.innerHTML = "";
 
 	add_friends_button.addEventListener("click", () => {
 		add_friends_popup.classList.remove("hidden");
@@ -42,6 +45,9 @@ export function add_friends_setup()
 		const input_str = addfriend_search_bar.value;
 		const valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
+		if(input_str.length === 0)
+			return;
+		
 		if(!valid_chars.includes(input_str[input_str.length - 1]))
 		{
 			player_list_div.innerHTML = "";

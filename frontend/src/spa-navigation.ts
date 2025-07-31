@@ -9,7 +9,7 @@ export function add_history(path : string)
 {
 	console.log("Add history called = Path: ", path);
 	prev_url = location.pathname;
-	history.pushState({ page: path }, path, `/gameindex.html/${path}`);
+	history.pushState({ page: path }, path, `/index/${path}`);
 }
 
 export function terminate_history()
@@ -17,11 +17,11 @@ export function terminate_history()
 	console.log("Terminate history called = Prev url: ", prev_url);
 	history.pushState({page : prev_url}, prev_url, prev_url);
 
-	if(prev_url === "/gameindex.html/")
+	if(prev_url === "/index/")
         rmv_all_pgs_except_index();
     else
 	{
-		const url = prev_url.substring("/gameindex.html/".length, prev_url.length);
+		const url = prev_url.substring("/index/".length, prev_url.length);
         display_other_pages(url);
 	}
 
@@ -35,10 +35,10 @@ window.addEventListener("popstate", (event) => {
 	console.log("Current URL:", location.pathname);
 
 	//very sus part
-	if(location.pathname == "/gameindex.html/")
+	if(location.pathname == "/index/")
 		rmv_all_pgs_except_index();
 	else
-		display_other_pages(event.state.page); //parse in event state page not locationpathname cuz that one will have /gameindex.html in front
+		display_other_pages(event.state.page); //parse in event state page not locationpathname cuz that one will have /index in front
 });
 
 function rmv_all_pgs_except_index()
