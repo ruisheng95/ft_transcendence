@@ -191,6 +191,8 @@ export function index_init()
 		.querySelector<HTMLButtonElement>("#logout_button")
 		?.addEventListener("click", () => {
 		socket.send(JSON.stringify({ type: "logout" }));
+		socket.close();
+		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 		localStorage.removeItem("session");
 		// window.location.href = "/index.html";
 		display_login_page();

@@ -1,21 +1,12 @@
 //pf config
 
 import { WS } from "./class/WS.ts";
-import { display_login_page } from "./gameindex.ts";
 import { add_history } from "./spa-navigation.ts";
-const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
-socket.addEventListener("close", (event) => {
-  // If invalid session, redirect home page
-  if (!event.wasClean) {
-    localStorage.removeItem("session");
-    // window.location.href = "/index.html";
-	display_login_page();
-  }
-});
 
 
 export function pf_config_setup()
 {
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 	const pf_config_button = document.querySelector<HTMLButtonElement>("#pf_config_button");
 	const pf_config_popup = document.querySelector<HTMLButtonElement>("#pf_config_popup");
 	const close_pf_config = document.querySelector<HTMLButtonElement>("#close_pf_config");

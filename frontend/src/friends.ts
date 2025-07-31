@@ -5,10 +5,10 @@ import { add_history } from "./spa-navigation";
 //add fren
 
 import { WS } from "./class/WS.ts";
-const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 
 export function add_friends_setup()
 {
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 	const add_friends_button = document.querySelector<HTMLButtonElement>("#add_friends_button");
 	const add_friends_popup = document.querySelector<HTMLButtonElement>("#add_friends_popup");
 	const close_add_friends = document.querySelector<HTMLButtonElement>("#close_add_friends");
@@ -151,6 +151,7 @@ export const add_friends_popup = `
 //remove_frens
 export function remove_friends_setup()
 {
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 	const remove_friends_button = document.querySelector<HTMLButtonElement>("#remove_friends_button");
 	const remove_friends_popup = document.querySelector<HTMLDivElement>("#remove_friends_popup");
 	const close_remove_friends = document.querySelector<HTMLButtonElement>("#close_remove_friends");
