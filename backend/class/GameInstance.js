@@ -240,6 +240,7 @@ export class GameInstance {
         ) {
           if (index === 0) {
             // Left
+			
             if (key === "w" || key === "ArrowUp") {
               this.#player_movement.leftplayer_up = type === "keydown";
             } else if (key === "s" || key === "ArrowDown") {
@@ -315,9 +316,13 @@ export class OnlineMatchmaking {
         request.log.info("GameInstance registered player: " + playerId);
         player.connection.send(
           JSON.stringify({
-            type: MsgType.GAME_INIT,
-            ...defaultGameSetting,
-            playerId,
+            // type: MsgType.GAME_INIT,
+            // ...defaultGameSetting,
+            // playerId,
+
+			type: MsgType.MATCHMAKING_STATUS,
+			status: "Lobby full",
+			players: JSON.stringify(pendingPlayerLobby.map((player) => player.email))
           })
         );
       });
@@ -326,9 +331,8 @@ export class OnlineMatchmaking {
       connection.send(
         JSON.stringify({
           type: MsgType.MATCHMAKING_STATUS,
-          status:
-            "Waiting for players..." +
-            JSON.stringify(pendingPlayerLobby.map((player) => player.email)),
+          status: "Waiting for players",
+          players: JSON.stringify(pendingPlayerLobby.map((player) => player.email)),
         })
       );
     }
