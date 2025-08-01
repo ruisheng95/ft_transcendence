@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./gamestyle.css";
 
-import { display_game } from "./display_game";
+import { display_game } from "./game-local-display_game";
 import { add_history } from "./spa-navigation";
 
 //vs_AI_game

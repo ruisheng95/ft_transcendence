@@ -31,6 +31,7 @@ export function online_play_menus_setup()
 	});
 
 	online_1v1_button.addEventListener("click", () => {
+		online_play_menus_popup.classList.add("hidden");
 		online_1v1_play();
 		add_history("onlinegame/1v1");
 	});

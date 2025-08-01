@@ -3,7 +3,7 @@
 let prev_url = "";
 
 import { vs_AI_spa_nav} from "./vs_AI";
-import { exported_stop_game_ft } from "./display_game";
+import { exported_stop_game_ft } from "./game-local-display_game";
 
 export function add_history(path : string)
 {

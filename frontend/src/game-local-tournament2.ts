@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { display_game } from "./display_game";
+import { display_game } from "./game-local-display_game";
 import { add_history } from "./spa-navigation";
 
 export function local_tour_manager(p1_name: string, p2_name : string, p3_name : string, p4_name : string)

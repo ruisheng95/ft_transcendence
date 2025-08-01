@@ -19,7 +19,7 @@ import { vs_AI_game_setup, vs_AI_game_popup } from "./vs_AI.ts";
 import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_game.ts"
 import { online_play_menus_setup, online_play_menus_popup } from "./game-online-pre_game.ts";
 
-import { game_popup } from "./display_game.ts";
+import { game_popup } from "./game-local-display_game.ts";
 import { online_game_popup } from "./game-online-1v1.ts";
 
 

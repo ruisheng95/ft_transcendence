@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { terminate_history } from "./spa-navigation";
+import { add_history, terminate_history } from "./spa-navigation";
 import { WS } from "./class/WS.ts";
 
 let first_call_flag = false;
@@ -47,12 +47,6 @@ export function online_1v1_play()
     block_height = 0, block_width = 0, player_speed = 0,
     rightplayerY = 0, leftplayerY = 0, player_indent = 0;
 
-	//key binds
-	const key_binds = new Map();
-	key_binds.set("w", "leftplayer_up");
-	key_binds.set("s", "leftplayer_down");
-	key_binds.set("ArrowUp", "rightplayer_up");
-	key_binds.set("ArrowDown", "rightplayer_down");
 
 	//playing status
 	let playing = true;
@@ -107,9 +101,6 @@ export function online_1v1_play()
 			dy: dy,
 			dx: dx,
 		};
-		//remove the start button
-		if (start_game_button)
-			start_game_button.style.display = "none";
 		
 		//send the init JSON to backend
 		if (socket.readyState === WebSocket.OPEN)
@@ -127,6 +118,11 @@ export function online_1v1_play()
 		{
 			if(playing == false)
 				return ;
+
+			//remove the start button
+			if (start_game_button)
+				start_game_button.style.display = "none";
+
 			ballX = msg_obj.ballX;
 			ballY = msg_obj.ballY;
 			leftplayerY = msg_obj.leftplayerY;
@@ -142,7 +138,7 @@ export function online_1v1_play()
 			if (start_game_button)
 				start_game_button.style.display = "block";
 			playing = false;
-			// handle_game_end(msg_obj);
+			handle_game_end(msg_obj);
 		}
 	}
 
@@ -190,7 +186,6 @@ export function online_1v1_play()
 
 	function handleKeyDown(key_pressed: KeyboardEvent)
 	{
-		console.log("SEND KEYDOWN RIP");
 		if (socket.readyState === WebSocket.OPEN)
 		{
 			const keydown_obj = {
@@ -203,7 +198,6 @@ export function online_1v1_play()
 
 	function handleKeyUp(key_pressed: KeyboardEvent)
 	{
-		console.log("SEND KEYUP LOL");
 		if (socket.readyState === WebSocket.OPEN)
 		{
 			const keyup_obj = {
@@ -217,7 +211,7 @@ export function online_1v1_play()
 	//online play functions
 	function display_matchmaking_popup(msg_obj : any)
 	{
-		const matchmaking_popup = document.querySelector<HTMLDivElement>("#matchmaking_popup");
+		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
 		const p1_name_div = document.querySelector<HTMLDivElement>("#online_mm_p1_name");
 		const p2_name_div = document.querySelector<HTMLDivElement>("#online_mm_p2_name");
 		const mm_status_div = document.querySelector<HTMLDivElement>("#mm_status");
@@ -256,8 +250,9 @@ export function online_1v1_play()
 	function start_match_countdown(mm_status_div: HTMLDivElement)
 	{
 		const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
+		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
 
-		if(!game_popup) throw new Error("start match countdown elements not found");
+		if(!game_popup || !matchmaking_popup) throw new Error("start match countdown elements not found");
 
 		let countdown = 3;
 
@@ -284,15 +279,40 @@ export function online_1v1_play()
 			{
 				clearInterval(interval);
 				game_popup.classList.remove("hidden");
+				matchmaking_popup.classList.add("hidden");
 				init_positions();
 				render_positions();
 			}
 		}, 1000);
 	}
+
+	function handle_game_end(gameover_obj : any)
+	{
+		const online1v1_winner_div = document.querySelector<HTMLDivElement>("#online_1v1_winner_name");
+		const online1v1_winner_popup = document.querySelector<HTMLDivElement>("#online_1v1_winner_popup");
+		const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
+		const close_online_1v1_winner_popup_button = document.querySelector<HTMLButtonElement>("#close_online1v1_winner_popup");
+
+		if(!game_popup || !online1v1_winner_popup || !online1v1_winner_div || !close_online_1v1_winner_popup_button)
+			throw new Error("Online1v1 winner display elements not found");
+
+		if(gameover_obj.winner == "leftplayer")
+			online1v1_winner_div.innerHTML = `<h1 class="text-white text-[40px]">"Player1"</h1>`;
+		else
+			online1v1_winner_div.innerHTML = `<h1 class="text-white text-[40px]">"Player2"</h1>`;
+
+		online1v1_winner_popup.classList.remove("hidden");
+		game_popup.classList.add("hidden");
+
+		close_online_1v1_winner_popup_button.addEventListener("click", () => {
+			online1v1_winner_popup.classList.add("hidden");
+			add_history("");
+		})
+	}
 }
 
-const matchmaking_popup = `
-	<div id="matchmaking_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
+const online1v1_matchmaking_popup = `
+	<div id="online1v1_matchmaking_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
 		<div class="relative m-0 p-6 bg-black text-white border border-white">
 			<h1 class="text-[5vh] font-semibold mt-[3vh] mb-[10vh]"><center>Online 1v1 matchmaking lobby</center></h1>
 			
@@ -311,9 +331,23 @@ const matchmaking_popup = `
 	</div>
 `
 
+const online_1v1_winner_popup = `
+	<div id="online_1v1_winner_popup" class="border border-2 border-white flex flex-col justify-center items-center hidden fixed bg-black bg-opacity-90 inset-0" style="background-color: rgba(0,0,0,0.9)">
+		<div id="online_1v1_popup_screen" class="bg-black border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center">
+
+			<div class="text-center">
+				<h1 class="text-[50px] text-white">WINNER! 🎉:</h1>
+				<div id="online_1v1_winner_name" class="text-[40px] font-bold mb-6 text-white"></div>
+				<div class="text-[50px] mb-6 text-white">Congratulations</div>
+			</div>
+
+			<button id="close_online1v1_winner_popup" class="border-1 border-white text-white text-[20px] px-[5px] py-[5px]">close</button>
+		</div>
+	</div>
+`
 export const online_game_popup = `
 
-	${matchmaking_popup}
+	${online1v1_matchmaking_popup}
 	<div id="online_game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
 		<div class="relative m-0 p-0 bg-black text-white">
 			<button id="online_close_game" class="absolute top-[10px] right-[10px] text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
@@ -326,4 +360,5 @@ export const online_game_popup = `
 			</div>
 		</div>
 	</div>
+	${online_1v1_winner_popup}
 `;
