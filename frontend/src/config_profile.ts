@@ -49,7 +49,7 @@ export function pf_config_setup()
 
 	socket.addEventListener('message', (event) => {
 
-		console.log(event.data);
+		//console.log(event.data);
 		const response = JSON.parse(event.data);
 		if (response.type === 'modify_profile_status')
 		{

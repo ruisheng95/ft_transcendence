@@ -34,7 +34,7 @@ export function add_friends_setup()
 	
 	socket.addEventListener("message", (message) => {
 		const msg_obj = JSON.parse(message.data);
-		console.log(msg_obj);
+		//console.log(msg_obj);
 		if(msg_obj.type === "matching_server_players")
 			display_player_list(msg_obj);
 	});
@@ -176,7 +176,7 @@ export function remove_friends_setup()
 	let player_friends_obj : any;
 	socket.addEventListener("message", (message) => {
 		const msg_obj = JSON.parse(message.data);
-		console.log(msg_obj);
+		//console.log(msg_obj);
 		if(msg_obj.type === "player_friends")
 		{
 			player_friends_obj = msg_obj;

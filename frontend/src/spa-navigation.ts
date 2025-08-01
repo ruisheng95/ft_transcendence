@@ -7,14 +7,14 @@ import { exported_stop_game_ft } from "./display_game";
 
 export function add_history(path : string)
 {
-	console.log("Add history called = Path: ", path);
+	//console.log("Add history called = Path: ", path);
 	prev_url = location.pathname;
 	history.pushState({ page: path }, path, `/index/${path}`);
 }
 
 export function terminate_history()
 {
-	console.log("Terminate history called = Prev url: ", prev_url);
+	//console.log("Terminate history called = Prev url: ", prev_url);
 	history.pushState({page : prev_url}, prev_url, prev_url);
 
 	if(prev_url === "/index/")
@@ -31,8 +31,8 @@ export function terminate_history()
 }
 
 window.addEventListener("popstate", (event) => {
-	console.log("user changed history");
-	console.log("Current URL:", location.pathname);
+	//console.log("user changed history");
+	//console.log("Current URL:", location.pathname);
 
 	//very sus part
 	if(location.pathname == "/index/")
@@ -115,7 +115,7 @@ function display_other_pages(path : string)
 		|| !local_play_menus_popup || !game_popup || !history_popup
 		|| !playerstats_popup || !settings_popup || !pf_config_popup || !vs_AI_game_button) throw new Error("display gameindexhtml elements not found");
 
-	console.log("PATH: ", path);
+	//console.log("PATH: ", path);
 
 	rmv_all_pgs_except_index();
 	

@@ -140,7 +140,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
-		console.log("JSON recv to frontend");
+		//console.log("JSON recv to frontend");
 		const msg_obj = JSON.parse(message.data);
 			
 		if(msg_obj.type == "game_update")

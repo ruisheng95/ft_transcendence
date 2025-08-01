@@ -154,6 +154,7 @@ const root = async function (fastify) {
     "/ws-online",
     { websocket: true, onRequest: fastify.verify_session },
     (connection, request) => {
+		console.log("Connected here");
       onlineMatchmaking.registerPlayer(
         fastify.get_email_by_session(request),
         connection,

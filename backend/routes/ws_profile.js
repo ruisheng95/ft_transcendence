@@ -76,7 +76,7 @@ const root = async function (fastify) {
         };
       
         connection.send(JSON.stringify(friends_obj));
-        console.log(friends_obj);
+        //console.log(friends_obj);
       }
       
 
@@ -157,7 +157,7 @@ const root = async function (fastify) {
       }
 
       function modify_profile(message_obj) {
-        console.log(message_obj);
+        //console.log(message_obj);
 
         const name = message_obj.name;
         const pfp = message_obj.pfp;
@@ -288,7 +288,7 @@ const root = async function (fastify) {
 
 
       function add_friend(add_friend_name) {
-        console.log("added friend name: ", add_friend_name);
+        //console.log("added friend name: ", add_friend_name);
         
         try {
             const userEmail = fastify.get_email_by_session(request);
@@ -362,7 +362,7 @@ const root = async function (fastify) {
     }
 
       function remove_friend(remove_friend_name) {
-          console.log("remove friend name: ", remove_friend_name);
+          //console.log("remove friend name: ", remove_friend_name);
           
           try {
               const userEmail = fastify.get_email_by_session(request);

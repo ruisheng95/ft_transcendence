@@ -17,8 +17,10 @@ import { remove_friends_setup, remove_friends_popup } from "./friends.ts";
 import { vs_AI_game_setup, vs_AI_game_popup } from "./vs_AI.ts";
 
 import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_game.ts"
+import { online_play_menus_setup, online_play_menus_popup } from "./game-online-pre_game.ts";
 
 import { game_popup } from "./display_game.ts";
+import { online_game_popup } from "./game-online-1v1.ts";
 
 
 import { add_history } from "./spa-navigation.ts";
@@ -60,9 +62,9 @@ export function index_init()
 	}
 	}
 
-	setInterval( async () => {
-		socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
-	}, 1000);
+	// setInterval( async () => {
+	// 	socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
+	// }, 1000);
 
 	function init_player(msg_obj: any) {
 	player = msg_obj;
@@ -98,7 +100,7 @@ export function index_init()
 				<div id="enter_game_sec" class="border-2 border-white border w-[500px] h-[450px] bg-black flex flex-col justify-center items-center gap-[20px]">
 					<h1 class="text-white text-[25px] font-bold"> Enter game: </h1>
 					<button id="local_play_menus_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">local play</button>
-					<button id="online_play" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">online play</button>
+					<button id="online_play_menus_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">online play</button>
 					<button id="vs_AI_game_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">vs_Ai</button>
 				</div> `;
 
@@ -168,9 +170,11 @@ export function index_init()
 				${remove_friends_popup}
 
 				${local_play_menus_popup}
+				${online_play_menus_popup}
 				${vs_AI_game_popup}
 				
 				${game_popup}
+				${online_game_popup}
 
 			</div>
 		`;
@@ -185,6 +189,7 @@ export function index_init()
 	remove_friends_setup();
 
 	local_play_menus_setup();
+	online_play_menus_setup();
 	vs_AI_game_setup();
 
 	document
