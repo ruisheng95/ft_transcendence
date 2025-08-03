@@ -38,15 +38,11 @@ export function online_1v1_play()
 	if(!board || !rightplayer || !leftplayer || !ball || !start_game_button || !close_game_button || !game_popup)
 		throw new Error("Required game elements not found");
 
-	// game_popup.classList.remove("hidden");
-	//init them vars from the css / html
-
 	//vars
 	let ball_len = 0, ballX = 0, ballY = 0, dy = 0, dx = 0,
     boardHeight = 0, boardWidth = 0, board_border_width = 0,
     block_height = 0, block_width = 0, player_speed = 0,
     rightplayerY = 0, leftplayerY = 0, player_indent = 0;
-
 
 	//playing status
 	let playing = true;
@@ -64,16 +60,10 @@ export function online_1v1_play()
 			game_popup.classList.add("hidden");
 			playing = false;
 			terminate_history();
+			socket.close();
+			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 		});
 	}
-
-	//functions
-
-	// const stop_game = () => {
-	// 	game_popup.classList.add("hidden");
-	// 	playing = false;
-	// };
-	// stop_game_ft = stop_game;
 
 	function start_the_fkin_game()
 	{
@@ -166,7 +156,6 @@ export function online_1v1_play()
 			leftplayerY = board.clientHeight / 2 - (block_height / 2);
 			player_indent = 20;
 		}
-
 	}
 
 	function render_positions()
@@ -215,14 +204,19 @@ export function online_1v1_play()
 		const p1_name_div = document.querySelector<HTMLDivElement>("#online_mm_p1_name");
 		const p2_name_div = document.querySelector<HTMLDivElement>("#online_mm_p2_name");
 		const mm_status_div = document.querySelector<HTMLDivElement>("#mm_status");
+		const exit_mm = document.querySelector<HTMLButtonElement>("#online1v1_exit_matchmaking");
+		const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
 
-		if(!mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
+		if(!online_play_menus_popup || !exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
 
 		let p1_name = "";
 		let p2_name = "";
 		const players = JSON.parse(msg_obj.players);
 		if(msg_obj.status === "Waiting for players")
 		{
+			exit_mm.classList.remove("hidden");
+			online_play_menus_popup.classList.add("hidden");
+			
 			mm_status_div.innerHTML = `
 			<div class="flex justify-center">
 				<div>Searching for players</div>
@@ -231,6 +225,14 @@ export function online_1v1_play()
 				<div class="animate-pulse [animation-delay:600ms]">.</div>
 			</div>
 			` //pulsing dots aniamtion lmaoo
+
+			exit_mm.addEventListener("click", () => {
+				matchmaking_popup.classList.add("hidden");
+				socket.close();
+				WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+				add_history("");
+			});
+
 			p1_name = players[0];
 			p2_name = `<div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>` //spinning circle animation
 		}
@@ -239,6 +241,7 @@ export function online_1v1_play()
 			start_match_countdown(mm_status_div);
 			p1_name = players[0];
 			p2_name = players[1];
+			exit_mm.classList.add("hidden");
 		}
 
 		p1_name_div.innerHTML = p1_name;
@@ -330,7 +333,10 @@ const online1v1_matchmaking_popup = `
 				</div>
 			</div>
 
+			<div class="flex flex-col items-center">
 			<div id="mm_status" class="text-white mt-[10vh] text-[4vh]"></div>
+			<button id="online1v1_exit_matchmaking" class="border border-white px-[4vw] py-2 mt-[3vh]">Exit</button>
+			</div>
 		</div>
 	</div>
 `

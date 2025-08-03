@@ -24,10 +24,6 @@ export function terminate_history()
 		const url = prev_url.substring("/index/".length, prev_url.length);
         display_other_pages(url);
 	}
-
-	//theres a bug where if u press close button (not back) to close the url, u can press the forward button to open back the popups if we do history.back
-	//since history cannot be deleted, push the prev_url to the history to overlap, simulating the closed popup state
-	//if not i srsly dk how we can keep manipulating the url to follow wat we want lmao
 }
 
 window.addEventListener("popstate", (event) => {
@@ -63,12 +59,15 @@ function rmv_all_pgs_except_index()
 	const add_friends_popup = document.querySelector<HTMLButtonElement>("#add_friends_popup");
 	const remove_friends_popup = document.querySelector<HTMLDivElement>("#remove_friends_popup");
 
+	const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
+
 	if(!remove_friends_popup || !add_friends_popup
 		|| !registration_1v1 || !local1v1_winner_popup
 		|| !registration_2v2 || !local2v2_winner_popup
 		|| !registration_tournament || !localTour_matchmaking_popup
 		|| !local_play_menus_popup || !vs_AI_winner_popup || !history_popup
-		|| !playerstats_popup || !settings_popup || !pf_config_popup ) throw new Error("display gameindexhtml elements not found");
+		|| !playerstats_popup || !settings_popup
+		|| !pf_config_popup || !online_play_menus_popup) throw new Error("display gameindexhtml elements not found");
 
 	history_popup.classList.add("hidden");
 	playerstats_popup.classList.add("hidden");
@@ -90,6 +89,8 @@ function rmv_all_pgs_except_index()
 
 	add_friends_popup.classList.add("hidden");
 	remove_friends_popup.classList.add("hidden");
+
+	online_play_menus_popup.classList.add("hidden");
 }
 
 function display_other_pages(path : string)
@@ -110,10 +111,14 @@ function display_other_pages(path : string)
 	const add_friends_popup = document.querySelector<HTMLButtonElement>("#add_friends_popup");
 	const remove_friends_popup = document.querySelector<HTMLDivElement>("#remove_friends_popup");
 
-	if(!remove_friends_popup || !add_friends_popup
+	const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
+	const logout_button = document.querySelector<HTMLButtonElement>("#logout_button")
+
+	if(!remove_friends_popup || !add_friends_popup || !logout_button
 		|| !registration_1v1 || !registration_2v2 || !registration_tournament
 		|| !local_play_menus_popup || !game_popup || !history_popup
-		|| !playerstats_popup || !settings_popup || !pf_config_popup || !vs_AI_game_button) throw new Error("display gameindexhtml elements not found");
+		|| !playerstats_popup || !settings_popup || !pf_config_popup
+		|| !vs_AI_game_button || !online_play_menus_popup) throw new Error("display gameindexhtml elements not found");
 
 	//console.log("PATH: ", path);
 
@@ -143,5 +148,9 @@ function display_other_pages(path : string)
 			add_friends_popup.classList.remove("hidden"); break;
 		case "remove_friend":
 			remove_friends_popup.classList.remove("hidden"); break;
+		case "onlinegame":
+			online_play_menus_popup.classList.remove("hidden"); break;
+		case "login": 
+			logout_button.click(); //idk if this will be stable lol can remove if theres bug
 	}
 }
