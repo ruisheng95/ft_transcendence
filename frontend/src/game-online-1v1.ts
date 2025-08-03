@@ -307,6 +307,10 @@ export function online_1v1_play()
 		close_online_1v1_winner_popup_button.addEventListener("click", () => {
 			online1v1_winner_popup.classList.add("hidden");
 			add_history("");
+			
+			//socket cleanup
+			socket.close();
+			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 		})
 	}
 }
