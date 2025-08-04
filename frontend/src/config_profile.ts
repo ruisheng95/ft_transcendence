@@ -6,7 +6,7 @@ import { add_history } from "./spa-navigation.ts";
 
 export function pf_config_setup()
 {
-	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
 	const pf_config_button = document.querySelector<HTMLButtonElement>("#pf_config_button");
 	const pf_config_popup = document.querySelector<HTMLButtonElement>("#pf_config_popup");
 	const close_pf_config = document.querySelector<HTMLButtonElement>("#close_pf_config");

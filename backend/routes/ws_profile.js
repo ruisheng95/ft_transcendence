@@ -32,7 +32,25 @@ const root = async function (fastify) {
         else if (message_obj.type === "logout") logout();
 		else if (message_obj.type === "verify_rf_input")
 			check_remove_fren_input(message_obj.input);
+		else if (message_obj.type === "get_playerstats")
+			send_playerstats();
       }
+
+	  function send_playerstats()
+	  {
+		const email = fastify.get_email_by_session(request);
+        const { RATING, WINNING_STREAK, TOTAL_WIN, TOTAL_LOSE } = fastify.betterSqlite3
+          .prepare("SELECT RATING, WINNING_STREAK, TOTAL_WIN, TOTAL_LOSE FROM USER WHERE EMAIL = ?")
+          .get(email);
+        const ret_obj = {
+          type: "playerstats_info",
+          rating: RATING,
+          winning_streak: WINNING_STREAK,
+		  total_win: TOTAL_WIN,
+		  total_lose: TOTAL_LOSE
+        };
+        connection.send(JSON.stringify(ret_obj));
+	  }
 
       function send_player_profile() {
         const email = fastify.get_email_by_session(request);
