@@ -73,7 +73,7 @@ function insert_playerstats_and_history_main()
 			const winstreak = msg_obj.winning_streak;
 			const total_wins = msg_obj.total_win;
 			const total_loss = msg_obj.total_lose;
-			const winrate = total_wins + total_loss != 0 ? (total_wins / (total_wins + total_loss)) * 100 : 0;
+			const winrate = total_wins + total_loss != 0 ? Math.round((total_wins / (total_wins + total_loss)) * 100) : 0;
 
 			playerstats_div.innerHTML = `
 			<div class="flex flex-col items-center justify-center text-white gap-3">

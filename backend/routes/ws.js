@@ -5,7 +5,7 @@ import {
 import { MsgType } from "../class/MessageType.js";
 
 const root = async function (fastify) {
-  const onlineMatchmaking = new OnlineMatchmaking();
+  const onlineMatchmaking = new OnlineMatchmaking(fastify); //modifed by ck
   fastify.get("/ws", { websocket: true }, (connection) => {
     //declare vars
     let boardHeight, boardWidth, board_border_width;
@@ -154,7 +154,6 @@ const root = async function (fastify) {
     "/ws-online",
     { websocket: true, onRequest: fastify.verify_session },
     (connection, request) => {
-		console.log("Connected here");
       onlineMatchmaking.registerPlayer(
         fastify.get_email_by_session(request),
         connection,
