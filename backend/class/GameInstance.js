@@ -277,21 +277,23 @@ class Player {
   gameNoOfPlayers; // gameNoOfPlayers of 2 (1v1) or 4 (2v2)
   gameInstance;
   request;
+  username;
 
-  constructor(email, connection, gameNoOfPlayers, request) {
+  constructor(email, connection, gameNoOfPlayers, request, username) {
     this.email = email;
     this.connection = connection;
     this.gameNoOfPlayers = gameNoOfPlayers;
     this.request = request;
+	this.username = username;
   }
 }
 
 export class OnlineMatchmaking {
   #playerArray = [];
 
-  registerPlayer(email, connection, gameNoOfPlayers, request) {
+  registerPlayer(email, connection, gameNoOfPlayers, request, username) {
     this.#playerArray.push(
-      new Player(email, connection, gameNoOfPlayers, request)
+      new Player(email, connection, gameNoOfPlayers, request, username)
     );
     request.log.info("OnlineMatchmaking registered: " + email);
     const nonPlayingPlayers = this.#playerArray.filter(
@@ -322,7 +324,7 @@ export class OnlineMatchmaking {
 
 			type: MsgType.MATCHMAKING_STATUS,
 			status: "Lobby full",
-			players: JSON.stringify(pendingPlayerLobby.map((player) => player.email))
+			players: JSON.stringify(pendingPlayerLobby.map((player) => player.username))
           })
         );
       });
@@ -332,7 +334,7 @@ export class OnlineMatchmaking {
         JSON.stringify({
           type: MsgType.MATCHMAKING_STATUS,
           status: "Waiting for players",
-          players: JSON.stringify(pendingPlayerLobby.map((player) => player.email)),
+          players: JSON.stringify(pendingPlayerLobby.map((player) => player.username)),
         })
       );
     }

@@ -30,10 +30,7 @@ const root = async function (fastify) {
         else if (message_obj.type === "remove_friend_name")
           remove_friend(message_obj.name);
         else if (message_obj.type === "logout") logout();
-		else if (message_obj.type === "verify_rf_input")
-			check_remove_fren_input(message_obj.input);
-		else if (message_obj.type === "get_playerstats")
-			send_playerstats();
+		else if (message_obj.type === "get_playerstats") send_playerstats();
       }
 
 	  function send_playerstats()
@@ -452,44 +449,6 @@ const root = async function (fastify) {
               connection.send(JSON.stringify(error_obj));
           }
       }
-
-	  function check_remove_fren_input(input) {
-
-		let error_str = "";
-		for (let i = 0; i < input.length; i++) {
-          const code = input.charCodeAt(i);
-          if (
-            !(
-              (
-                (code >= 48 && code <= 57) || // nums 0-9
-                (code >= 65 && code <= 90) || // big chars A-Z
-                (code >= 97 && code <= 122) || // small chars a-z
-                code === 95
-              ) // underscore _
-            )
-          )
-            error_str = "only letters, numbers, and '_' allowed";
-        }
-
-		if(error_str != "")
-		{
-			const ret_obj = {
-				type: "rf_input_validation",
-				error_msg: error_str,
-				input: input
-			}
-			connection.send(JSON.stringify(ret_obj));
-		}
-		else
-		{
-			const ret_obj = {
-				type: "rf_input_validation",
-				error_msg: "",
-				input: input
-			}
-			connection.send(JSON.stringify(ret_obj));
-		}
-	  }
     
       function logout() {
         const session = request.query.session;
