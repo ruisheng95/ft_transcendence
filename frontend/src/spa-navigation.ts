@@ -1,6 +1,7 @@
 
 //prev_url will always include gameindex cuz i using location.pathname
 let prev_url = "";
+let navigation_disabled = false;
 
 import { vs_AI_spa_nav} from "./vs_AI";
 import { exported_stop_game_ft } from "./game-local-display_game";
@@ -26,7 +27,22 @@ export function terminate_history()
 	}
 }
 
+export function disable_navigation()
+{
+	navigation_disabled = true;
+}
+
+export function enable_navigation()
+{
+	navigation_disabled = false;
+}
+
 window.addEventListener("popstate", (event) => {
+	if (navigation_disabled)
+	{
+		history.go(1);
+		return;
+	}
 	//console.log("user changed history");
 	//console.log("Current URL:", location.pathname);
 
@@ -60,6 +76,7 @@ function rmv_all_pgs_except_index()
 	const remove_friends_popup = document.querySelector<HTMLDivElement>("#remove_friends_popup");
 
 	const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
+	const online1v1_winner_popup = document.querySelector<HTMLDivElement>("#online_1v1_winner_popup");
 
 	if(!remove_friends_popup || !add_friends_popup
 		|| !registration_1v1 || !local1v1_winner_popup
@@ -67,7 +84,7 @@ function rmv_all_pgs_except_index()
 		|| !registration_tournament || !localTour_matchmaking_popup
 		|| !local_play_menus_popup || !vs_AI_winner_popup || !history_popup
 		|| !playerstats_popup || !settings_popup
-		|| !pf_config_popup || !online_play_menus_popup) throw new Error("display gameindexhtml elements not found");
+		|| !pf_config_popup || !online_play_menus_popup || !online1v1_winner_popup) throw new Error("display gameindexhtml elements not found");
 
 	history_popup.classList.add("hidden");
 	playerstats_popup.classList.add("hidden");
@@ -91,6 +108,7 @@ function rmv_all_pgs_except_index()
 	remove_friends_popup.classList.add("hidden");
 
 	online_play_menus_popup.classList.add("hidden");
+	online1v1_winner_popup.classList.add("hidden");
 }
 
 function display_other_pages(path : string)

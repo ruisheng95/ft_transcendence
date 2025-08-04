@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { add_history, terminate_history } from "./spa-navigation";
+import { add_history, disable_navigation, enable_navigation, terminate_history } from "./spa-navigation";
 import { WS } from "./class/WS.ts";
 
 let first_call_flag = false;
@@ -46,6 +46,10 @@ export function online_1v1_play()
 
 	//playing status
 	let playing = true;
+
+	//player names
+	let p1_name = "";
+	let p2_name = "";
 
 	render_positions();
 	socket.addEventListener("message", process_msg_from_socket);
@@ -209,13 +213,10 @@ export function online_1v1_play()
 
 		if(!online_play_menus_popup || !exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
 
-		let p1_name = "";
-		let p2_name = "";
 		const players = JSON.parse(msg_obj.players);
 		if(msg_obj.status === "Waiting for players")
 		{
 			exit_mm.classList.remove("hidden");
-			online_play_menus_popup.classList.add("hidden");
 			
 			mm_status_div.innerHTML = `
 			<div class="flex justify-center">
@@ -238,11 +239,14 @@ export function online_1v1_play()
 		}
 		else if(msg_obj.status === "Lobby full")
 		{
+			disable_navigation();
 			start_match_countdown(mm_status_div);
 			p1_name = players[0];
 			p2_name = players[1];
 			exit_mm.classList.add("hidden");
 		}
+
+		online_play_menus_popup.classList.add("hidden");
 
 		p1_name_div.innerHTML = p1_name;
 		p2_name_div.innerHTML = p2_name;
@@ -254,8 +258,10 @@ export function online_1v1_play()
 	{
 		const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
+		const p1_name_div = document.querySelector<HTMLDivElement>("#online_p1_name_display");
+		const p2_name_div = document.querySelector<HTMLDivElement>("#online_p2_name_display");
 
-		if(!game_popup || !matchmaking_popup) throw new Error("start match countdown elements not found");
+		if(!game_popup || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("start match countdown elements not found");
 
 		let countdown = 3;
 
@@ -283,6 +289,8 @@ export function online_1v1_play()
 				clearInterval(interval);
 				game_popup.classList.remove("hidden");
 				matchmaking_popup.classList.add("hidden");
+				p1_name_div.innerHTML = p1_name;
+				p2_name_div.innerHTML = p2_name;
 				init_positions();
 				render_positions();
 			}
@@ -291,36 +299,44 @@ export function online_1v1_play()
 
 	function handle_game_end(gameover_obj : any)
 	{
-		const online1v1_winner_div = document.querySelector<HTMLDivElement>("#online_1v1_winner_name");
+		const online1v1_winner_div = document.querySelector<HTMLDivElement>("#online1v1_winner_name");
+		const online1v1_loser_div = document.querySelector<HTMLDivElement>("#online1v1_loser_name");
 		const online1v1_winner_popup = document.querySelector<HTMLDivElement>("#online_1v1_winner_popup");
 		const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 		const close_online_1v1_winner_popup_button = document.querySelector<HTMLButtonElement>("#close_online1v1_winner_popup");
 
-		if(!game_popup || !online1v1_winner_popup || !online1v1_winner_div || !close_online_1v1_winner_popup_button)
+		if(!online1v1_loser_div || !game_popup || !online1v1_winner_popup || !online1v1_winner_div || !close_online_1v1_winner_popup_button)
 			throw new Error("Online1v1 winner display elements not found");
 
+		enable_navigation();
 		if(gameover_obj.winner == "leftplayer")
-			online1v1_winner_div.innerHTML = `<h1 class="text-white text-[40px]">"Player1"</h1>`;
+		{
+			online1v1_winner_div.innerHTML = `Winner🏆: ${p1_name} <p class="text-green-500">+5</p>`;
+			online1v1_loser_div.innerHTML = `Loser💔: ${p2_name} <p class="text-red-500">-5</p1>`;
+		}
 		else
-			online1v1_winner_div.innerHTML = `<h1 class="text-white text-[40px]">"Player2"</h1>`;
+		{
+			online1v1_winner_div.innerHTML = `Winner: ${p2_name} <p class="text-green-500">+5</p1>`;
+			online1v1_loser_div.innerHTML = `Loser: ${p1_name} <p class="text-red-500">-5</p1>`;
+		}
 
 		online1v1_winner_popup.classList.remove("hidden");
 		game_popup.classList.add("hidden");
 
+		//socket cleanup
+		socket.close();
+		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+
 		close_online_1v1_winner_popup_button.addEventListener("click", () => {
 			online1v1_winner_popup.classList.add("hidden");
 			add_history("");
-			
-			//socket cleanup
-			socket.close();
-			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 		})
 	}
 }
 
 const online1v1_matchmaking_popup = `
 	<div id="online1v1_matchmaking_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
-		<div class="relative m-0 p-6 bg-black text-white border border-white">
+		<div class="relative p-6 bg-black text-white border border-white">
 			<h1 class="text-[5vh] font-semibold mt-[3vh] mb-[10vh]"><center>Online 1v1 matchmaking lobby</center></h1>
 			
 			<div class="flex justify-center items-center gap-8">
@@ -345,16 +361,20 @@ const online_1v1_winner_popup = `
 	<div id="online_1v1_winner_popup" class="border border-2 border-white flex flex-col justify-center items-center hidden fixed bg-black bg-opacity-90 inset-0" style="background-color: rgba(0,0,0,0.9)">
 		<div id="online_1v1_popup_screen" class="bg-black border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center">
 
-			<div class="text-center">
-				<h1 class="text-[50px] text-white">WINNER! 🎉:</h1>
-				<div id="online_1v1_winner_name" class="text-[40px] font-bold mb-6 text-white"></div>
-				<div class="text-[50px] mb-6 text-white">Congratulations</div>
+			<div class="text-center flex flex-col items-center">
+				<h1 class="text-[50px] text-white mb-6">Game over!</h1>
+
+				<h1 class="text-[30px] text-white mb-2">Results:</h1>
+				<div class="w-[60%] border-t-2 border-white mb-4"></div>
+				<div id="online1v1_winner_name" class="text-[20px] font-bold mb-2 text-white flex gap-2"></div>
+				<div id="online1v1_loser_name" class="text-[20px] font-bold mb-6 text-white flex gap-2"></div>
 			</div>
 
 			<button id="close_online1v1_winner_popup" class="border-1 border-white text-white text-[20px] px-[5px] py-[5px]">close</button>
 		</div>
 	</div>
 `
+
 export const online_game_popup = `
 
 	${online1v1_matchmaking_popup}
