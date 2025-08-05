@@ -6,7 +6,7 @@
 
 import "./gameindex.css";
 import { pf_config_setup, pf_config_popup } from "./config_profile.ts";
-import { playerstats_setup, playerstats_popup } from "./other_stuff.ts";
+import { playerstats_setup, playerstats_popup } from "./player_stats.ts";
 import { settings_setup, settings_popup } from "./other_stuff.ts";
 import { help_setup, help_popup } from "./other_stuff.ts";
 

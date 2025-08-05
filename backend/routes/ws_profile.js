@@ -36,17 +36,67 @@ const root = async function (fastify) {
 	  function send_playerstats()
 	  {
 		const email = fastify.get_email_by_session(request);
+
+		//get stats
         const { RATING, WINNING_STREAK, TOTAL_WIN, TOTAL_LOSE } = fastify.betterSqlite3
           .prepare("SELECT RATING, WINNING_STREAK, TOTAL_WIN, TOTAL_LOSE FROM USER WHERE EMAIL = ?")
           .get(email);
+
+		//get history
+		let HISTORY = fastify.betterSqlite3
+          .prepare(`SELECT date, match_type,
+			user1_email, user1_result, user2_email, user2_result,
+			user3_email, user3_result, user4_email, user4_result
+			FROM PONG_MATCH WHERE user1_email = ? OR user2_email = ? OR
+			user3_email = ? OR user4_email = ?`)
+          .all(email, email, email, email);
+
+		function get_username_from_email(email)
+		{
+			const { USERNAME } = fastify.betterSqlite3
+			.prepare("SELECT USERNAME FROM USER WHERE EMAIL = ?")
+			.get(email);
+
+			return USERNAME;
+		}
+
+		for (const entry of HISTORY) //add them names
+		{
+			if(entry.user1_email) entry.user1_name = get_username_from_email(entry.user1_email);
+			if(entry.user2_email) entry.user2_name = get_username_from_email(entry.user2_email);
+			if(entry.user3_email) entry.user3_name = get_username_from_email(entry.user3_email);
+			if(entry.user4_email) entry.user4_name = get_username_from_email(entry.user4_email);
+		} 
+
+		//return obj
         const ret_obj = {
           type: "playerstats_info",
           rating: RATING,
           winning_streak: WINNING_STREAK,
 		  total_win: TOTAL_WIN,
-		  total_lose: TOTAL_LOSE
+		  total_lose: TOTAL_LOSE,
+		  history: HISTORY
         };
+
         connection.send(JSON.stringify(ret_obj));
+
+		// 		CREATE TABLE IF NOT EXISTS PONG_MATCH (
+		// 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+		// 	date TEXT NOT NULL,
+		// 	match_type TEXT NOT NULL,
+
+		// 	user1_email TEXT,
+		// 	user1_result INTEGER,
+
+		// 	user2_email TEXT,
+		// 	user2_result INTEGER,
+
+		// 	user3_email TEXT,
+		// 	user3_result INTEGER,
+
+		// 	user4_email TEXT,
+		// 	user4_result INTEGER
+		// );
 	  }
 
       function send_player_profile() {

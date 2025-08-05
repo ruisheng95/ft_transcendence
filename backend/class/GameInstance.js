@@ -299,7 +299,12 @@ export class GameInstance {
 	.prepare("UPDATE USER SET TOTAL_LOSE = TOTAL_LOSE + 1, WINNING_STREAK = 0, RATING = CASE WHEN RATING > 0 THEN RATING - 5 ELSE 0 END WHERE EMAIL = ?")
 	.run(loser_email);
 
-	//still need to update match histories HAIHHHHH
+	//update match history
+	const curr_date = new Date().toLocaleDateString(); // 8/5/2025 <- prints in this format
+	this.#fastify.betterSqlite3
+	.prepare("INSERT INTO PONG_MATCH (date, match_type, user1_email, user1_result, user2_email, user2_result) VALUES (?, ?, ?, ?, ?, ?)")
+	.run(curr_date, "pong 1v1", winner_email, 1, loser_email, 0);
+
 	//personal notes:
 	// fields: TOTAL_WIN TOTAL_LOSE WINNING_STREAK RATING
 	// case when else statement = if else statement (CASE WHEN condition THEN value ELSE other_value END)
