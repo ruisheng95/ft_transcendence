@@ -5,10 +5,10 @@ import { add_history } from "./spa-navigation";
 //add fren
 
 import { WS } from "./class/WS.ts";
-const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 
 export function add_friends_setup()
 {
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 	const add_friends_button = document.querySelector<HTMLButtonElement>("#add_friends_button");
 	const add_friends_popup = document.querySelector<HTMLButtonElement>("#add_friends_popup");
 	const close_add_friends = document.querySelector<HTMLButtonElement>("#close_add_friends");
@@ -16,8 +16,11 @@ export function add_friends_setup()
 	const player_list_div = document.querySelector<HTMLDivElement>("#players_list");
 	const error_div = document.querySelector<HTMLDivElement>("#add_error");
 
-	if(!player_list_div || !addfriend_search_bar || !add_friends_button || !add_friends_popup || !close_add_friends)
+	if(!error_div || !player_list_div || !addfriend_search_bar || !add_friends_button || !add_friends_popup || !close_add_friends)
 		throw new Error("Error add_friends buttons not found");
+
+	//clear error div
+	error_div.innerHTML = "";
 
 	add_friends_button.addEventListener("click", () => {
 		add_friends_popup.classList.remove("hidden");
@@ -31,7 +34,7 @@ export function add_friends_setup()
 	
 	socket.addEventListener("message", (message) => {
 		const msg_obj = JSON.parse(message.data);
-		console.log(msg_obj);
+		//console.log(msg_obj);
 		if(msg_obj.type === "matching_server_players")
 			display_player_list(msg_obj);
 	});
@@ -42,14 +45,19 @@ export function add_friends_setup()
 		const input_str = addfriend_search_bar.value;
 		const valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
+		if(input_str.length === 0)
+			return;
+		
 		if(!valid_chars.includes(input_str[input_str.length - 1]))
 		{
 			player_list_div.innerHTML = "";
 			player_list_div.classList.add("hidden");
 			error_div.classList.remove("hidden");
 			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">Alphabets, numbers or '_' only</h1>`;
-			addfriend_search_bar.value = input_str.substr(0, input_str.length - 1);
+			addfriend_search_bar.value = input_str.substring(0, input_str.length - 1);
 		}
+		else
+			error_div.innerHTML = "";
 
 		if (input_str.length >= 5)
 			socket.send(JSON.stringify({type: "get_server_players", name: addfriend_search_bar.value}));
@@ -145,13 +153,15 @@ export const add_friends_popup = `
 //remove_frens
 export function remove_friends_setup()
 {
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 	const remove_friends_button = document.querySelector<HTMLButtonElement>("#remove_friends_button");
 	const remove_friends_popup = document.querySelector<HTMLDivElement>("#remove_friends_popup");
 	const close_remove_friends = document.querySelector<HTMLButtonElement>("#close_remove_friends");
 	const friends_list_div = document.querySelector<HTMLDivElement>("#friends_list");
 	const removefriend_search_bar = document.querySelector<HTMLInputElement>("#removefriend_search_bar");
+	const error_div = document.querySelector<HTMLDivElement>("#rem_error");
 
-	if(!removefriend_search_bar || !remove_friends_button || !remove_friends_popup || !close_remove_friends)
+	if(!error_div || !removefriend_search_bar || !remove_friends_button || !remove_friends_popup || !close_remove_friends)
 		throw new Error("Error remove_friends buttons not found");
 
 	close_remove_friends.addEventListener("click", () => {
@@ -169,24 +179,41 @@ export function remove_friends_setup()
 	let player_friends_obj : any;
 	socket.addEventListener("message", (message) => {
 		const msg_obj = JSON.parse(message.data);
-		console.log(msg_obj);
+		//console.log(msg_obj);
 		if(msg_obj.type === "player_friends")
 		{
 			player_friends_obj = msg_obj;
 			display_friends_list("");
 		}
-		else if(msg_obj.type === "rf_input_validation")
-			handle_validation_result(msg_obj)
 	});
 
 	removefriend_search_bar.addEventListener("input", () => {
-		verify_input(removefriend_search_bar.value);
+
+		//check for invalid chars
+		const input_str = removefriend_search_bar.value;
+		const valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+
+		if(input_str.length === 0)
+			return;
+		
+		if(!valid_chars.includes(input_str[input_str.length - 1]) && error_div)
+		{
+			error_div.classList.remove("hidden");
+			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">Alphabets, numbers or '_' only</h1>`;
+			removefriend_search_bar.value = input_str.substring(0, input_str.length - 1);
+		}
+		else if(input_str.length > 30)
+		{
+			error_div.classList.remove("hidden");
+			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">Search too long</h1>`;
+			removefriend_search_bar.value = input_str.substring(0, input_str.length - 1);
+		}
+		else
+			error_div.innerHTML = "";
+
+		display_friends_list(removefriend_search_bar.value);
 	})
 
-	function verify_input(input : string)
-	{
-		socket.send(JSON.stringify({type: "verify_rf_input", input: input}));
-	}
 
 	function display_friends_list(input : string)
 	{
@@ -232,25 +259,6 @@ export function remove_friends_setup()
 		button.classList.remove("text-white");
 		button.classList.add("text-gray-500");
 		button.removeEventListener("click", handle_remove_friend);
-	}
-
-	function handle_validation_result(msg_obj : any)
-	{
-		const error_div = document.querySelector<HTMLDivElement>("#rem_error");
-		if(!error_div) throw new Error("Error div not found");
-		if(msg_obj.error_msg != "")
-		{
-			error_div.classList.remove("hidden");
-			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">${msg_obj.error_msg}</h1>`;
-			if(friends_list_div)
-				friends_list_div.classList.add("hidden");
-			if(removefriend_search_bar)
-				removefriend_search_bar.value = "";
-			return;
-		}
-
-		error_div.classList.add("hidden");
-		display_friends_list(msg_obj.input);
 	}
 }
 

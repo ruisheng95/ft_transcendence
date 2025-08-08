@@ -1,3 +1,5 @@
+import { index_init } from "./gameindex";
+
 const google_sign_in = document.querySelector<HTMLButtonElement>("#google_sign_in");
 
 if (!google_sign_in) throw new Error("board element not found");
@@ -34,12 +36,14 @@ window.handle_credential_response = function(response: google.accounts.id.Creden
     .then((response) => response.json())
     .then((json) => {
       localStorage.setItem("session", json.session);
-      window.location.href = "/gameindex.html";
+    //   window.location.href = "/gameindex.html";
+	index_init();
     });
 };
 // If session exist, redirect
 if (localStorage.getItem("session")) {
-   window.location.href = "/gameindex.html";
+//    window.location.href = "/gameindex.html";
+index_init();
 }
 
 if (import.meta.env.VITE_ENV === "dev") {
@@ -57,7 +61,8 @@ if (import.meta.env.VITE_ENV === "dev") {
       .then((response) => response.json())
       .then((json) => {
         localStorage.setItem("session", json.session);
-        window.location.href = "/gameindex.html";
+        // window.location.href = "/gameindex.html";
+		index_init();
       });
   });
   google_sign_in.parentNode?.insertBefore(

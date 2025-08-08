@@ -5,7 +5,7 @@ import {
 import { MsgType } from "../class/MessageType.js";
 
 const root = async function (fastify) {
-  const onlineMatchmaking = new OnlineMatchmaking();
+  const onlineMatchmaking = new OnlineMatchmaking(fastify); //modifed by ck
   fastify.get("/ws", { websocket: true }, (connection) => {
     //declare vars
     let boardHeight, boardWidth, board_border_width;
@@ -158,7 +158,8 @@ const root = async function (fastify) {
         fastify.get_email_by_session(request),
         connection,
         2,
-        request
+        request,
+		get_username_from_email(fastify.get_email_by_session(request))
       );
 
       connection.on("message", (message) => {
@@ -188,6 +189,15 @@ const root = async function (fastify) {
         onlineMatchmaking.removePlayerByConnection(connection);
         request.log.info("Socket disconnect: " + player.email);
       });
+
+	  function get_username_from_email(email)
+	  {
+		const { USERNAME } = fastify.betterSqlite3
+        .prepare("SELECT USERNAME FROM USER WHERE EMAIL = ?")
+        .get(email);
+
+		return USERNAME;
+	  }
     }
   );
 };

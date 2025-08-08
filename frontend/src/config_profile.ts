@@ -2,18 +2,11 @@
 
 import { WS } from "./class/WS.ts";
 import { add_history } from "./spa-navigation.ts";
-const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
-socket.addEventListener("close", (event) => {
-  // If invalid session, redirect home page
-  if (!event.wasClean) {
-    localStorage.removeItem("session");
-    window.location.href = "/index.html";
-  }
-});
 
 
 export function pf_config_setup()
 {
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
 	const pf_config_button = document.querySelector<HTMLButtonElement>("#pf_config_button");
 	const pf_config_popup = document.querySelector<HTMLButtonElement>("#pf_config_popup");
 	const close_pf_config = document.querySelector<HTMLButtonElement>("#close_pf_config");
@@ -47,16 +40,16 @@ export function pf_config_setup()
 	pfp_button.addEventListener("click", () => { input_pfp.click();});
 
 	//REMEMBER TO UNCOMMENT THIS FOR NEW PLAYER CONFIG TO POPUP (commented this cuz very mafan during testing)
-	// if(localStorage.getItem("new_player_flag") === "true")
-	// {
-	// 	pf_config_button.click();
-	// 	close_pf_config.classList.add("hidden");
-	// 	localStorage.setItem("new_player_flag", "false");
-	// }
+	if(localStorage.getItem("new_player_flag") === "true")
+	{
+		pf_config_button.click();
+		close_pf_config.classList.add("hidden");
+		localStorage.setItem("new_player_flag", "false");
+	}
 
 	socket.addEventListener('message', (event) => {
 
-		console.log(event.data);
+		//console.log(event.data);
 		const response = JSON.parse(event.data);
 		if (response.type === 'modify_profile_status')
 		{

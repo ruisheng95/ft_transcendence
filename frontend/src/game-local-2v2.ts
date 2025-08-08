@@ -257,7 +257,7 @@ function local_2v2_game_init()
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
-		console.log("JSON recv to frontend");
+		//console.log("JSON recv to frontend");
 		const msg_obj = JSON.parse(message.data);
 			
 		if(msg_obj.type == "game_update")

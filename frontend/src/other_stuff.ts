@@ -30,37 +30,6 @@ export const help_popup = `
 	</div>
 `
 
-//player stats
-export function playerstats_setup ()
-{
-	const playerstats_button = document.querySelector<HTMLButtonElement>("#playerstats_button");
-	const playerstats_popup = document.querySelector<HTMLButtonElement>("#playerstats_popup");
-	const close_playerstats = document.querySelector<HTMLButtonElement>("#close_playerstats");
-
-	if(!playerstats_button || !playerstats_popup || !close_playerstats)
-		throw new Error("Error playerstats buttons not found");
-
-	playerstats_button.addEventListener("click", () => {
-		playerstats_popup.classList.remove("hidden");
-		add_history("playerstats");
-	});
-
-	close_playerstats.addEventListener("click", () => {
-		playerstats_popup.classList.add("hidden");
-		add_history("");
-	});
-}
-
-
-export const playerstats_popup = `
-	<div id="playerstats_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0" style="background-color: rgba(0,0,0,0.9)">
-		<div id="playerstats_screen" class="relative bg-black h-[70vh] w-[35vw] flex flex-col items-center border border-2 border-white">
-			<h1 class="text-white text-[40px] font-bold my-[5vh]">playerstats:</h1>
-			<button id="close_playerstats" class="text-white border border-white absolute bottom-4 right-4 w-[5vw] h-[5vh]">close</button>
-		</div>
-	</div>
-`
-
 //settings
 
 export function settings_setup ()

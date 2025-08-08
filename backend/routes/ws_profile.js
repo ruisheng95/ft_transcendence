@@ -30,9 +30,74 @@ const root = async function (fastify) {
         else if (message_obj.type === "remove_friend_name")
           remove_friend(message_obj.name);
         else if (message_obj.type === "logout") logout();
-		else if (message_obj.type === "verify_rf_input")
-			check_remove_fren_input(message_obj.input);
+		else if (message_obj.type === "get_playerstats") send_playerstats();
       }
+
+	  function send_playerstats()
+	  {
+		const email = fastify.get_email_by_session(request);
+
+		//get stats
+        const { RATING, WINNING_STREAK, TOTAL_WIN, TOTAL_LOSE } = fastify.betterSqlite3
+          .prepare("SELECT RATING, WINNING_STREAK, TOTAL_WIN, TOTAL_LOSE FROM USER WHERE EMAIL = ?")
+          .get(email);
+
+		//get history
+		let HISTORY = fastify.betterSqlite3
+          .prepare(`SELECT date, match_type,
+			user1_email, user1_result, user2_email, user2_result,
+			user3_email, user3_result, user4_email, user4_result
+			FROM PONG_MATCH WHERE user1_email = ? OR user2_email = ? OR
+			user3_email = ? OR user4_email = ?`)
+          .all(email, email, email, email);
+
+		function get_username_from_email(email)
+		{
+			const { USERNAME } = fastify.betterSqlite3
+			.prepare("SELECT USERNAME FROM USER WHERE EMAIL = ?")
+			.get(email);
+
+			return USERNAME;
+		}
+
+		for (const entry of HISTORY) //add them names
+		{
+			if(entry.user1_email) entry.user1_name = get_username_from_email(entry.user1_email);
+			if(entry.user2_email) entry.user2_name = get_username_from_email(entry.user2_email);
+			if(entry.user3_email) entry.user3_name = get_username_from_email(entry.user3_email);
+			if(entry.user4_email) entry.user4_name = get_username_from_email(entry.user4_email);
+		} 
+
+		//return obj
+        const ret_obj = {
+          type: "playerstats_info",
+          rating: RATING,
+          winning_streak: WINNING_STREAK,
+		  total_win: TOTAL_WIN,
+		  total_lose: TOTAL_LOSE,
+		  history: HISTORY
+        };
+
+        connection.send(JSON.stringify(ret_obj));
+
+		// 		CREATE TABLE IF NOT EXISTS PONG_MATCH (
+		// 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+		// 	date TEXT NOT NULL,
+		// 	match_type TEXT NOT NULL,
+
+		// 	user1_email TEXT,
+		// 	user1_result INTEGER,
+
+		// 	user2_email TEXT,
+		// 	user2_result INTEGER,
+
+		// 	user3_email TEXT,
+		// 	user3_result INTEGER,
+
+		// 	user4_email TEXT,
+		// 	user4_result INTEGER
+		// );
+	  }
 
       function send_player_profile() {
         const email = fastify.get_email_by_session(request);
@@ -76,7 +141,7 @@ const root = async function (fastify) {
         };
       
         connection.send(JSON.stringify(friends_obj));
-        console.log(friends_obj);
+        //console.log(friends_obj);
       }
       
 
@@ -157,7 +222,7 @@ const root = async function (fastify) {
       }
 
       function modify_profile(message_obj) {
-        console.log(message_obj);
+        //console.log(message_obj);
 
         const name = message_obj.name;
         const pfp = message_obj.pfp;
@@ -288,7 +353,7 @@ const root = async function (fastify) {
 
 
       function add_friend(add_friend_name) {
-        console.log("added friend name: ", add_friend_name);
+        //console.log("added friend name: ", add_friend_name);
         
         try {
             const userEmail = fastify.get_email_by_session(request);
@@ -362,7 +427,7 @@ const root = async function (fastify) {
     }
 
       function remove_friend(remove_friend_name) {
-          console.log("remove friend name: ", remove_friend_name);
+          //console.log("remove friend name: ", remove_friend_name);
           
           try {
               const userEmail = fastify.get_email_by_session(request);
@@ -434,44 +499,6 @@ const root = async function (fastify) {
               connection.send(JSON.stringify(error_obj));
           }
       }
-
-	  function check_remove_fren_input(input) {
-
-		let error_str = "";
-		for (let i = 0; i < input.length; i++) {
-          const code = input.charCodeAt(i);
-          if (
-            !(
-              (
-                (code >= 48 && code <= 57) || // nums 0-9
-                (code >= 65 && code <= 90) || // big chars A-Z
-                (code >= 97 && code <= 122) || // small chars a-z
-                code === 95
-              ) // underscore _
-            )
-          )
-            error_str = "only letters, numbers, and '_' allowed";
-        }
-
-		if(error_str != "")
-		{
-			const ret_obj = {
-				type: "rf_input_validation",
-				error_msg: error_str,
-				input: input
-			}
-			connection.send(JSON.stringify(ret_obj));
-		}
-		else
-		{
-			const ret_obj = {
-				type: "rf_input_validation",
-				error_msg: "",
-				input: input
-			}
-			connection.send(JSON.stringify(ret_obj));
-		}
-	  }
     
       function logout() {
         const session = request.query.session;

@@ -1,3 +1,4 @@
+// import fastify from "fastify"; //modified by ck
 import { MsgType } from "./MessageType.js";
 
 export const defaultGameSetting = {
@@ -14,6 +15,8 @@ export const defaultGameSetting = {
 };
 
 export class GameInstance {
+  #emailsArray = []; //ck added
+  #fastify = null; //ck added
   #connectionArray = [];
   #boardHeight = 0;
   #boardWidth = 0;
@@ -41,6 +44,12 @@ export class GameInstance {
     leftplayer_up: false,
     leftplayer_down: false,
   };
+
+  constructor(fastify, players_emails)
+  {
+  	this.#fastify = fastify;
+	this.#emailsArray = players_emails;
+  }
 
   #sendJson(json) {
     this.#connectionArray.forEach((connection) =>
@@ -144,6 +153,12 @@ export class GameInstance {
         this.#ballX <= this.#ball_len / 2 ? "rightplayer" : "leftplayer";
       clearInterval(this.#game_interval_id);
       this.#sendJson({ type: MsgType.GAME_OVER, winner: winner_p });
+
+	  //update db
+	  if(this.#ballX <= this.#ball_len / 2)
+		this.#update_playerstats_aftergame(this.#emailsArray[1], this.#emailsArray[0]);
+	  else
+		this.#update_playerstats_aftergame(this.#emailsArray[0], this.#emailsArray[1]);
     } else {
       if (
         !this.#game_hit_lock &&
@@ -240,6 +255,7 @@ export class GameInstance {
         ) {
           if (index === 0) {
             // Left
+			
             if (key === "w" || key === "ArrowUp") {
               this.#player_movement.leftplayer_up = type === "keydown";
             } else if (key === "s" || key === "ArrowDown") {
@@ -268,6 +284,31 @@ export class GameInstance {
     const found = this.#connectionArray.some((conn) => conn === connection);
     return found;
   }
+
+  //functions ck coded:
+
+  #update_playerstats_aftergame(winner_email, loser_email)
+  {
+	//update winner
+	this.#fastify.betterSqlite3
+	.prepare("UPDATE USER SET TOTAL_WIN = TOTAL_WIN + 1, WINNING_STREAK = WINNING_STREAK + 1, RATING = RATING + 5 WHERE EMAIL = ?")
+	.run(winner_email);
+
+	//update loser
+	this.#fastify.betterSqlite3
+	.prepare("UPDATE USER SET TOTAL_LOSE = TOTAL_LOSE + 1, WINNING_STREAK = 0, RATING = CASE WHEN RATING > 0 THEN RATING - 5 ELSE 0 END WHERE EMAIL = ?")
+	.run(loser_email);
+
+	//update match history
+	const curr_date = new Date().toLocaleDateString(); // 8/5/2025 <- prints in this format
+	this.#fastify.betterSqlite3
+	.prepare("INSERT INTO PONG_MATCH (date, match_type, user1_email, user1_result, user2_email, user2_result) VALUES (?, ?, ?, ?, ?, ?)")
+	.run(curr_date, "pong 1v1", winner_email, 1, loser_email, 0);
+
+	//personal notes:
+	// fields: TOTAL_WIN TOTAL_LOSE WINNING_STREAK RATING
+	// case when else statement = if else statement (CASE WHEN condition THEN value ELSE other_value END)
+  }
 }
 
 class Player {
@@ -276,21 +317,29 @@ class Player {
   gameNoOfPlayers; // gameNoOfPlayers of 2 (1v1) or 4 (2v2)
   gameInstance;
   request;
+  username;
 
-  constructor(email, connection, gameNoOfPlayers, request) {
+  constructor(email, connection, gameNoOfPlayers, request, username) {
     this.email = email;
     this.connection = connection;
     this.gameNoOfPlayers = gameNoOfPlayers;
     this.request = request;
+	this.username = username;
   }
 }
 
 export class OnlineMatchmaking {
   #playerArray = [];
+  #fastify = null;
 
-  registerPlayer(email, connection, gameNoOfPlayers, request) {
+  constructor(fastify)
+  {
+	this.#fastify = fastify;
+  }
+
+  registerPlayer(email, connection, gameNoOfPlayers, request, username) {
     this.#playerArray.push(
-      new Player(email, connection, gameNoOfPlayers, request)
+      new Player(email, connection, gameNoOfPlayers, request, username)
     );
     request.log.info("OnlineMatchmaking registered: " + email);
     const nonPlayingPlayers = this.#playerArray.filter(
@@ -308,16 +357,20 @@ export class OnlineMatchmaking {
     }
     if (pendingPlayerLobby.length === gameLobbySize) {
       // Start game
-      const gameInstance = new GameInstance();
+      const gameInstance = new GameInstance(this.#fastify, pendingPlayerLobby.map((player) => player.email));
       pendingPlayerLobby.forEach((player) => {
         player.gameInstance = gameInstance;
         const playerId = gameInstance.registerPlayer(player.connection);
         request.log.info("GameInstance registered player: " + playerId);
         player.connection.send(
           JSON.stringify({
-            type: MsgType.GAME_INIT,
-            ...defaultGameSetting,
-            playerId,
+            // type: MsgType.GAME_INIT,
+            // ...defaultGameSetting,
+            // playerId,
+
+			type: MsgType.MATCHMAKING_STATUS,
+			status: "Lobby full",
+			players: JSON.stringify(pendingPlayerLobby.map((player) => player.username))
           })
         );
       });
@@ -326,9 +379,8 @@ export class OnlineMatchmaking {
       connection.send(
         JSON.stringify({
           type: MsgType.MATCHMAKING_STATUS,
-          status:
-            "Waiting for players..." +
-            JSON.stringify(pendingPlayerLobby.map((player) => player.email)),
+          status: "Waiting for players",
+          players: JSON.stringify(pendingPlayerLobby.map((player) => player.username)),
         })
       );
     }
