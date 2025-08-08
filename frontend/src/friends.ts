@@ -210,6 +210,8 @@ export function remove_friends_setup()
 		}
 		else
 			error_div.innerHTML = "";
+
+		display_friends_list(removefriend_search_bar.value);
 	})
 
 

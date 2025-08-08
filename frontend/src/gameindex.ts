@@ -57,7 +57,7 @@ export function index_init()
 
 	if (msg_obj.type == "player_profile") {
 		init_player(msg_obj);
-	} else if (msg_obj.type == "player_friends") {
+	} else if (msg_obj.type == "player_friends" || msg_obj.type === "add_friend_response") {
 		init_friends(msg_obj);
 	}
 	}
