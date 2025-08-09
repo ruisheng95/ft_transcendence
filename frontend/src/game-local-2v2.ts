@@ -150,49 +150,21 @@ function local_2v2_game_init()
 
 	const game_obj = document.querySelector<HTMLDivElement>("#local_2v2_game");
 
-	if (game_obj)
-		game_obj.innerHTML = `
-	<button id="local2v2_start_game_button" type="button" class="bg-black text-white w-[10vw] h-[10vh] absolute top-[20px] left-[20px] text-lg border-2 border-white">Start game</button>
-	<center>
-	<div id="local2v2_board" class="bg-black w-[80vw] h-[85vh] relative justify-center border-4 border-white">
-		<div id="local2v2_ball" class="bg-white w-[15px] h-[15px] absolute top-[100px]"></div>
-		<div id="local2v2_player1" class="bg-white w-[10px] h-[100px] absolute"></div>
-		<div id="local2v2_player2" class="bg-white w-[10px] h-[100px] absolute"></div>
-		<div id="local2v2_player3" class="bg-white w-[10px] h-[100px] absolute"></div>
-		<div id="local2v2_player4" class="bg-white w-[10px] h-[100px] absolute"></div>
-	</div>
-	</center>
-	`;
-
-	const start_game_button = document.querySelector<HTMLButtonElement>("#local2v2_start_game_button");
-	const board = document.querySelector<HTMLDivElement>("#local2v2_board");
-	const player1 = document.querySelector<HTMLDivElement>("#local2v2_player1");
-	const player2 = document.querySelector<HTMLDivElement>("#local2v2_player2");
-	const player3 = document.querySelector<HTMLDivElement>("#local2v2_player3");
-	const player4 = document.querySelector<HTMLDivElement>("#local2v2_player4");
-	const ball = document.querySelector<HTMLDivElement>("#local2v2_ball");
-
-	//bruh stupid ts
-	if(!board || !player1 || !player2 || !player3 || !player4 || !ball || !start_game_button)
-		throw new Error("Required game elements not found");
-
-	//init them vars from the css / html
-
-	//ball stuff
-	const ball_len = ball.clientWidth;
-	const ballX = board.clientWidth / 2;
-	const ballY = board.clientHeight / 2;
+		//ball stuff
+	const ball_len = 15;
+	const ballX = 500; // 1000/2
+	const ballY = 250; // 500/2
 	const dy = 2;
 	const dx = 2;
 
 	//board stuff
-	const boardHeight = board.clientHeight;
-	const boardWidth = board.clientWidth;
-	const board_border_width = parseInt(getComputedStyle(board).borderLeftWidth);
+	const boardHeight = 500;
+	const boardWidth = 1000;
+	const board_border_width = 4;
 
 	//players settings
-	const block_height = player4.clientHeight;
-	const block_width = player4.clientWidth;
+	const block_height = 100;
+	const block_width = 10;
 	const player_speed = 5;
 	const player1Y = boardHeight / 4 - block_height / 2;
 	const player2Y = (3 * boardHeight) / 4 - block_height / 2;
@@ -211,6 +183,35 @@ function local_2v2_game_init()
 	key_binds.set("ArrowUp", "player4_up");
 	key_binds.set("ArrowDown", "player4_down");
 
+	if(!game_obj) throw new Error("local2v2 init elements not found");
+
+	game_obj.innerHTML = "";
+
+	game_obj.innerHTML = `
+	<button id="local2v2_start_game_button" type="button" class="bg-black text-white w-[10vw] h-[10vh] absolute top-[20px] left-[20px] text-lg border-2 border-white">Start game</button>
+	<center>
+	<div id="local2v2_board" class="bg-black w-[${boardWidth}px] h-[${boardHeight}px] relative justify-center border-4 border-white">
+		<div id="local2v2_ball" class="bg-white w-[${ball_len}px] h-[${ball_len}px] absolute"></div>
+		<div id="local2v2_player1" class="bg-white w-[${block_width}px] h-[${block_height}px] absolute"></div>
+		<div id="local2v2_player2" class="bg-white w-[${block_width}px] h-[${block_height}px] absolute"></div>
+		<div id="local2v2_player3" class="bg-white w-[${block_width}px] h-[${block_height}px] absolute"></div>
+		<div id="local2v2_player4" class="bg-white w-[${block_width}px] h-[${block_height}px] absolute"></div>
+	</div>
+	</center>
+	`;
+
+	const start_game_button = document.querySelector<HTMLButtonElement>("#local2v2_start_game_button");
+	const board = document.querySelector<HTMLDivElement>("#local2v2_board");
+	const player1 = document.querySelector<HTMLDivElement>("#local2v2_player1");
+	const player2 = document.querySelector<HTMLDivElement>("#local2v2_player2");
+	const player3 = document.querySelector<HTMLDivElement>("#local2v2_player3");
+	const player4 = document.querySelector<HTMLDivElement>("#local2v2_player4");
+	const ball = document.querySelector<HTMLDivElement>("#local2v2_ball");
+
+	//bruh stupid ts
+	if(!board || !player1 || !player2 || !player3 || !player4 || !ball || !start_game_button)
+		throw new Error("Required game elements not found");
+
 	render_positions(ballX, ballY, player1Y, player2Y, player3Y, player4Y);
 	socket.addEventListener("message", process_msg_from_socket);
 	document.addEventListener('keydown', handleKeyDown);
@@ -225,27 +226,28 @@ function local_2v2_game_init()
 		//init the init game JSON obj
 		const config_obj = {
 
-		//type
-		type: "game_init",
+			//type
+			type: "game_init",
 
-		//board stuff
-		boardHeight: boardHeight,
-		boardWidth: boardWidth,
-		board_border_width: board_border_width,
+			//board stuff
+			boardHeight: boardHeight,
+			boardWidth: boardWidth,
+			board_border_width: board_border_width,
 
-		//player stuff
-		block_height: block_height,
-		block_width: block_width,
-		player_speed: player_speed,
-		player_indent: player_indent,
+			//player stuff
+			block_height: block_height,
+			block_width: block_width,
+			player_speed: player_speed,
+			player_indent: player_indent,
 
-		// Ball stuff
-		ball_len: ball_len,
-		ballX: ballX,
-		ballY: ballY,
-		dy: dy,
-		dx: dx,
+			// Ball stuff
+			ball_len: ball_len,
+			ballX: ballX,
+			ballY: ballY,
+			dy: dy,
+			dx: dx,
 	};
+
 		//remove the start button
 		if (start_game_button)
 			start_game_button.style.display = "none";

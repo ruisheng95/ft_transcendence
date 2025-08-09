@@ -17,19 +17,50 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 
 	if(!game_obj) throw new Error("Game obj not found");
 
+	//init them vars from the css / html
+
+	//ball stuff
+	const ball_len = 15;
+	let ballX = 500;
+	let ballY = 250;
+	let dy = 2;
+	let dx = 2;
+
+	//board stuff
+	const boardHeight = 500;
+	const boardWidth = 1000;
+	const board_border_width = 4;
+
+	//players settings
+	const block_height = 150;
+	const block_width = 10;
+	const player_speed = 5;
+	let rightplayerY = boardHeight / 2 - (block_height / 2);
+	let leftplayerY = boardHeight / 2 - (block_height / 2);
+	const player_indent = 20;
+
+	//key binds
+	const key_binds = new Map();
+	key_binds.set("w", "leftplayer_up");
+	key_binds.set("s", "leftplayer_down");
+	key_binds.set("ArrowUp", "rightplayer_up");
+	key_binds.set("ArrowDown", "rightplayer_down");
+
+	//put the main frame of the game into the html
 	game_obj.innerHTML = "";
 
 	game_obj.innerHTML = `
 	<button id="game_start_game_button" type="button" class="bg-black text-white w-[10vw] h-[10vh] absolute top-[20px] left-[20px] text-lg border-2 border-white">Start game</button>
-		<center>
-		<div id="game_board" class="bg-black w-[80vw] h-[85vh] relative justify-center border-4 border-white">
-			<div id="game_ball" class="bg-white w-[15px] h-[15px] absolute top-[100px]"></div>
-			<div id="game_leftplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
-			<div id="game_rightplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
-		</div>
+	<center>
+	<div id="game_board" class="bg-black w-[${boardWidth}px] h-[${boardHeight}px] relative justify-center border-4 border-white">
+		<div id="game_ball" class="bg-white w-[${ball_len}px] h-[${ball_len}px] absolute"></div>
+		<div id="game_leftplayer" class="bg-white w-[${block_width}px] h-[${block_height}px] absolute"></div>
+		<div id="game_rightplayer" class="bg-white w-[${block_width}px] h-[${block_height}px] absolute"></div>
+	</div>
 	</center>
 	`;
 
+	//do stuff for the game logic
 	const start_game_button = document.querySelector<HTMLButtonElement>("#game_start_game_button");
 	const board = document.querySelector<HTMLDivElement>("#game_board");
 	const rightplayer = document.querySelector<HTMLDivElement>("#game_rightplayer");
@@ -41,35 +72,6 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	//bruh stupid ts
 	if(!board || !rightplayer || !leftplayer || !ball || !start_game_button || !close_game_button || !game_popup)
 		throw new Error("Required game elements not found");
-
-	//init them vars from the css / html
-
-	//ball stuff
-	const ball_len = ball.clientWidth;
-	let ballX = board.clientWidth / 2;
-	let ballY = board.clientHeight / 2;
-	let dy = 2;
-	let dx = 2;
-
-	//board stuff
-	const boardHeight = board.clientHeight;
-	const boardWidth = board.clientWidth;
-	const board_border_width = parseInt(getComputedStyle(board).borderLeftWidth);
-
-	//players settings
-	const block_height = rightplayer.clientHeight;
-	const block_width = rightplayer.clientWidth;
-	const player_speed = 5;
-	let rightplayerY = board.clientHeight / 2 - (block_height / 2);
-	let leftplayerY = board.clientHeight / 2 - (block_height / 2);
-	const player_indent = 20;
-
-	//key binds
-	const key_binds = new Map();
-	key_binds.set("w", "leftplayer_up");
-	key_binds.set("s", "leftplayer_down");
-	key_binds.set("ArrowUp", "rightplayer_up");
-	key_binds.set("ArrowDown", "rightplayer_down");
 
 	//playing status
 	let playing = true;
@@ -89,7 +91,6 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 			terminate_history();
 		});
 	}
-
 
 	// AI STUFF
 	if(AI_flag == true)
