@@ -39,6 +39,30 @@ export function pf_config_setup()
 
 	pfp_button.addEventListener("click", () => { input_pfp.click();});
 
+	name_input.addEventListener("input", () => {
+		//check for invalid chars
+		const input_str = name_input.value;
+		const valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+
+		if(input_str.length === 0)
+			return;
+		
+		if(!valid_chars.includes(input_str[input_str.length - 1]))
+		{
+			error_display.classList.remove("hidden");
+			error_display.innerHTML = `<h1 class="text-[13px] text-red-500">Alphabets, numbers or '_' only</h1>`;
+			name_input.value = input_str.substring(0, input_str.length - 1);
+		}
+		else if(input_str.length > 30)
+		{
+			error_display.classList.remove("hidden");
+			error_display.innerHTML = `<h1 class="text-[13px] text-red-500">Search too long</h1>`;
+			name_input.value = input_str.substring(0, input_str.length - 1);
+		}
+		else
+			error_display.innerHTML = "";
+	});
+
 	//REMEMBER TO UNCOMMENT THIS FOR NEW PLAYER CONFIG TO POPUP (commented this cuz very mafan during testing)
 	if(localStorage.getItem("new_player_flag") === "true")
 	{
