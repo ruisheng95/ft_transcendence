@@ -2,16 +2,19 @@
 import "./style.css";
 
 import { setupCounter } from "./counter.ts";
+import { about_popup } from "./about.ts";
+
+history.pushState({page: "login"}, "login", "/login");
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-<div class="bg-gray-950 text-white min-h-screen inter-font flex flex-col items-center justify-center">
+<div id="login_page" class="bg-gray-950 text-white min-h-screen inter-font flex flex-col items-center justify-center">
 	
 	<!-- Project title -->
 	<div class="mb-40">
 		<div class="h-1 bg-yellow-400 w-full mb-6"></div>
-		<h1 class="text-6xl pixel-font tracking-widest text-center">
-			FT_TRANSCENDENCE
-		</h1>
+			<h1 class="text-6xl pixel-font tracking-widest text-center">
+				FT_TRANSCENDENCE
+			</h1>
 		<div class="h-1 bg-yellow-400 w-full mt-6"></div>
 	</div>
 	
@@ -21,7 +24,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 		<div id="google_sign_in">
 		</div>
 
-		<button type="button" class="py-2 rounded-full text-center font-semibold text-lg bg-yellow-400 text-black hover:bg-yellow-300 hover:-translate-y-1 transition duration-200">
+		<button type="button" id="open_about_button" class="py-2 rounded-full text-center font-semibold text-lg bg-yellow-400 text-black hover:bg-yellow-300 hover:-translate-y-1 transition duration-200">
 			About
 		</button>
 
@@ -31,7 +34,21 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 		
 	</div>
 </div>
+
+${about_popup}
 `;
+
+//open about page
+document.querySelector<HTMLButtonElement>("#open_about_button")?.addEventListener("click", () => {
+	document.querySelector<HTMLDivElement>("#about_popup")?.classList.remove("hidden");
+	document.querySelector<HTMLDivElement>("#login_page")?.classList.add("hidden");
+});
+
+//close about page
+document.querySelector<HTMLButtonElement>("#close_about_button")?.addEventListener("click", () => {
+	document.querySelector<HTMLDivElement>("#about_popup")?.classList.add("hidden");
+	document.querySelector<HTMLDivElement>("#login_page")?.classList.remove("hidden");	
+});
 
 // document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 // <div class="h-[100vh] bg-black flex items-center justify-center">

@@ -44,7 +44,7 @@ window.addEventListener("popstate", (event) => {
 		return;
 	}
 	//console.log("user changed history");
-	//console.log("Current URL:", location.pathname);
+	console.log("Current URL:", location.pathname);
 
 	//very sus part
 	if(location.pathname == "/index/")
@@ -78,13 +78,14 @@ function rmv_all_pgs_except_index()
 	const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
 	const online1v1_winner_popup = document.querySelector<HTMLDivElement>("#online_1v1_winner_popup");
 
+
 	if(!remove_friends_popup || !add_friends_popup
 		|| !registration_1v1 || !local1v1_winner_popup
 		|| !registration_2v2 || !local2v2_winner_popup
 		|| !registration_tournament || !localTour_matchmaking_popup
 		|| !local_play_menus_popup || !vs_AI_winner_popup || !history_popup
 		|| !playerstats_popup || !settings_popup
-		|| !pf_config_popup || !online_play_menus_popup || !online1v1_winner_popup) throw new Error("display gameindexhtml elements not found");
+		|| !pf_config_popup || !online_play_menus_popup || !online1v1_winner_popup) throw new Error("remove all pages elements not found");
 
 	history_popup.classList.add("hidden");
 	playerstats_popup.classList.add("hidden");
@@ -109,6 +110,7 @@ function rmv_all_pgs_except_index()
 
 	online_play_menus_popup.classList.add("hidden");
 	online1v1_winner_popup.classList.add("hidden");
+
 }
 
 function display_other_pages(path : string)
@@ -130,13 +132,14 @@ function display_other_pages(path : string)
 	const remove_friends_popup = document.querySelector<HTMLDivElement>("#remove_friends_popup");
 
 	const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
-	const logout_button = document.querySelector<HTMLButtonElement>("#logout_button")
+	const logout_button = document.querySelector<HTMLButtonElement>("#logout_button");
+
 
 	if(!remove_friends_popup || !add_friends_popup || !logout_button
 		|| !registration_1v1 || !registration_2v2 || !registration_tournament
 		|| !local_play_menus_popup || !game_popup || !history_popup
 		|| !playerstats_popup || !settings_popup || !pf_config_popup
-		|| !vs_AI_game_button || !online_play_menus_popup) throw new Error("display gameindexhtml elements not found");
+		|| !vs_AI_game_button || !online_play_menus_popup) throw new Error("display othar pages elements not found");
 
 	//console.log("PATH: ", path);
 
@@ -169,6 +172,6 @@ function display_other_pages(path : string)
 		case "onlinegame":
 			online_play_menus_popup.classList.remove("hidden"); break;
 		case "login": 
-			logout_button.click(); //idk if this will be stable lol can remove if theres bug
+			logout_button.click(); break;
 	}
 }
