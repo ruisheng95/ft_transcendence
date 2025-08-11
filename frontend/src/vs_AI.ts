@@ -4,6 +4,7 @@ import "./gamestyle.css";
 import { display_game } from "./game-local-display_game";
 import { add_history } from "./spa-navigation";
 
+
 //vs_AI_game
 export function vs_AI_game_setup ()
 {

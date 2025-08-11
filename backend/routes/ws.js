@@ -121,7 +121,7 @@ const root = async function (fastify) {
 
     function recv_msg(message) {
       const message_obj = JSON.parse(message.toString());
-      // console.log("Received:", message_obj);
+      console.log("Received:", message_obj);
 
       if (message_obj.type == "game_init") {
         //init game vars

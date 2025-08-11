@@ -60,9 +60,9 @@ export function index_init()
 	}
 	}
 
-	setInterval( async () => {
-		socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
-	}, 1000);
+	// setInterval( async () => {
+	// 	socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
+	// }, 1000);
 
 	function init_player(msg_obj: any) {
 	player = msg_obj;
