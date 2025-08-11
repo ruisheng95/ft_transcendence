@@ -22,14 +22,16 @@ export function pf_config_setup()
 	const header_pfp = document.querySelector<HTMLImageElement>("#header_img");
 	const header_name = document.querySelector<HTMLDivElement>("#header_name");
 
+	const settings_popup = document.querySelector<HTMLButtonElement>("#settings_popup");
 
-	if(!error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config || !pfp_button || !input_pfp || !file_name_display || !pfp_img_preview || !pfp_empty)
+	if(!settings_popup || !error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config || !pfp_button || !input_pfp || !file_name_display || !pfp_img_preview || !pfp_empty)
 		throw new Error("Error pf_config stuff not found");
 
 	pf_config_button.addEventListener("click", () => {
 		error_display.innerHTML = "";
 		name_input.value = "";
 		pf_config_popup.classList.remove("hidden");
+		settings_popup.classList.add("hidden");
 		add_history("profile_config");
 	});
 	close_pf_config.addEventListener("click", () => {

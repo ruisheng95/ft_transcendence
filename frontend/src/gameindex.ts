@@ -5,10 +5,8 @@
 //only init - ing the webpage after i recv JSON of profile from socket
 
 import "./gameindex.css";
-import { pf_config_setup, pf_config_popup } from "./config_profile.ts";
 import { playerstats_setup, playerstats_popup } from "./player_stats.ts";
-import { settings_setup, settings_popup } from "./other_stuff.ts";
-import { help_setup, help_popup } from "./other_stuff.ts";
+import { settings_setup, settings_popup } from "./settings.ts";
 
 import { add_friends_setup, add_friends_popup } from "./friends.ts";
 import { remove_friends_setup, remove_friends_popup } from "./friends.ts";
@@ -17,7 +15,7 @@ import { remove_friends_setup, remove_friends_popup } from "./friends.ts";
 import { vs_AI_game_setup, vs_AI_game_popup } from "./vs_AI.ts";
 
 import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_game.ts"
-import { online_play_menus_setup, online_play_menus_popup } from "./game-online-pre_game.ts";
+import { online_play_menus_setup} from "./game-online-pre_game.ts";
 
 import { game_popup } from "./game-local-display_game.ts";
 import { online_game_popup } from "./game-online-1v1.ts";
@@ -97,26 +95,70 @@ export function index_init()
 	app?.classList.add("hidden");
 
 	const enter_game_sec = `
-				<div id="enter_game_sec" class="border-2 border-white border w-[500px] h-[450px] bg-black flex flex-col justify-center items-center gap-[20px]">
-					<h1 class="text-white text-[25px] font-bold"> Enter game: </h1>
-					<button id="local_play_menus_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">local play</button>
-					<button id="online_play_menus_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">online play</button>
-					<button id="vs_AI_game_button" type="button" class = "text-[20px] text-white border-1 w-[200px] h-[100px]">vs_Ai</button>
-				</div> `;
+		<div id="enter_game_sec" class="text-white h-[90vh] w-full bg-gray-950 flex flex-col inter-font">
+			
+			<!-- Game Selection Grid -->
+			<div class="py-20 px-12 grid gap-8 grid-cols-4 justify-center">
+				
+				<!-- 1 vs 1 -->
+				<div class="bg-white/20 rounded-lg p-8 text-center space-y-4">
+					<div class="h-60">
+						<h2 class="text-3xl font-bold mb-6">1 vs 1</h2>
+						<p>Classic 1-on-1 clash outplay your rival in a fast-paced duel</p>
+					</div>
+					<button id="online_1v1_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
+						Online
+					</button>
+					<button id="local_1v1_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
+						Local Play
+					</button>
+				</div>
 
-	//left sec
-	const left_sec = `
-			<div id="left_sec" class="flex flex-col border-2 border-white border w-[200px] h-[450px] bg-black justify-center items-center gap-[20px]">
-				<h1 class="text-white text-[20px] font-bold"> Other stuffs: </h1>
-				<button id="playerstats_button" class="flex flex-col items-center justify-center text-white text-[20px] border-1 w-[120px] h-[100px]">Player stats</button>
-				<button id="settings_button" class="flex flex-col items-center justify-center text-white text-[20px] border-1 w-[120px] h-[100px]">Settings</button>
-				<button id="help_button" class="flex flex-col items-center justify-center text-white text-[20px] border-1 w-[120px] h-[100px]">Help</button>
+				<!-- 2 vs 2 -->
+				<div class="bg-white/20 rounded-lg p-8 text-center space-y-4">
+					<div class="h-60">
+						<h2 class="text-3xl font-bold mb-6">2 vs 2</h2>
+						<p>Team up with a friend and crush the competition in thrilling 2v2 battles</p>
+					</div>
+					<button id="online_2v2_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
+						Online
+					</button>
+					<button id="local_2v2_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
+						Local Play
+					</button>
+				</div>
+
+				<!-- Tournament -->
+				<div class="bg-white/20 rounded-lg p-8 text-center space-y-4">
+					<div class="h-60">
+						<h2 class="text-3xl font-bold mb-6">Tournament</h2>
+						<p>Climb the bracket and compete for glory. Each player competes in 2 rounds to determine the winner</p>
+					</div>
+					<button id="online_tournament_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
+						Online
+					</button>
+					<button id="local_tournament_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
+						Local Play
+					</button>
+				</div>
+				
+				<!-- Practice -->
+				<div class="bg-white/20 rounded-lg p-8 text-center space-y-4">
+					<div class="h-60">
+						<h2 class="text-3xl font-bold mb-6">Practice</h2>
+						<p>Train up and sharpen your skills by battling the AI</p>
+					</div>
+					<button id="vs_AI_game_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
+						vs AI
+					</button>
+				</div>
 			</div>
-		`;
+		</div>
+	`;
 
 	//right sec (fren lists, empty until we get frens list from socket)
 	const right_sec = `
-			<div id="right_sec" class="flex flex-col border-2 border-white border w-[200px] h-[450px] bg-black">
+			<div id="right_sec" class="hidden flex flex-col border-2 border-white border w-[200px] h-[450px] bg-black">
 				<h1 class="text-white text-[20px] font-bold text-center mb-[10px]"> Friends </h1>
 				
 				<div id="friends_list_div" class="flex-1 overflow-y-auto hide-scrollbar p-[10px]">
@@ -130,33 +172,33 @@ export function index_init()
 
 //header sec - simplified version
 	const header_sec = `
-	<div id="header_sec">
-		<div class="flex items-center justify-between w-[99vw] h-[10vh] bg-gray-950 border-b border-gray-700 px-4">
+	<div id="header_sec" class="inter-font">
+		<div class="text-white flex items-center justify-between w-full h-[10vh] bg-gray-950 border-b border-gray-700 px-4">
 			
 			<!-- User Profile Section -->
 			<div class="flex space-x-4 items-center">
 				<img id="header_img" src="${player.pfp ? player.pfp : "/src/defaultpfp.png"}" 
 					class="w-14 h-14 rounded-full border-2 border-white">
-				<span id="header_name" class="text-xl font-semibold text-white">${player.username}</span>
+				<span id="header_name" class="text-xl font-semibold">${player.username}</span>
 			</div>
 
 			<!-- Navigation Section -->
-			<div class="flex items-center space-x-4">
+			<div class="flex">
 				
 				<!-- Game Section -->
 				<div class="border-l border-gray-700 py-1 px-3">
-					<div class="text-sm tracking-widest mb-1 text-gray-300">Game</div>
+					<div class="text-sm tracking-widest mb-1">Game</div>
 					<div class="flex items-center space-x-2">
 
 						<!-- Pong -->
 						<button class="relative group px-3 py-1 bg-yellow-400 rounded-lg">
 							<i class="fas fa-table-tennis text-xl text-gray-950"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-10">Pong</span>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg">Pong</span>
 						</button>
 
 						<!-- XOX -->
-						<button class="relative group px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors">
-							<i class="fas fa-th text-xl text-white"></i>
+						<button class="relative group px-3 py-1 rounded-lg">
+							<i class="fas fa-th text-xl"></i>
 							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg whitespace-nowrap">Tic-Tac-Toe</span>
 						</button>
 
@@ -165,25 +207,25 @@ export function index_init()
 
 				<!-- Menu Selection -->
 				<div class="border-l border-gray-700 py-1 px-3">
-					<div class="text-sm tracking-widest mb-1 text-gray-300">Menu</div>
+					<div class="text-sm tracking-widest mb-1">Menu</div>
 					<div class="flex items-center space-x-2">
 
 						<!-- Friends -->
-						<button class="relative group px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors">
+						<button class="relative group px-3 py-1 rounded-lg">
 							<i class="fas fa-users text-xl text-white"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-10">Friends</span>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg">Friends</span>
 						</button>
 
-						<!-- Profile -->
-						<button id="pf_config_button" class="relative group px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors">
+						<!-- Settings -->
+						<button id="settings_button" class="relative group px-3 py-1 rounded-lg">
 							<i class="fas fa-cog text-xl text-white"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-10">Profile</span>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg">Settings</span>
 						</button>
 
-						<!-- Exit -->
-						<button id="logout_button" class="relative group px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors">
+						<!-- Logout -->
+						<button id="logout_button" class="relative group px-3 py-1 rounded-lg">
 							<i class="fas fa-sign-out-alt text-xl text-white"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-10">Exit</span>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg">Logout</span>
 						</button>
 
 					</div>
@@ -191,32 +233,37 @@ export function index_init()
 			</div>
 			
 		</div>
-		
-		<div class="text-center bg-gray-950 pt-[4vh]">
-			<h1 class="text-white text-[40px] font-bold">ft_transcendence menus :/</h1>
-		</div>
 	</div>
 	`;
+
+	const footer_sec = `
+	<div class="group fixed bottom-12 right-12 duration-200 transition-opacity text-white">
+		<button id="playerstats_button"
+			class="flex items-center font-semibold text-xl mb-1">
+			<span class="pr-4">Player stats</span>
+			<i class="fas fa-chevron-right text-yellow-400 text-2xl"></i>
+			<i class="fas fa-chevron-right text-yellow-400 text-2xl"></i>
+		</button>
+		<div class="h-1 opacity-0 group-hover:opacity-100 bg-yellow-400 w-full"></div>
+	</div>
+	`
 
 	game.innerHTML = `
 			<div id = "screen" class = "min-h-screen bg-black">
 				${header_sec}
-				<div id = "sections" class = "flex justify-center pt-[50px] gap-[100px] pb-[50px]">
-					${left_sec}
-					${enter_game_sec}
-					${right_sec}
-				</div>
-				${pf_config_popup}
+				${enter_game_sec}
+				${footer_sec}
+
+				${right_sec}
+				
 
 				${playerstats_popup}
 				${settings_popup}
-				${help_popup}
 
 				${add_friends_popup}
 				${remove_friends_popup}
 
 				${local_play_menus_popup}
-				${online_play_menus_popup}
 				${vs_AI_game_popup}
 				
 				${game_popup}
@@ -227,9 +274,6 @@ export function index_init()
 
 	playerstats_setup();
 	settings_setup();
-	help_setup();
-
-	pf_config_setup();
 
 	add_friends_setup();
 	remove_friends_setup();

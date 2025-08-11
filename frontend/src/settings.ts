@@ -1,34 +1,5 @@
+import { pf_config_popup, pf_config_setup } from "./config_profile";
 import { add_history} from "./spa-navigation";
-
-//help
-export function help_setup()
-{
-	const help_button = document.querySelector<HTMLButtonElement>("#help_button");
-	const help_popup = document.querySelector<HTMLButtonElement>("#help_popup");
-	const close_help = document.querySelector<HTMLButtonElement>("#close_help");
-
-	if(!help_button || !help_popup || !close_help)
-		throw new Error("Error help buttons not found");
-
-	help_button.addEventListener("click", () => {
-		help_popup.classList.remove("hidden")
-		add_history("help");
-	});
-	close_help.addEventListener("click", () => {
-		help_popup.classList.add("hidden")
-		add_history("");
-	});
-}
-
-
-export const help_popup = `
-	<div id="help_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0" style="background-color: rgba(0,0,0,0.9)">
-		<div id="help_screen" class="relative bg-black h-[70vh] w-[35vw] flex flex-col items-center border border-2 border-white">
-			<h1 class="text-white text-[40px] font-bold my-[5vh]">help:</h1>
-			<button id="close_help" class="text-white border border-white absolute bottom-4 right-4 w-[5vw] h-[5vh]">close</button>
-		</div>
-	</div>
-`
 
 //settings
 
@@ -49,6 +20,8 @@ export function settings_setup ()
 		settings_popup.classList.add("hidden");
 		add_history("");
 	});
+
+	pf_config_setup();
 }
 
 
@@ -59,7 +32,7 @@ export const settings_popup = `
 			<div id="option_blocks" class="flex flex-col gap-[3vh] w-[20vw]">
 				<div id="block" class="flex">
 					<h1 class="text-white text-[20px]">Modify profile:</h1>
-					<button id="setting1" class="text-white border border-white ml-auto">setting1</button>
+					<button id="pf_config_button" class="text-white border border-white ml-auto">profile conf</button>
 				</div>
 				<div id="block" class="flex">
 					<h1 class="text-white text-[20px]">settings 2:</h1>
@@ -69,4 +42,6 @@ export const settings_popup = `
 			<button id="close_settings" class="text-white border border-white absolute bottom-4 right-4 w-[5vw] h-[5vh]">close</button>
 		</div>
 	</div>
+
+	${pf_config_popup}
 `

@@ -209,9 +209,8 @@ export function online_1v1_play()
 		const p2_name_div = document.querySelector<HTMLDivElement>("#online_mm_p2_name");
 		const mm_status_div = document.querySelector<HTMLDivElement>("#mm_status");
 		const exit_mm = document.querySelector<HTMLButtonElement>("#online1v1_exit_matchmaking");
-		const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
 
-		if(!online_play_menus_popup || !exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
+		if(!exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
 
 		const players = JSON.parse(msg_obj.players);
 		if(msg_obj.status === "Waiting for players")
@@ -246,7 +245,6 @@ export function online_1v1_play()
 			exit_mm.classList.add("hidden");
 		}
 
-		online_play_menus_popup.classList.add("hidden");
 
 		p1_name_div.innerHTML = p1_name;
 		p2_name_div.innerHTML = p2_name;
