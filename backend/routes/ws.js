@@ -2,6 +2,7 @@ import {
   OnlineMatchmaking,
   defaultGameSetting,
 } from "../class/GameInstance.js";
+import { defaultGameSetting2v2 } from "../class/GameInstance2v2.js";
 import { MsgType } from "../class/MessageType.js";
 
 const root = async function (fastify) {
@@ -167,6 +168,58 @@ const root = async function (fastify) {
         const player = onlineMatchmaking.getPlayerByConnection(connection);
         if (message_obj.type == MsgType.GAME_START) {
           player.gameInstance?.startGame(defaultGameSetting);
+        } else if (
+          message_obj.type == "keyup" ||
+          message_obj.type == "keydown"
+        ) {
+          player.gameInstance?.performKeyPress(
+            message_obj.type,
+            message_obj.key,
+            connection
+          );
+        }
+      });
+
+      connection.on("close", () => {
+        const player = onlineMatchmaking.getPlayerByConnection(connection);
+        if (player.gameInstance) {
+          // Stop game if any one player disconnected
+          player.gameInstance.stopGame();
+          player.gameInstance = null;
+        }
+        onlineMatchmaking.removePlayerByConnection(connection);
+        request.log.info("Socket disconnect: " + player.email);
+      });
+
+	  function get_username_from_email(email)
+	  {
+		const { USERNAME } = fastify.betterSqlite3
+        .prepare("SELECT USERNAME FROM USER WHERE EMAIL = ?")
+        .get(email);
+
+		return USERNAME;
+	  }
+    }
+  );
+
+  // Online 2v2 route
+  fastify.get(
+    "/ws-online-2v2",
+    { websocket: true, onRequest: fastify.verify_session },
+    (connection, request) => {
+      onlineMatchmaking.registerPlayer(
+        fastify.get_email_by_session(request),
+        connection,
+        4, // 4 players for 2v2
+        request,
+		get_username_from_email(fastify.get_email_by_session(request))
+      );
+
+      connection.on("message", (message) => {
+        const message_obj = JSON.parse(message.toString());
+        const player = onlineMatchmaking.getPlayerByConnection(connection);
+        if (message_obj.type == MsgType.GAME_START) {
+          player.gameInstance?.startGame(defaultGameSetting2v2);
         } else if (
           message_obj.type == "keyup" ||
           message_obj.type == "keydown"
