@@ -128,29 +128,75 @@ export function index_init()
 			</div>
 		`;
 
-	//header sec - simplified version
+//header sec - simplified version
 	const header_sec = `
-			<div id="header_sec">
-				<div class="flex items-center w-[99vw] h-[10vh] bg-black border-b border-white">
-					
-					<img id ="header_img" src="${
-			player.pfp ? player.pfp : "/src/defaultpfp.png"
-			}" class="w-[40px] h-[40px] rounded-full border-2 border-white ml-[1vw]">
-					<div id="header_name">
-						<h1 class="text-white text-[18px] pl-[1vw]">${player.username}</h1>
-					</div>
-					
-					<div id="buttons" class="flex ml-auto px-[10px] py-[5px] gap-[10px]">
-						<button id="pf_config_button" class="text-white text-[14px] border border-white p-[3px]">Configure profile</button>
-						<button id="logout_button" class="text-white text-[14px] border border-white p-[3px]">Logout</button>
-					</div>
+	<div id="header_sec">
+		<div class="flex items-center justify-between w-[99vw] h-[10vh] bg-gray-950 border-b border-gray-700 px-4">
+			
+			<!-- User Profile Section -->
+			<div class="flex space-x-4 items-center">
+				<img id="header_img" src="${player.pfp ? player.pfp : "/src/defaultpfp.png"}" 
+					class="w-14 h-14 rounded-full border-2 border-white">
+				<span id="header_name" class="text-xl font-semibold text-white">${player.username}</span>
+			</div>
+
+			<!-- Navigation Section -->
+			<div class="flex items-center space-x-4">
 				
+				<!-- Game Section -->
+				<div class="border-l border-gray-700 py-1 px-3">
+					<div class="text-sm tracking-widest mb-1 text-gray-300">Game</div>
+					<div class="flex items-center space-x-2">
+
+						<!-- Pong -->
+						<button class="relative group px-3 py-1 bg-yellow-400 rounded-lg">
+							<i class="fas fa-table-tennis text-xl text-gray-950"></i>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-10">Pong</span>
+						</button>
+
+						<!-- XOX -->
+						<button class="relative group px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors">
+							<i class="fas fa-th text-xl text-white"></i>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg whitespace-nowrap">Tic-Tac-Toe</span>
+						</button>
+
+					</div>
 				</div>
-				<div class="text-center bg-black pt-[4vh]">
-					<h1 class="text-white text-[40px] font-bold">ft_transcendence menus :/</h1>
+
+				<!-- Menu Selection -->
+				<div class="border-l border-gray-700 py-1 px-3">
+					<div class="text-sm tracking-widest mb-1 text-gray-300">Menu</div>
+					<div class="flex items-center space-x-2">
+
+						<!-- Friends -->
+						<button class="relative group px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors">
+							<i class="fas fa-users text-xl text-white"></i>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-10">Friends</span>
+						</button>
+
+						<!-- Profile -->
+						<button id="pf_config_button" class="relative group px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors">
+							<i class="fas fa-cog text-xl text-white"></i>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-10">Profile</span>
+						</button>
+
+						<!-- Exit -->
+						<button id="logout_button" class="relative group px-3 py-1 rounded-lg hover:bg-gray-800 transition-colors">
+							<i class="fas fa-sign-out-alt text-xl text-white"></i>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-10">Exit</span>
+						</button>
+
+					</div>
 				</div>
 			</div>
-		`;
+			
+		</div>
+		
+		<div class="text-center bg-gray-950 pt-[4vh]">
+			<h1 class="text-white text-[40px] font-bold">ft_transcendence menus :/</h1>
+		</div>
+	</div>
+	`;
 
 	game.innerHTML = `
 			<div id = "screen" class = "min-h-screen bg-black">
