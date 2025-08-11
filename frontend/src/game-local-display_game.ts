@@ -50,14 +50,15 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	game_obj.innerHTML = "";
 
 	game_obj.innerHTML = `
-	<div id="game_buttons" class="flex gap-[325px] mb-[20px]">
+	<div id="game_buttons" class="flex gap-[400px] mb-[20px]">
 		<button id="close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
 		<button id="game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
 	</div>
 
-	<div id="player_names" class="flex gap-[800px] mb-[16px]">
-				<div id="p1_name_display" class="text-red-500 text-2xl font-bold"><h1>player1</h1></div>
-				<div id="p2_name_display" class="text-blue-500 text-2xl font-bold"><h1>player2</h1></div>
+	<div class="flex">
+	<div class="flex flex-col space-y-2">
+		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">W</div>
+		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">S</div>
 	</div>
 
 	<div id="game_board" class="bg-black w-[${boardWidth}px] h-[${boardHeight}px] relative border-4 border-white">
@@ -65,6 +66,17 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		<div id="game_ball" class="bg-yellow-300 rounded-full w-[${ball_len}px] h-[${ball_len}px] absolute"></div>
 		<div id="game_leftplayer" class="bg-red-500 rounded w-[${block_width}px] h-[${block_height}px] absolute"></div>
 		<div id="game_rightplayer" class="bg-blue-500 rounded w-[${block_width}px] h-[${block_height}px] absolute"></div>
+	</div>
+
+	<div class="flex flex-col space-y-2">
+		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
+			<i class="fa fa-arrow-up"></i>
+		</div>
+		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
+			<i class="fa fa-arrow-down"></i>
+		</div>
+	</div>
+
 	</div>
 	`;
 
@@ -321,6 +333,10 @@ export const game_popup = `
 	<div id="game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
 		<div class="flex flex-col items-center bg-black text-white">
 			<div id="game_board_area"></div>
+			<div id="player_names" class="flex gap-[800px] mb-[16px]">
+				<div id="p1_name_display" class="text-red-500 text-2xl font-bold"><h1>player1</h1></div>
+				<div id="p2_name_display" class="text-blue-500 text-2xl font-bold"><h1>player2</h1></div>
+			</div>
 	</div>
 `;
 
