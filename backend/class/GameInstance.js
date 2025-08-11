@@ -1,5 +1,6 @@
 // import fastify from "fastify"; //modified by ck
 import { MsgType } from "./MessageType.js";
+import { GameInstance2v2 } from "./GameInstance2v2.js";
 
 export const defaultGameSetting = {
   boardWidth: 1000,
@@ -356,8 +357,14 @@ export class OnlineMatchmaking {
       }
     }
     if (pendingPlayerLobby.length === gameLobbySize) {
-      // Start game
-      const gameInstance = new GameInstance(this.#fastify, pendingPlayerLobby.map((player) => player.email));
+      // Start game - choose appropriate game instance based on lobby size
+      let gameInstance;
+      if (gameLobbySize === 2) {
+        gameInstance = new GameInstance(this.#fastify, pendingPlayerLobby.map((player) => player.email));
+      } else if (gameLobbySize === 4) {
+        gameInstance = new GameInstance2v2(this.#fastify, pendingPlayerLobby.map((player) => player.email));
+      }
+      
       pendingPlayerLobby.forEach((player) => {
         player.gameInstance = gameInstance;
         const playerId = gameInstance.registerPlayer(player.connection);
