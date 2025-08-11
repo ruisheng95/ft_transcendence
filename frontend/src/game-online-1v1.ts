@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { add_history, disable_navigation, enable_navigation, terminate_history } from "./spa-navigation";
 import { WS } from "./class/WS.ts";
+import { MsgType } from "./class/MessageType.ts";
 
 let first_call_flag = false;
 
@@ -108,7 +109,7 @@ export function online_1v1_play()
 			
 		if(msg_obj.type === "matchmaking_status")
 			display_matchmaking_popup(msg_obj);
-		else if(msg_obj.type == "game_update")
+		else if(msg_obj.type === MsgType.GAME_UPDATE)
 		{
 			if(playing == false)
 				return ;
@@ -116,13 +117,14 @@ export function online_1v1_play()
 			//remove the start button
 			if (start_game_button)
 				start_game_button.style.display = "none";
-
-			ballX = msg_obj.ballX;
-			ballY = msg_obj.ballY;
-			leftplayerY = msg_obj.leftplayerY;
-			rightplayerY = msg_obj.rightplayerY;
-			dx = msg_obj.speed_x;
-			dy = msg_obj.speed_y;
+			// Send in this format:
+			// [ballX, ballY, leftPlayerY, rightPlayerY, speed_x, speed_y]
+			ballX = msg_obj.d[0];
+			ballY = msg_obj.d[1];
+			leftplayerY = msg_obj.d[2];
+			rightplayerY = msg_obj.d[3];
+			dx = msg_obj.d[4];
+			dy = msg_obj.d[5];
 			render_positions();
 		}
 		else if(msg_obj.type == "game_over")
