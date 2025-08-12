@@ -56,7 +56,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	</div>
 
 	<div class="flex">
-	<div class="flex flex-col space-y-2">
+	<div class="flex flex-col space-y-2 mr-[20px]">
 		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">W</div>
 		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">S</div>
 	</div>
@@ -68,7 +68,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		<div id="game_rightplayer" class="bg-blue-500 rounded w-[${block_width}px] h-[${block_height}px] absolute"></div>
 	</div>
 
-	<div class="flex flex-col space-y-2">
+	<div class="flex flex-col space-y-2 ml-[20px]">
 		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
 			<i class="fa fa-arrow-up"></i>
 		</div>

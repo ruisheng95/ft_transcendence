@@ -125,7 +125,7 @@ export function index_init()
 			<div class="flex">
 				
 				<!-- Game Section -->
-				<div class="border-l border-gray-950 py-1 px-3">
+				<div class="border-l border-gray-700 py-1 px-3">
 					<div class="text-sm tracking-widest mb-1">Game</div>
 					<div class="flex items-center space-x-2">
 
@@ -145,7 +145,7 @@ export function index_init()
 				</div>
 
 				<!-- Menu Selection -->
-				<div class="border-l border-gray-950 py-1 px-3">
+				<div class="border-l border-gray-700 py-1 px-3">
 					<div class="text-sm tracking-widest mb-1">Menu</div>
 					<div class="flex items-center space-x-2">
 
