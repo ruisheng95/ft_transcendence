@@ -103,7 +103,7 @@ export function online_1v1_play()
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
-		//console.log("JSON recv to frontend: ", message.data);
+		console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
 			
 		if(msg_obj.type === "matchmaking_status")
@@ -388,5 +388,6 @@ export const online_game_popup = `
 			</div>
 		</div>
 	</div>
+
 	${online_1v1_winner_popup}
 `;

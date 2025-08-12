@@ -337,6 +337,7 @@ export const game_popup = `
 				<div id="p1_name_display" class="text-red-500 text-2xl font-bold"><h1>player1</h1></div>
 				<div id="p2_name_display" class="text-blue-500 text-2xl font-bold"><h1>player2</h1></div>
 			</div>
+		</div>
 	</div>
 `;
 

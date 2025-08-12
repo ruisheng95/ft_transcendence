@@ -181,14 +181,14 @@ export function index_init()
 			${pong_modes_popup}
 			${friends_popup}
 
-				${playerstats_popup}
-				${settings_popup}
+			${playerstats_popup}
+			${settings_popup}
 
-				${local_play_menus_popup}
-				${vs_AI_game_popup}
+			${local_play_menus_popup}
+			${vs_AI_game_popup}
 				
-				${game_popup}
-				${online_game_popup}
+			${game_popup}
+			${online_game_popup}
 
 			</div>
 		`;
