@@ -335,7 +335,7 @@ const root = async function (fastify) {
 
 
       function add_friend(add_friend_name) {
-        //console.log("added friend name: ", add_friend_name);
+        // console.log("added friend name: ", add_friend_name);
         
         try {
             const userEmail = fastify.get_email_by_session(request);
@@ -409,7 +409,7 @@ const root = async function (fastify) {
     }
 
       function remove_friend(remove_friend_name) {
-          //console.log("remove friend name: ", remove_friend_name);
+          console.log("remove friend name: ", remove_friend_name);
           
           try {
               const userEmail = fastify.get_email_by_session(request);

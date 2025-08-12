@@ -8,8 +8,7 @@ import "./gameindex.css";
 import { playerstats_setup, playerstats_popup } from "./player_stats.ts";
 import { settings_setup, settings_popup } from "./settings.ts";
 
-import { add_friends_setup, add_friends_popup } from "./friends.ts";
-import { remove_friends_setup, remove_friends_popup } from "./friends.ts";
+import {friends_popup, friends_page_setup } from "./friends.ts";
 
 // import { local_play_game_setup, local_play_game_popup } from "./game.ts";
 import { vs_AI_game_setup, vs_AI_game_popup } from "./vs_AI.ts";
@@ -24,6 +23,7 @@ import { online_game_popup } from "./game-online-1v1.ts";
 import { add_history } from "./spa-navigation.ts";
 
 import { WS } from "./class/WS.ts";
+import { pong_modes_popup, pong_modes_setup } from "./pong_modes.ts";
 
 export function index_init()
 {
@@ -46,7 +46,7 @@ export function index_init()
 	//
 	//
 	let player: any;
-	let friends_obj: any;
+	// let friends_obj: any;
 
 	function process_msg_from_socket(message: MessageEvent) {
 	// console.log("JSON obj recv to frontend");
@@ -55,9 +55,10 @@ export function index_init()
 
 	if (msg_obj.type == "player_profile") {
 		init_player(msg_obj);
-	} else if (msg_obj.type == "player_friends" || msg_obj.type === "add_friend_response") {
-		init_friends(msg_obj);
-	}
+	} 
+	// else if (msg_obj.type == "player_friends" || msg_obj.type === "add_friend_response") {
+	// 	init_friends(msg_obj);
+	// }
 	}
 
 	// setInterval( async () => {
@@ -74,13 +75,13 @@ export function index_init()
 	main_ft();
 
 	add_history(""); //temporarily add /gameindex.html/ to history cuz wanna have the popstate effect
-	socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
+	// socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
 	}
 
-	function init_friends(msg_obj: object) {
-	friends_obj = msg_obj;
-	modify_friends_list();
-	}
+	// function init_friends(msg_obj: object) {
+	// friends_obj = msg_obj;
+	// modify_friends_list();
+	// }
 
 	//main logic
 
@@ -94,81 +95,19 @@ export function index_init()
 	game.classList.remove("hidden");
 	app?.classList.add("hidden");
 
-	const enter_game_sec = `
-		<div id="enter_game_sec" class="text-white h-[90vh] w-full bg-gray-950 flex flex-col inter-font">
-			
-			<!-- Game Selection Grid -->
-			<div class="py-20 px-12 grid gap-8 grid-cols-4 justify-center">
-				
-				<!-- 1 vs 1 -->
-				<div class="bg-white/20 rounded-lg p-8 text-center space-y-4">
-					<div class="h-60">
-						<h2 class="text-3xl font-bold mb-6">1 vs 1</h2>
-						<p>Classic 1-on-1 clash outplay your rival in a fast-paced duel</p>
-					</div>
-					<button id="online_1v1_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
-						Online
-					</button>
-					<button id="local_1v1_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
-						Local Play
-					</button>
-				</div>
-
-				<!-- 2 vs 2 -->
-				<div class="bg-white/20 rounded-lg p-8 text-center space-y-4">
-					<div class="h-60">
-						<h2 class="text-3xl font-bold mb-6">2 vs 2</h2>
-						<p>Team up with a friend and crush the competition in thrilling 2v2 battles</p>
-					</div>
-					<button id="online_2v2_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
-						Online
-					</button>
-					<button id="local_2v2_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
-						Local Play
-					</button>
-				</div>
-
-				<!-- Tournament -->
-				<div class="bg-white/20 rounded-lg p-8 text-center space-y-4">
-					<div class="h-60">
-						<h2 class="text-3xl font-bold mb-6">Tournament</h2>
-						<p>Climb the bracket and compete for glory. Each player competes in 2 rounds to determine the winner</p>
-					</div>
-					<button id="online_tournament_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
-						Online
-					</button>
-					<button id="local_tournament_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
-						Local Play
-					</button>
-				</div>
-				
-				<!-- Practice -->
-				<div class="bg-white/20 rounded-lg p-8 text-center space-y-4">
-					<div class="h-60">
-						<h2 class="text-3xl font-bold mb-6">Practice</h2>
-						<p>Train up and sharpen your skills by battling the AI</p>
-					</div>
-					<button id="vs_AI_game_button" class="w-full border-2 border-yellow-400 py-3 rounded-full font-medium text-white hover:bg-yellow-400 hover:text-black transition-colors duration-200">
-						vs AI
-					</button>
-				</div>
-			</div>
-		</div>
-	`;
-
 	//right sec (fren lists, empty until we get frens list from socket)
-	const right_sec = `
-			<div id="right_sec" class="hidden flex flex-col border-2 border-white border w-[200px] h-[450px] bg-black">
-				<h1 class="text-white text-[20px] font-bold text-center mb-[10px]"> Friends </h1>
+	// const right_sec = `
+	// 		<div id="right_sec" class="hidden flex flex-col border-2 border-white border w-[200px] h-[450px] bg-black">
+	// 			<h1 class="text-white text-[20px] font-bold text-center mb-[10px]"> Friends </h1>
 				
-				<div id="friends_list_div" class="flex-1 overflow-y-auto hide-scrollbar p-[10px]">
-				</div>
-				<div id="fren_buttons" class="flex w-full">
-					<button id="add_friends_button" class="flex-1 text-white text-[14px] border-white border-1 p-[3px]">Add friend</button>
-					<button id="remove_friends_button" class="flex-1 text-white text-[14px] p-[3px] border-white border-1">Remove friend </button>
-				</div>
-			</div>
-		`;
+	// 			<div id="friends_list_div" class="flex-1 overflow-y-auto hide-scrollbar p-[10px]">
+	// 			</div>
+	// 			<div id="fren_buttons" class="flex w-full">
+	// 				<button id="add_friends_button" class="flex-1 text-white text-[14px] border-white border-1 p-[3px]">Add friend</button>
+	// 				<button id="remove_friends_button" class="flex-1 text-white text-[14px] p-[3px] border-white border-1">Remove friend </button>
+	// 			</div>
+	// 		</div>
+	// 	`;
 
 //header sec - simplified version
 	const header_sec = `
@@ -186,13 +125,13 @@ export function index_init()
 			<div class="flex">
 				
 				<!-- Game Section -->
-				<div class="border-l border-gray-700 py-1 px-3">
+				<div class="border-l border-gray-950 py-1 px-3">
 					<div class="text-sm tracking-widest mb-1">Game</div>
 					<div class="flex items-center space-x-2">
 
 						<!-- Pong -->
-						<button class="relative group px-3 py-1 bg-yellow-400 rounded-lg">
-							<i class="fas fa-table-tennis text-xl text-gray-950"></i>
+						<button id="pong_modes_button" class="relative group px-3 py-1 rounded-lg">
+							<i class="fas fa-table-tennis text-xl"></i>
 							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg">Pong</span>
 						</button>
 
@@ -206,12 +145,12 @@ export function index_init()
 				</div>
 
 				<!-- Menu Selection -->
-				<div class="border-l border-gray-700 py-1 px-3">
+				<div class="border-l border-gray-950 py-1 px-3">
 					<div class="text-sm tracking-widest mb-1">Menu</div>
 					<div class="flex items-center space-x-2">
 
 						<!-- Friends -->
-						<button class="relative group px-3 py-1 rounded-lg">
+						<button id ="display_friends_page_button" class="relative group px-3 py-1 rounded-lg">
 							<i class="fas fa-users text-xl text-white"></i>
 							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg">Friends</span>
 						</button>
@@ -231,37 +170,19 @@ export function index_init()
 					</div>
 				</div>
 			</div>
-			
 		</div>
 	</div>
 	`;
 
-	const footer_sec = `
-	<div class="group fixed bottom-12 right-12 duration-200 transition-opacity text-white">
-		<button id="playerstats_button"
-			class="flex items-center font-semibold text-xl mb-1">
-			<span class="pr-4">Player stats</span>
-			<i class="fas fa-chevron-right text-yellow-400 text-2xl"></i>
-			<i class="fas fa-chevron-right text-yellow-400 text-2xl"></i>
-		</button>
-		<div class="h-1 opacity-0 group-hover:opacity-100 bg-yellow-400 w-full"></div>
-	</div>
-	`
 
 	game.innerHTML = `
-			<div id = "screen" class = "min-h-screen bg-black">
-				${header_sec}
-				${enter_game_sec}
-				${footer_sec}
-
-				${right_sec}
-				
+		<div id = "screen" class = "min-h-screen bg-black">
+			${header_sec}
+			${pong_modes_popup}
+			${friends_popup}
 
 				${playerstats_popup}
 				${settings_popup}
-
-				${add_friends_popup}
-				${remove_friends_popup}
 
 				${local_play_menus_popup}
 				${vs_AI_game_popup}
@@ -272,15 +193,16 @@ export function index_init()
 			</div>
 		`;
 
+	pong_modes_setup();
 	playerstats_setup();
 	settings_setup();
 
-	add_friends_setup();
-	remove_friends_setup();
 
 	local_play_menus_setup();
 	online_play_menus_setup();
 	vs_AI_game_setup();
+
+	friends_page_setup();
 
 	document
 		.querySelector<HTMLButtonElement>("#logout_button")
@@ -295,57 +217,57 @@ export function index_init()
 	}
 
 
-	function modify_friends_list()
-	{
-	let online_frens = "";
-	let offline_frens = "";
+	// function modify_friends_list()
+	// {
+	// let online_frens = "";
+	// let offline_frens = "";
 
-	let i = 0;
-	while (i < friends_obj.friends.length) {
-		const friend = friends_obj.friends[i];
-		const display_name =
-		friend.username.length > 15
-			? friend.username.substring(0, 15) + "..."
-			: friend.username;
+	// let i = 0;
+	// while (i < friends_obj.friends.length) {
+	// 	const friend = friends_obj.friends[i];
+	// 	const display_name =
+	// 	friend.username.length > 15
+	// 		? friend.username.substring(0, 15) + "..."
+	// 		: friend.username;
 
-		const friend_html = `
-				<div class="flex items-center text-white text-[14px] w-full h-[35px] px-[5px] py-[2px]">
-					<img src="${
-			friend.pfp ? friend.pfp : "/src/defaultpfp.png"
-			}" class="w-[20px] h-[20px]">
-					<h1 class="text-white ml-[5px]">${display_name}</h1>
-					<div class="ml-auto w-[8px] h-[8px] rounded-full ${
-			friend.status === "online" ? "bg-green-400" : "bg-gray-500"
-			}"></div>
-				</div>
-			`;
+	// 	const friend_html = `
+	// 			<div class="flex items-center text-white text-[14px] w-full h-[35px] px-[5px] py-[2px]">
+	// 				<img src="${
+	// 		friend.pfp ? friend.pfp : "/src/defaultpfp.png"
+	// 		}" class="w-[20px] h-[20px]">
+	// 				<h1 class="text-white ml-[5px]">${display_name}</h1>
+	// 				<div class="ml-auto w-[8px] h-[8px] rounded-full ${
+	// 		friend.status === "online" ? "bg-green-400" : "bg-gray-500"
+	// 		}"></div>
+	// 			</div>
+	// 		`;
 
-		if (friend.status === "online") online_frens += friend_html;
-		else offline_frens += friend_html;
+	// 	if (friend.status === "online") online_frens += friend_html;
+	// 	else offline_frens += friend_html;
 
-		i++;
-	}
+	// 	i++;
+	// }
 
-	const friends_list_div = document.querySelector<HTMLDivElement>("#friends_list_div");
-	if(!friends_list_div) throw new Error("modify frens elements not found");
+	// const friends_list_div = document.querySelector<HTMLDivElement>("#friends_list_div");
+	// if(!friends_list_div) throw new Error("modify frens elements not found");
 
-	friends_list_div.innerHTML = `
-	<div id="online_frens" class="mb-[15px]">
-		<h2 class="text-white text-[16px] mb-[5px]"> Online: </h2>
-		<div class="w-full border-b-1 border-white mb-[10px]"></div>
-			<div class="space-y-[5px]">
-				${online_frens}
-		</div>
-	</div>
+	// friends_list_div.innerHTML = `
+	// <div id="online_frens" class="mb-[15px]">
+	// 	<h2 class="text-white text-[16px] mb-[5px]"> Online: </h2>
+	// 	<div class="w-full border-b-1 border-white mb-[10px]"></div>
+	// 		<div class="space-y-[5px]">
+	// 			${online_frens}
+	// 	</div>
+	// </div>
 					
-	<div id="offline_frens" class="mb-[15px]">
-		<h2 class="text-white text-[16px] mb-[5px]"> Offline: </h2>
-		<div class="w-full border-b-1 border-white mb-[10px]"></div>
-			<div class="space-y-[5px]">
-				${offline_frens}
-		</div>
-	</div>`
-	}
+	// <div id="offline_frens" class="mb-[15px]">
+	// 	<h2 class="text-white text-[16px] mb-[5px]"> Offline: </h2>
+	// 	<div class="w-full border-b-1 border-white mb-[10px]"></div>
+	// 		<div class="space-y-[5px]">
+	// 			${offline_frens}
+	// 	</div>
+	// </div>`
+	// }
 }
 
 export function display_login_page()
