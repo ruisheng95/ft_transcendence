@@ -148,7 +148,7 @@ function local_2v2_game_init()
 	const board_border_width = 4;
 
 	//players settings
-	const block_height = 100;
+	const block_height = 150;
 	const block_width = 10;
 	const player_speed = 5;
 	const player1Y = boardHeight / 4 - block_height / 2;
