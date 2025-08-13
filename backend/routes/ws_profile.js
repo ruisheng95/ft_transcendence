@@ -84,24 +84,6 @@ const root = async function (fastify) {
         };
 
         connection.send(JSON.stringify(ret_obj));
-
-		// 		CREATE TABLE IF NOT EXISTS PONG_MATCH (
-		// 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-		// 	date TEXT NOT NULL,
-		// 	match_type TEXT NOT NULL,
-
-		// 	user1_email TEXT,
-		// 	user1_result INTEGER,
-
-		// 	user2_email TEXT,
-		// 	user2_result INTEGER,
-
-		// 	user3_email TEXT,
-		// 	user3_result INTEGER,
-
-		// 	user4_email TEXT,
-		// 	user4_result INTEGER
-		// );
 	  }
 
       function send_player_profile() {
@@ -362,7 +344,7 @@ const root = async function (fastify) {
 
 
       function add_friend(add_friend_name) {
-        //console.log("added friend name: ", add_friend_name);
+        // console.log("added friend name: ", add_friend_name);
         
         try {
             const userEmail = fastify.get_email_by_session(request);
@@ -438,7 +420,7 @@ const root = async function (fastify) {
     }
 
       function remove_friend(remove_friend_name) {
-          //console.log("remove friend name: ", remove_friend_name);
+          console.log("remove friend name: ", remove_friend_name);
           
           try {
               const userEmail = fastify.get_email_by_session(request);

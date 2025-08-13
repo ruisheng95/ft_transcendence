@@ -1,35 +1,17 @@
 import "./gamestyle.css";
-
-
-import { add_history } from "./spa-navigation";
 import { online_1v1_play } from "./game-online-1v1";
 import { online_2v2_play } from "./game-online-2v2";
 
 // online_play_menus	
 export function online_play_menus_setup()
 {
-	const online_play_menus_button = document.querySelector<HTMLButtonElement>("#online_play_menus_button");
-	const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
-	const close_online_play_menus = document.querySelector<HTMLButtonElement>("#close_online_play_menus");
-
 	//navigation stuff
 	const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
 	const online_2v2_button = document.querySelector<HTMLButtonElement>("#online_2v2_button");
 	const online_tournament_button = document.querySelector<HTMLButtonElement>("#online_tournament_button");
 
-	if (!online_play_menus_button || !online_play_menus_popup || !close_online_play_menus ||
-		!online_1v1_button || !online_2v2_button || !online_tournament_button)
+	if (!online_1v1_button || !online_2v2_button || !online_tournament_button)
 		throw new Error("online play menus stuff not found");
-
-	online_play_menus_button.addEventListener("click", () => {
-		online_play_menus_popup.classList.remove("hidden");
-		add_history("onlinegame");
-	 });
-
-	close_online_play_menus.addEventListener("click", () => {
-		online_play_menus_popup.classList.add("hidden");
-		add_history("")
-	});
 
 	online_1v1_button.addEventListener("click", () => {
 		// online_play_menus_popup.classList.add("hidden"); moved to hide in online 1v1

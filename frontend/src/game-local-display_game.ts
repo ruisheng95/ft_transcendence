@@ -1,4 +1,3 @@
-
 // => void means return value is void
 //AI flag is optional arg wif default value set as false
 
@@ -7,29 +6,81 @@ import { terminate_history } from "./spa-navigation";
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let stop_game_ft = () => {};
 
-let first_call_flag = false; // to prevent add event listeners to add event multiple times to the buttons
 
 export function display_game(handle_game_end : (msg_obj : object) => void, AI_flag = false)
 {
-	const socket = new WebSocket("ws://localhost:3000/ws");
+	console.log("DISPLAY GAME CALLED");
+	const socket = new WebSocket("ws://localhost:3000/ws"); //care this
+
 
 	const game_obj = document.querySelector<HTMLDivElement>("#game_board_area");
 
 	if(!game_obj) throw new Error("Game obj not found");
 
+	//init them vars from the css / html
+
+	//board stuff
+	const boardHeight = 500;
+	const boardWidth = 1000;
+	const board_border_width = 4;
+
+	//ball stuff
+	const ball_len = 15;
+	let ballX = (boardWidth / 2) - (ball_len / 2) - 3; // to make it look like the center of the line cuz of the border bruh 
+	let ballY = (boardHeight / 2) - (ball_len / 2);
+	let dy = 2;
+	let dx = 2;
+
+	//players settings
+	const block_height = 150;
+	const block_width = 10;
+	const player_speed = 5;
+	let rightplayerY = boardHeight / 2 - (block_height / 2);
+	let leftplayerY = boardHeight / 2 - (block_height / 2);
+	const player_indent = 20;
+
+	//key binds
+	const key_binds = new Map();
+	key_binds.set("w", "leftplayer_up");
+	key_binds.set("s", "leftplayer_down");
+	key_binds.set("ArrowUp", "rightplayer_up");
+	key_binds.set("ArrowDown", "rightplayer_down");
+
+	//put the main frame of the game into the html
 	game_obj.innerHTML = "";
 
 	game_obj.innerHTML = `
-	<button id="game_start_game_button" type="button" class="bg-black text-white w-[10vw] h-[10vh] absolute top-[20px] left-[20px] text-lg border-2 border-white">Start game</button>
-		<center>
-		<div id="game_board" class="bg-black w-[80vw] h-[85vh] relative justify-center border-4 border-white">
-			<div id="game_ball" class="bg-white w-[15px] h-[15px] absolute top-[100px]"></div>
-			<div id="game_leftplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
-			<div id="game_rightplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
+	<div id="game_buttons" class="flex gap-[400px] mb-[20px]">
+		<button id="close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
+		<button id="game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
+	</div>
+
+	<div class="flex">
+	<div class="flex flex-col space-y-2 mr-[20px]">
+		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">W</div>
+		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">S</div>
+	</div>
+
+	<div id="game_board" class="bg-black w-[${boardWidth}px] h-[${boardHeight}px] relative border-4 border-white">
+		<div id="game_center_line" class="w-[1px] h-full border-l-4 border-dashed border-gray-500 mx-auto"></div>
+		<div id="game_ball" class="bg-yellow-300 rounded-full w-[${ball_len}px] h-[${ball_len}px] absolute"></div>
+		<div id="game_leftplayer" class="bg-red-500 rounded w-[${block_width}px] h-[${block_height}px] absolute"></div>
+		<div id="game_rightplayer" class="bg-blue-500 rounded w-[${block_width}px] h-[${block_height}px] absolute"></div>
+	</div>
+
+	<div class="flex flex-col space-y-2 ml-[20px]">
+		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
+			<i class="fa fa-arrow-up"></i>
 		</div>
-	</center>
+		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
+			<i class="fa fa-arrow-down"></i>
+		</div>
+	</div>
+
+	</div>
 	`;
 
+	//do stuff for the game logic
 	const start_game_button = document.querySelector<HTMLButtonElement>("#game_start_game_button");
 	const board = document.querySelector<HTMLDivElement>("#game_board");
 	const rightplayer = document.querySelector<HTMLDivElement>("#game_rightplayer");
@@ -42,35 +93,6 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	if(!board || !rightplayer || !leftplayer || !ball || !start_game_button || !close_game_button || !game_popup)
 		throw new Error("Required game elements not found");
 
-	//init them vars from the css / html
-
-	//ball stuff
-	const ball_len = ball.clientWidth;
-	let ballX = board.clientWidth / 2;
-	let ballY = board.clientHeight / 2;
-	let dy = 2;
-	let dx = 2;
-
-	//board stuff
-	const boardHeight = board.clientHeight;
-	const boardWidth = board.clientWidth;
-	const board_border_width = parseInt(getComputedStyle(board).borderLeftWidth);
-
-	//players settings
-	const block_height = rightplayer.clientHeight;
-	const block_width = rightplayer.clientWidth;
-	const player_speed = 5;
-	let rightplayerY = board.clientHeight / 2 - (block_height / 2);
-	let leftplayerY = board.clientHeight / 2 - (block_height / 2);
-	const player_indent = 20;
-
-	//key binds
-	const key_binds = new Map();
-	key_binds.set("w", "leftplayer_up");
-	key_binds.set("s", "leftplayer_down");
-	key_binds.set("ArrowUp", "rightplayer_up");
-	key_binds.set("ArrowDown", "rightplayer_down");
-
 	//playing status
 	let playing = true;
 	
@@ -78,18 +100,13 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	socket.addEventListener("message", process_msg_from_socket);
 	document.addEventListener('keydown', handleKeyDown);
 	document.addEventListener('keyup', handleKeyUp);
-	start_game_button.addEventListener("click", start_the_fkin_game)
-
-	if(first_call_flag == false)
-	{
-		first_call_flag = true;
-		close_game_button.addEventListener("click", () => {
+	start_game_button.addEventListener("click", start_the_fkin_game);
+	close_game_button.addEventListener("click", () => {
 			game_popup.classList.add("hidden");
+			start_game_button.classList.remove("hidden");
 			playing = false;
 			terminate_history();
 		});
-	}
-
 
 	// AI STUFF
 	if(AI_flag == true)
@@ -131,7 +148,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		};
 		//remove the start button
 		if (start_game_button)
-			start_game_button.style.display = "none";
+			start_game_button.classList.add("hidden");
 		
 		//send the init JSON to backend
 		if (socket.readyState === WebSocket.OPEN)
@@ -157,6 +174,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		}
 		else if(msg_obj.type == "game_over")
 		{
+			console.log("recv game end, playing status: ", playing);
 			if(playing == false)
 				return ;
 			if (start_game_button)
@@ -313,14 +331,11 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 
 export const game_popup = `
 	<div id="game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
-		<div class="relative m-0 p-0 bg-black text-white">
-			<button id="close_game" class="absolute top-[10px] right-[10px] text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
-			<h1 class="text-[5vh] font-semibold mt-[3vh] mb-[3vh]"><center>Local 1v1 Game</center></h1>
-			
-			<div class="flex justify-center items-center">
-				<div id="p1_name_display" class="text-white text-[3vh] font-bold mr-[20px]"><h1>player1</h1></div>
-				<div id="game_board_area"></div>
-				<div id="p2_name_display" class="text-white text-[3vh] font-bold ml-[20px]"><h1>player2</h1></div>
+		<div class="flex flex-col items-center bg-black text-white">
+			<div id="game_board_area"></div>
+			<div id="player_names" class="flex gap-[800px] mb-[16px]">
+				<div id="p1_name_display" class="text-red-500 text-2xl font-bold"><h1>player1</h1></div>
+				<div id="p2_name_display" class="text-blue-500 text-2xl font-bold"><h1>player2</h1></div>
 			</div>
 		</div>
 	</div>

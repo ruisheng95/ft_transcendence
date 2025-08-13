@@ -3,8 +3,6 @@ import { add_history, disable_navigation, enable_navigation, terminate_history }
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 
-let first_call_flag = false;
-
 
 export function online_1v1_play()
 {
@@ -17,14 +15,36 @@ export function online_1v1_play()
 	game_obj.innerHTML = "";
 
 	game_obj.innerHTML = `
-	<button id="online_game_start_game_button" type="button" class="bg-black text-white w-[10vw] h-[10vh] absolute top-[20px] left-[20px] text-lg border-2 border-white">Start game</button>
-		<center>
-		<div id="online_game_board" class="bg-black w-[1000px] h-[500px] relative justify-center border-4 border-white">
-			<div id="online_game_ball" class="bg-white w-[15px] h-[15px] absolute top-[100px]"></div>
-			<div id="online_game_leftplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
-			<div id="online_game_rightplayer" class="bg-white w-[10px] h-[150px] absolute"></div>
+	<div id="online_game_buttons" class="flex gap-[400px] mb-[20px]">
+		<button id="online_close_game" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
+		<button id="online_game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
+	</div>
+	<div class="flex">
+		<div class="flex flex-col space-y-2 mr-[20px]">
+			<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
+				<i class="fa fa-arrow-up"></i>
+			</div>
+			<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
+				<i class="fa fa-arrow-down"></i>
+			</div>
 		</div>
-	</center>
+
+		<div id="online_game_board" class="bg-black w-[1000px] h-[500px] relative justify-center border-4 border-white">
+			<div id="online_game_center_line" class="w-[1px] h-full border-l-4 border-dashed border-gray-500 mx-auto"></div>
+			<div id="online_game_ball" class="bg-yellow-500 rounded-full w-[15px] h-[15px] absolute top-[100px]"></div>
+			<div id="online_game_leftplayer" class="bg-red-500 rounded w-[10px] h-[150px] absolute"></div>
+			<div id="online_game_rightplayer" class="bg-blue-500 rounded w-[10px] h-[150px] absolute"></div>
+		</div>
+
+		<div class="flex flex-col space-y-2 ml-[20px]">
+			<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
+				<i class="fa fa-arrow-up"></i>
+			</div>
+			<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
+				<i class="fa fa-arrow-down"></i>
+			</div>
+		</div>
+	</div>
 	`;
 
 	const start_game_button = document.querySelector<HTMLButtonElement>("#online_game_start_game_button");
@@ -58,17 +78,13 @@ export function online_1v1_play()
 	document.addEventListener('keyup', handleKeyUp);
 	start_game_button.addEventListener("click", start_the_fkin_game)
 
-	if(first_call_flag == false)
-	{
-		first_call_flag = true;
-		close_game_button.addEventListener("click", () => {
-			game_popup.classList.add("hidden");
-			playing = false;
-			terminate_history();
-			socket.close();
-			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-		});
-	}
+	close_game_button.addEventListener("click", () => {
+		game_popup.classList.add("hidden");
+		playing = false;
+		terminate_history();
+		socket.close();
+		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+	});
 
 	function start_the_fkin_game()
 	{
@@ -104,7 +120,7 @@ export function online_1v1_play()
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
-		//console.log("JSON recv to frontend: ", message.data);
+		console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
 			
 		if(msg_obj.type === "matchmaking_status")
@@ -130,7 +146,11 @@ export function online_1v1_play()
 		else if(msg_obj.type == "game_over")
 		{
 			if(playing == false)
-				return ;
+			{
+				socket.close();
+				WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+				return;
+			}
 			if (start_game_button)
 				start_game_button.style.display = "block";
 			playing = false;
@@ -144,8 +164,8 @@ export function online_1v1_play()
 		{
 			//ball stuff
 			ball_len = ball.clientWidth;
-			ballX = board.clientWidth / 2;
-			ballY = board.clientHeight / 2;
+			ballX = board.clientWidth / 2 - ball_len / 2 + 2;
+			ballY = board.clientHeight / 2 - ball_len / 2;
 			dy = 2;
 			dx = 2;
 
@@ -211,9 +231,8 @@ export function online_1v1_play()
 		const p2_name_div = document.querySelector<HTMLDivElement>("#online_mm_p2_name");
 		const mm_status_div = document.querySelector<HTMLDivElement>("#mm_status");
 		const exit_mm = document.querySelector<HTMLButtonElement>("#online1v1_exit_matchmaking");
-		const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
 
-		if(!online_play_menus_popup || !exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
+		if(!exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
 
 		const players = JSON.parse(msg_obj.players);
 		if(msg_obj.status === "Waiting for players")
@@ -248,7 +267,6 @@ export function online_1v1_play()
 			exit_mm.classList.add("hidden");
 		}
 
-		online_play_menus_popup.classList.add("hidden");
 
 		p1_name_div.innerHTML = p1_name;
 		p2_name_div.innerHTML = p2_name;
@@ -325,10 +343,9 @@ export function online_1v1_play()
 		online1v1_winner_popup.classList.remove("hidden");
 		game_popup.classList.add("hidden");
 
-		//socket cleanup
 		socket.close();
 		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-
+		
 		close_online_1v1_winner_popup_button.addEventListener("click", () => {
 			online1v1_winner_popup.classList.add("hidden");
 			add_history("");
@@ -381,16 +398,14 @@ export const online_game_popup = `
 
 	${online1v1_matchmaking_popup}
 	<div id="online_game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
-		<div class="relative m-0 p-0 bg-black text-white">
-			<button id="online_close_game" class="absolute top-[10px] right-[10px] text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
-			<h1 class="text-[5vh] font-semibold mt-[3vh] mb-[3vh]"><center>Online 1v1 Game</center></h1>
-			
-			<div class="flex justify-center items-center">
-				<div id="online_p1_name_display" class="text-white text-[3vh] font-bold mr-[20px]"><h1>player1</h1></div>
-				<div id="online_game_board_area"></div>
-				<div id="online_p2_name_display" class="text-white text-[3vh] font-bold ml-[20px]"><h1>player2</h1></div>
+		<div class="flex flex-col items-center bg-black text-white">
+			<div id="online_game_board_area"></div>
+			<div id="online_names" class="flex gap-[600px] mb-[16px]">
+				<div id="online_p1_name_display" class="text-red-500 text-[3vh] font-bold mr-[20px]"><h1>player1</h1></div>
+				<div id="online_p2_name_display" class="text-blue-500 text-[3vh] font-bold ml-[20px]"><h1>player2</h1></div>
 			</div>
 		</div>
 	</div>
+
 	${online_1v1_winner_popup}
 `;

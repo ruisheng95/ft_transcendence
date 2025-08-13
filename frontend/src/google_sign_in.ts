@@ -17,8 +17,9 @@ google_sign_in.innerHTML = `
 	data-login_uri="${uri}"
 	data-callback="handle_credential_response">
 </div>
-<div class="g_id_signin" data-type="standard" data-theme="filled_blue"></div>`
+<div class="g_id_signin px-12 py-2 rounded-full font-semibold text-lg flex items-center space-x-3 border-2 border-yellow-400 hover:bg-yellow-400/20 hover:-translate-y-1 transition duration-200" data-type="standard"></div>`
 
+// py-2 rounded-full text-center font-semibold text-lg bg-yellow-400 text-black hover:bg-yellow-300 hover:-translate-y-1 transition duration-200
 
 //need put window. cuz we defining a global function for the data-callback if not it cant see this function
 // @ts-expect-error - Function is used in data-callback hence not detected by ts as its in the template string
@@ -49,7 +50,7 @@ index_init();
 if (import.meta.env.VITE_ENV === "dev") {
   const dummySignInButton = document.createElement("button");
   dummySignInButton.textContent = "Dummy account sign in";
-  dummySignInButton.style.backgroundColor = "lightblue"
+  dummySignInButton.classList.add('py-2', 'rounded-full', 'text-center', 'font-semibold', 'text-lg', 'bg-yellow-400', 'text-black', 'hover:bg-yellow-300', 'hover:-translate-y-1', 'transition', 'duration-200');
   dummySignInButton.addEventListener("click", async () => {
     await fetch(`${import.meta.env.VITE_BACKEND_API_HOST}/session`, {
       method: "POST",

@@ -22,14 +22,16 @@ export function pf_config_setup()
 	const header_pfp = document.querySelector<HTMLImageElement>("#header_img");
 	const header_name = document.querySelector<HTMLDivElement>("#header_name");
 
+	const settings_popup = document.querySelector<HTMLButtonElement>("#settings_popup");
 
-	if(!error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config || !pfp_button || !input_pfp || !file_name_display || !pfp_img_preview || !pfp_empty)
+	if(!settings_popup || !error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config || !pfp_button || !input_pfp || !file_name_display || !pfp_img_preview || !pfp_empty)
 		throw new Error("Error pf_config stuff not found");
 
 	pf_config_button.addEventListener("click", () => {
 		error_display.innerHTML = "";
 		name_input.value = "";
 		pf_config_popup.classList.remove("hidden");
+		settings_popup.classList.add("hidden");
 		add_history("profile_config");
 	});
 	close_pf_config.addEventListener("click", () => {
@@ -38,6 +40,30 @@ export function pf_config_setup()
 	});
 
 	pfp_button.addEventListener("click", () => { input_pfp.click();});
+
+	name_input.addEventListener("input", () => {
+		//check for invalid chars
+		const input_str = name_input.value;
+		const valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+
+		if(input_str.length === 0)
+			return;
+		
+		if(!valid_chars.includes(input_str[input_str.length - 1]))
+		{
+			error_display.classList.remove("hidden");
+			error_display.innerHTML = `<h1 class="text-[13px] text-red-500">Alphabets, numbers or '_' only</h1>`;
+			name_input.value = input_str.substring(0, input_str.length - 1);
+		}
+		else if(input_str.length > 30)
+		{
+			error_display.classList.remove("hidden");
+			error_display.innerHTML = `<h1 class="text-[13px] text-red-500">Search too long</h1>`;
+			name_input.value = input_str.substring(0, input_str.length - 1);
+		}
+		else
+			error_display.innerHTML = "";
+	});
 
 	//REMEMBER TO UNCOMMENT THIS FOR NEW PLAYER CONFIG TO POPUP (commented this cuz very mafan during testing)
 	if(localStorage.getItem("new_player_flag") === "true")
