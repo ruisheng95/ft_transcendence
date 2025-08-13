@@ -146,25 +146,25 @@ export class GameInstance2v2 {
       if (
         !this.#game_hit_lock &&
         (
-          // Left team player 1 paddle hit
+          // Left team player 1 paddle hit (at player_indent position)
           (this.#ballX <= this.#player_indent + this.#block_width + Math.abs(this.#dx) &&
            this.#ballX >= this.#player_indent - Math.abs(this.#dx) &&
            this.#ballY + this.#ball_len >= this.#leftplayer1Y - 2 &&
            this.#ballY <= this.#leftplayer1Y + this.#block_height + 2) ||
           
-          // Left team player 2 paddle hit
-          (this.#ballX <= this.#player_indent + this.#block_width + Math.abs(this.#dx) &&
-           this.#ballX >= this.#player_indent - Math.abs(this.#dx) &&
+          // Left team player 2 paddle hit (at 8 * player_indent position)
+          (this.#ballX <= (8 * this.#player_indent) + this.#block_width + Math.abs(this.#dx) &&
+           this.#ballX >= (8 * this.#player_indent) - Math.abs(this.#dx) &&
            this.#ballY + this.#ball_len >= this.#leftplayer2Y - 2 &&
            this.#ballY <= this.#leftplayer2Y + this.#block_height + 2) ||
           
-          // Right team player 1 paddle hit
-          (this.#ballX + this.#ball_len >= this.#boardWidth - this.#player_indent - this.#block_width - Math.abs(this.#dx) &&
-           this.#ballX + this.#ball_len <= this.#boardWidth - this.#player_indent + Math.abs(this.#dx) &&
+          // Right team player 1 paddle hit (at 8 * player_indent from right)
+          (this.#ballX + this.#ball_len >= this.#boardWidth - (8 * this.#player_indent) - this.#block_width - Math.abs(this.#dx) &&
+           this.#ballX + this.#ball_len <= this.#boardWidth - (8 * this.#player_indent) + Math.abs(this.#dx) &&
            this.#ballY + this.#ball_len >= this.#rightplayer1Y - 2 &&
            this.#ballY <= this.#rightplayer1Y + this.#block_height + 2) ||
           
-          // Right team player 2 paddle hit
+          // Right team player 2 paddle hit (at player_indent from right)
           (this.#ballX + this.#ball_len >= this.#boardWidth - this.#player_indent - this.#block_width - Math.abs(this.#dx) &&
            this.#ballX + this.#ball_len <= this.#boardWidth - this.#player_indent + Math.abs(this.#dx) &&
            this.#ballY + this.#ball_len >= this.#rightplayer2Y - 2 &&
