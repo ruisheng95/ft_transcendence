@@ -9,8 +9,8 @@ export const defaultGameSetting2v2 = {
   player_speed: 5, 
   player_indent: 20,
   ball_len: 15,
-  dy: 2, 
-  dx: 2,
+  dy: 4, 
+  dx: 4,
 };
 
 export class GameInstance2v2 {

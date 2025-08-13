@@ -195,7 +195,7 @@ export function online_2v2_play()
 			my_player_index = msg_obj.player_index;
 			console.log(`You are player ${my_player_index}`);
 		}
-		else if(msg_obj.type == "game_update")
+		else if(msg_obj.type == "gu")
 		{
 			if(playing == false)
 				return ;
