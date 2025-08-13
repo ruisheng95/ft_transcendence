@@ -8,16 +8,21 @@
 // rmb to send back the friends list whenever it changes
 
 const root = async function (fastify) {
+  const emailToWebsocketMap = {};
   fastify.get(
     "/ws_profile",
     { websocket: true, onRequest: fastify.verify_session },
     async (connection, request) => {
-      connection.on("message", recv_msg);
+    connection.on("message", recv_msg);
+    emailToWebsocketMap[fastify.get_email_by_session(request)] = connection;
+    refresh_all_friend_list();
       //functions
 
       function recv_msg(message) {
         const message_obj = JSON.parse(message.toString());
-        request.log.info(message_obj, "Received:");
+        if (Object.keys(message_obj).length !== 0) {
+          request.log.info(message_obj, "Received:");
+        }
 
         if (message_obj.type === "get_player_profile") send_player_profile();
         else if (message_obj.type === "get_player_friends") send_fren_list();
@@ -94,38 +99,42 @@ const root = async function (fastify) {
         connection.send(JSON.stringify(player_profile));
       }
 
-      function send_fren_list() {
-        const userEmail = fastify.get_email_by_session(request);
-      
+      function get_friend_list_data(userEmail) {
         const friendRows = fastify.betterSqlite3
-          .prepare("SELECT FRIEND_EMAIL FROM FRIEND_LIST WHERE USER_EMAIL = ?")
-          .all(userEmail);
+            .prepare("SELECT FRIEND_EMAIL FROM FRIEND_LIST WHERE USER_EMAIL = ?")
+            .all(userEmail);
 
         const onlineEmails = new Set(Object.values(fastify.conf.session));
 
         const friends = friendRows.map(row => {
-          const friend = fastify.betterSqlite3
-            .prepare("SELECT USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
-            .get(row.FRIEND_EMAIL);
-          
-          const isOnline = onlineEmails.has(row.FRIEND_EMAIL);
-      
-          return {
-            username: friend.USERNAME,
-            pfp: friend.AVATAR,
-            status: isOnline ? "online" : "offline",
-          };
+            const friend = fastify.betterSqlite3
+                .prepare("SELECT USERNAME, AVATAR FROM USER WHERE EMAIL = ?")
+                .get(row.FRIEND_EMAIL);
+            
+            const isOnline = onlineEmails.has(row.FRIEND_EMAIL);
+        
+            return {
+                username: friend.USERNAME,
+                pfp: friend.AVATAR,
+                status: isOnline ? "online" : "offline",
+                email: row.FRIEND_EMAIL,
+            };
         });
-      
-        const friends_obj = {
-          type: "player_friends",
-          friends: friends,
-        };
-      
-        connection.send(JSON.stringify(friends_obj));
-        //console.log(friends_obj);
+          return friends;
       }
-      
+
+      function send_fren_list() {
+          const userEmail = fastify.get_email_by_session(request);
+          const friends = get_friend_list_data(userEmail);
+          
+          const friends_obj = {
+              type: "player_friends",
+              friends: friends,
+          };
+          
+          connection.send(JSON.stringify(friends_obj));
+          // console.log('Sent friend list:', friends_obj);
+      } 
 
       function send_server_players_for_addfrens(search_input_name) {
         let error_str = "";
@@ -176,7 +185,7 @@ const root = async function (fastify) {
         const availablePlayers = allMatchingPlayers
             .filter(player => !friendEmails.has(player.EMAIL))
             .map(player => {
-              console.log('Player data from DB:', player);
+              // console.log('Player data from DB:', player);
               return {
                 username: player.USERNAME,
                 pfp: player.AVATAR,
@@ -188,10 +197,10 @@ const root = async function (fastify) {
             players: availablePlayers,
         };
 
-        console.log('Final object being sent:', JSON.stringify(ret_obj, null, 2));
+        // console.log('Final object being sent:', JSON.stringify(ret_obj, null, 2));
         connection.send(JSON.stringify(ret_obj));
-        console.log(`Found ${availablePlayers.length} matching players for search: "${search_input_name}"`);
-        console.log('Sending to frontend:', ret_obj); 
+        // console.log(`Found ${availablePlayers.length} matching players for search: "${search_input_name}"`);
+        // console.log('Sending to frontend:', ret_obj); 
 
         } catch (error) {
             console.error('Error fetching server players:', error);
@@ -389,11 +398,13 @@ const root = async function (fastify) {
             
             console.log(`Added friendship: ${userEmail} <-> ${friendEmail}`);
             
+            const updatedFriends = get_friend_list_data(userEmail);
+
             const success_obj = {
                 type: "add_friend_response",
                 success: true,
                 message: `Successfully added ${add_friend_name} as friend`,
-                friend_username: add_friend_name
+                friends: updatedFriends
             };
             connection.send(JSON.stringify(success_obj));
             
@@ -462,12 +473,14 @@ const root = async function (fastify) {
               removeFriend.run(friendEmail, userEmail);
               
               console.log(`Removed friendship: ${userEmail} <-> ${friendEmail}`);
+
+              const updatedFriends = get_friend_list_data(userEmail);
               
               const success_obj = {
                   type: "remove_friend_response",
                   success: true,
                   message: `Successfully removed ${remove_friend_name} from friends`,
-                  removed_friend: remove_friend_name
+                  friends: updatedFriends
               };
               connection.send(JSON.stringify(success_obj));
               
@@ -481,10 +494,44 @@ const root = async function (fastify) {
               connection.send(JSON.stringify(error_obj));
           }
       }
+
+      function refresh_all_friend_list(is_logout) {
+        const email = fastify.get_email_by_session(request);
+
+        const emailsToNotify = [
+          email,
+          ...get_friend_list_data(email)
+            .filter((friend) => friend.status === "online")
+            .map((friend) => friend.email),
+        ];
+        if (is_logout) {
+          // Remove first email, no need to notify logged out email
+          emailsToNotify.shift();
+        }
+        for (const innerEmail of emailsToNotify) {
+          const friends = get_friend_list_data(innerEmail);
+          if (is_logout) {
+            // Notify friends that user is offline now
+            friends.forEach((friend) => {
+              if (friend.email === email) {
+                friend.status = "offline";
+              }
+            });
+          }
+          const friends_obj = {
+            type: "player_friends",
+            friends: friends,
+          };
+          const connection = emailToWebsocketMap[innerEmail];
+          connection.send(JSON.stringify(friends_obj));
+        }
+      }
     
       function logout() {
+        refresh_all_friend_list(true);
         const session = request.query.session;
         delete fastify.conf.session[session];
+        delete emailToWebsocketMap[fastify.get_email_by_session(request)];
       }
     }
   );
