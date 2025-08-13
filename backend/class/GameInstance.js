@@ -339,23 +339,30 @@ export class OnlineMatchmaking {
   }
 
   registerPlayer(email, connection, gameNoOfPlayers, request, username) {
+    // console.log(`[DEBUG] registerPlayer called: ${email}, gameNoOfPlayers: ${gameNoOfPlayers}`);
+    // console.log(`[DEBUG] Current player array length: ${this.#playerArray.length}`);
+    
     this.#playerArray.push(
       new Player(email, connection, gameNoOfPlayers, request, username)
     );
     request.log.info("OnlineMatchmaking registered: " + email);
+    
     const nonPlayingPlayers = this.#playerArray.filter(
       (player) => !player.gameInstance
     );
-    const pendingPlayerLobby = [nonPlayingPlayers[0]];
-    const gameLobbySize = nonPlayingPlayers[0].gameNoOfPlayers;
-    for (let i = 1; i < nonPlayingPlayers.length; i++) {
-      if (
-        nonPlayingPlayers[i].gameNoOfPlayers === gameLobbySize &&
-        pendingPlayerLobby.length !== gameLobbySize
-      ) {
-        pendingPlayerLobby.push(nonPlayingPlayers[i]);
-      }
-    }
+    
+    // console.log(`[DEBUG] Non-playing players: ${nonPlayingPlayers.length}`);
+    
+    // Find all players waiting for the same game mode
+    const playersWaitingForSameMode = nonPlayingPlayers.filter(
+      (player) => player.gameNoOfPlayers === gameNoOfPlayers
+    );
+    
+    // console.log(`[DEBUG] Players waiting for same mode (${gameNoOfPlayers}): ${playersWaitingForSameMode.length}`);
+    // console.log(`[DEBUG] Player emails in same mode: ${playersWaitingForSameMode.map(p => p.email).join(', ')}`);
+    
+    const pendingPlayerLobby = playersWaitingForSameMode;
+    const gameLobbySize = gameNoOfPlayers;
     if (pendingPlayerLobby.length === gameLobbySize) {
       // Start game - choose appropriate game instance based on lobby size
       let gameInstance;
@@ -365,10 +372,20 @@ export class OnlineMatchmaking {
         gameInstance = new GameInstance2v2(this.#fastify, pendingPlayerLobby.map((player) => player.email));
       }
       
-      pendingPlayerLobby.forEach((player) => {
+      pendingPlayerLobby.forEach((player, index) => {
         player.gameInstance = gameInstance;
         const playerId = gameInstance.registerPlayer(player.connection);
         request.log.info("GameInstance registered player: " + playerId);
+        
+        // Send player assignment first
+        player.connection.send(
+          JSON.stringify({
+            type: "player_assigned",
+            player_index: index
+          })
+        );
+        
+        // Then send lobby full status
         player.connection.send(
           JSON.stringify({
             // type: MsgType.GAME_INIT,
@@ -382,14 +399,17 @@ export class OnlineMatchmaking {
         );
       });
     } else {
-      // push pending status
-      connection.send(
-        JSON.stringify({
-          type: MsgType.MATCHMAKING_STATUS,
-          status: "Waiting for players",
-          players: JSON.stringify(pendingPlayerLobby.map((player) => player.username)),
-        })
-      );
+      // push pending status to ALL players in the lobby
+      const statusMessage = JSON.stringify({
+        type: MsgType.MATCHMAKING_STATUS,
+        status: "Waiting for players",
+        players: JSON.stringify(pendingPlayerLobby.map((player) => player.username)),
+      });
+      
+      // Send update to all players in the current lobby
+      pendingPlayerLobby.forEach((player) => {
+        player.connection.send(statusMessage);
+      });
     }
   }
 
