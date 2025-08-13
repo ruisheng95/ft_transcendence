@@ -3,6 +3,7 @@ import "./gamestyle.css";
 
 import { add_history } from "./spa-navigation";
 import { online_1v1_play } from "./game-online-1v1";
+import { online_2v2_play } from "./game-online-2v2";
 
 // online_play_menus	
 export function online_play_menus_setup()
@@ -33,6 +34,11 @@ export function online_play_menus_setup()
 	online_1v1_button.addEventListener("click", () => {
 		// online_play_menus_popup.classList.add("hidden"); moved to hide in online 1v1
 		online_1v1_play();
+	});
+
+	online_2v2_button.addEventListener("click", () => {
+		// online_play_menus_popup.classList.add("hidden"); moved to hide in online 2v2
+		online_2v2_play();
 	});
 }
 
