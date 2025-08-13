@@ -132,13 +132,13 @@ export function index_init()
 						<!-- Pong -->
 						<button id="pong_modes_button" class="relative group px-3 py-1 rounded-lg">
 							<i class="fas fa-table-tennis text-xl"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg">Pong</span>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-1">Pong</span>
 						</button>
 
 						<!-- XOX -->
 						<button class="relative group px-3 py-1 rounded-lg">
 							<i class="fas fa-th text-xl"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg whitespace-nowrap">Tic-Tac-Toe</span>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-1 whitespace-nowrap">Tic-Tac-Toe</span>
 						</button>
 
 					</div>
@@ -152,19 +152,19 @@ export function index_init()
 						<!-- Friends -->
 						<button id ="display_friends_page_button" class="relative group px-3 py-1 rounded-lg">
 							<i class="fas fa-users text-xl text-white"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg">Friends</span>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-1">Friends</span>
 						</button>
 
 						<!-- Settings -->
 						<button id="settings_button" class="relative group px-3 py-1 rounded-lg">
 							<i class="fas fa-cog text-xl text-white"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg">Settings</span>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-1">Settings</span>
 						</button>
 
 						<!-- Logout -->
 						<button id="logout_button" class="relative group px-3 py-1 rounded-lg">
 							<i class="fas fa-sign-out-alt text-xl text-white"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg">Logout</span>
+							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg z-1">Logout</span>
 						</button>
 
 					</div>
