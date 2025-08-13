@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2_Main</title>
+    <link rel="stylesheet" href="../style/output.css">
+</head>
+
+
+<body class="bg-gray-950 h-screen text-white overflow-hidden font-inter">
+
+	<!-- Header Layout-->
+	<header class="border-b border-gray-600 flex items-center justify-between">
+		
+		<!-- Left: User profile -->
+		<section class="pl-4 flex space-x-4 items-center">
+			<img class="w-14 h-14 rounded-full" src="../asset/user-avatar.jpg" alt="profile">
+			<span class="text-xl font-semibold">John Lennon</span>
+		</section>
+
+		<!-- Right: Navigation -->
+		<section class="flex">
+
+			<!-- Game Section -->
+			<div class="border-l border-gray-600 pt-1 pb-2 px-4">
+				<div class="text-sm tracking-widest mb-1">Game</div>
+				<div class="flex items-center space-x-2">
+
+					<!-- Pong -->
+					<button class="relative group px-3 py-1 rounded-lg bg-yellow-400">
+						<i class="fas fa-table-tennis text-xl text-black"></i>
+						<span class="tooltip-1">Pong</span>
+					</button>
+					
+					<!-- XOX -->
+					<button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-th text-xl"></i>
+						<span class="tooltip-1">Tic-Tac-Toe</span>
+					</button>
+					
+				</div>
+			</div>
+
+			<!-- Menu Selection -->
+			<div class="border-l border-gray-600 pt-1 pb-2 px-4">
+				<div class="text-sm tracking-widest mb-1">Menu</div>
+				<div class="flex items-center space-x-2">
+
+					<!-- Friends -->
+					<button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-users text-xl"></i>
+						<span class="tooltip-1">Friends</span>
+					</button>
+					
+					<!-- Profile -->
+					<button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-cog text-xl"></i>
+						<span class="tooltip-1">Settings</span>
+					</button>
+
+					<!-- Exit -->
+					 <button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-sign-out-alt text-xl"></i>
+						<span class="tooltip-1">Exit</span>
+					</button>
+					
+				</div>
+			</div>
+
+			
+		</section>
+	</header>
+
+	<!-- Game Selection -->
+	<main class="px-20 h-4/5 flex items-center justify-center">
+		<section class="grid w-full grid-cols-4 gap-8">
+
+			<!-- 1 vs 1 -->
+			<div class="bg-white/20 rounded-xl p-8 space-y-4">
+				<div class="h-60 flex flex-col items-center text-center space-y-4">
+					<img class="w-20 h-20 object-cover" src="../asset/1vs1.png" alt="game-type">
+					<h2 class="text-3xl font-bold">1 vs 1</h2>
+					<p class="text-lg">Classic 1-on-1 clash outplay your rival in a  duel</p>
+				</div>
+				<button class="button-secondary tracking-widest w-full">Online</button>
+				<button class="button-secondary tracking-widest w-full">Local Play</button>
+			</div>
+
+			<!-- 2 vs 2 -->
+			<div class="bg-white/20 rounded-xl p-8 space-y-4">
+				<div class="h-60 flex flex-col items-center text-center space-y-4">
+					<img class="w-20 h-20 object-cover" src="../asset/2vs2.png" alt="game-type">
+					<h2 class="text-3xl font-bold">2 vs 2</h2>
+					<p class="text-lg">Team up with a friend and crush the competition</p>
+				</div>
+				<button class="button-secondary tracking-widest w-full">Online</button>
+				<button class="button-secondary tracking-widest w-full">Local Play</button>
+			</div>
+
+			<!-- Tournament -->
+			<div class="bg-white/20 rounded-xl p-8 space-y-4">
+				<div class="h-60 flex flex-col items-center text-center space-y-4">
+					<img class="w-20 h-20 object-cover" src="../asset/tournament.png" alt="game-type">
+					<h2 class="text-3xl font-bold">Tournament</h2>
+					<p class="text-lg">Climb the bracket. Each player competes in 2 rounds to determine the winner</p>
+				</div>
+				<button class="button-secondary tracking-widest w-full">Online</button>
+				<button class="button-secondary tracking-widest w-full">Local Play</button>
+			</div>
+
+			<!-- Practice -->
+			<div class="bg-white/20 rounded-xl p-8 space-y-4">
+				<div class="h-60 flex flex-col items-center text-center space-y-4">
+					<img class="w-20 h-20 object-cover" src="../asset/bot.png" alt="game-type">
+					<h2 class="text-3xl font-bold">Practice</h2>
+					<p class="text-lg">Train up and sharpen your skills by battling the AI</p>
+				</div>
+				<button class="button-secondary tracking-widest w-full">vs AI</button>
+			</div>
+
+		</section>
+	</main>
+
+	<!-- Button: Switch to Player Stats View -->
+	<footer class="px-12 flex justify-end">
+		<button class="button-slide">
+			<span class="pr-4">Player Stats</span>
+			<i class="fas fa-chevron-right text-yellow-400 text-2xl"></i>
+			<i class="fas fa-chevron-right text-yellow-400 text-2xl"></i>
+		</button>
+	</footer>
+</body>
+</html>

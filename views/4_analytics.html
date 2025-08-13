@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4_Analytics</title>
+    <link rel="stylesheet" href="../style/output.css">
+</head>
+
+
+<body class="bg-gray-950 h-screen text-white overflow-hidden font-inter">
+
+	<!-- Header Layout-->
+	<header class="border-b border-gray-600 flex items-center justify-between">
+		
+		<!-- Left: User profile -->
+		<section class="pl-4 flex space-x-4 items-center">
+			<img class="w-14 h-14 rounded-full" src="../asset/user-avatar.jpg" alt="profile">
+			<span class="text-xl font-semibold">John Lennon</span>
+		</section>
+
+		<!-- Right: Navigation -->
+		<section class="flex">
+
+			<!-- Game Section -->
+			<div class="border-l border-gray-600 pt-1 pb-2 px-4">
+				<div class="text-sm tracking-widest mb-1">Game</div>
+				<div class="flex items-center space-x-2">
+
+					<!-- Pong -->
+					<button class="relative group px-3 py-1 rounded-lg bg-yellow-400">
+						<i class="fas fa-table-tennis text-xl text-black"></i>
+						<span class="tooltip-1">Pong</span>
+					</button>
+					
+					<!-- XOX -->
+					<button class="relative group px-3 py-1 rounded-lg ">
+						<i class="fas fa-th text-xl"></i>
+						<span class="tooltip-1">Tic-Tac-Toe</span>
+					</button>
+					
+				</div>
+			</div>
+
+			<!-- Menu Selection -->
+			<div class="border-l border-gray-600 pt-1 pb-2 px-4">
+				<div class="text-sm tracking-widest mb-1">Menu</div>
+				<div class="flex items-center space-x-2">
+
+					<!-- Friends -->
+					<button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-users text-xl"></i>
+						<span class="tooltip-1">Friends</span>
+					</button>
+					
+					<!-- Profile -->
+					<button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-cog text-xl"></i>
+						<span class="tooltip-1">Settings</span>
+					</button>
+
+					<!-- Exit -->
+					 <button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-sign-out-alt text-xl"></i>
+						<span class="tooltip-1">Exit</span>
+					</button>
+					
+				</div>
+			</div>
+
+			
+		</section>
+	</header>
+
+    <!-- Player Statistics Layout-->
+    <main class="flex px-12 pt-8 h-full">
+
+        <!-- Left -->
+        <section class="h-full w-5/12">
+            
+            <!-- Stats Table-->
+            <div class="px-8 h-4/5">
+                
+                <h2 class="text-xl font-bold mb-6 flex items-center">
+                    <i class="fa-solid fa-chart-pie mr-3"></i>
+                    Statistics
+                </h2>
+
+                <section class="grid grid-cols-2 gap-4">
+                    
+                    <!-- Ranking -->
+                    <div class="bg-white/20 rounded-lg px-4 py-2">
+                        <div class="flex items-center font-semibold mb-2">
+                            <i class="fas fa-map-pin text-yellow-400 text-2xl mr-3"></i>
+                            Ranking
+                        </div>
+                        <div class="text-5xl font-bold text-end">
+                            7<span class="text-xl">/ 25</span>
+                        </div>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="bg-white/20 rounded-lg px-4 py-2">
+                        <div class="flex items-center font-semibold mb-2">
+                            <i class="fas fa-star text-yellow-400 text-2xl mr-3"></i>
+                            Rating
+                        </div>
+                        <div class="text-5xl font-bold text-end">93</div>
+                    </div>
+
+                    <!-- Winning Streak -->
+                    <div class="bg-white/20 rounded-lg px-4 py-2">
+                        <div class="flex items-center font-semibold mb-2">
+                            <i class="fas fa-fire text-yellow-400 text-2xl mr-3"></i>
+                            Winning Streak
+                        </div>
+                        <div class="text-5xl font-bold text-end">3</div>
+                    </div>
+
+                    <!-- Total Matches -->
+                    <div class="bg-white/20 rounded-lg px-4 py-2">
+                        <div class="flex items-center font-semibold mb-2">
+                            <i class="fas fa-gamepad text-yellow-400 text-2xl mr-3"></i>
+                            Total Matches
+                        </div>
+                        <div class="text-5xl font-bold text-end">14</div>
+                    </div>
+
+                    <!-- Total Wins -->
+                    <div class="bg-white/20 rounded-lg px-4 py-2">
+                        <div class="flex items-center font-semibold mb-2">
+                            <i class="fas fa-face-laugh-squint text-yellow-400 text-2xl mr-3"></i>
+                            Total Wins
+                        </div>
+                        <div class="text-5xl font-bold text-end">10</div>
+                    </div>
+
+                    <!-- Total Loses -->
+                    <div class="bg-white/20 rounded-lg px-4 py-2">
+                        <div class="flex items-center font-semibold mb-2">
+                            <i class="fas fa-face-sad-cry text-yellow-400 text-2xl mr-3"></i>
+                            Total Loses
+                        </div>
+                        <div class="text-5xl font-bold text-end">4</div>
+                    </div>
+
+                    <!-- Win Rate -->
+                    <div class="bg-white/20 rounded-xl px-4 py-2 col-span-2">
+                        <div class="flex items-center font-semibold mb-4">
+                            <i class="fas fa-balance-scale text-yellow-400 text-2xl mr-3"></i>
+                            Win Rate
+                        </div>
+                        <div class="mb-4 w-full bg-red-500 rounded-full h-4">
+                            <div class="bg-green-500 h-4 rounded-l-full" style="width: 73%"></div>
+                        </div>
+                        <div class="text-2xl font-semibold text-end">73%</div>
+                    </div>
+
+                </section>
+            </div>
+
+            <!-- Button: Switch to Game Selection View -->
+            <footer class="flex">
+                <button class="button-slide">
+                    <i class="fas fa-chevron-left text-yellow-400 text-2xl"></i>
+                    <i class="fas fa-chevron-left text-yellow-400 text-2xl"></i>
+                    <span class="pl-4">Game Selection</span>
+			    </button>
+            </footer>
+        </section>
+
+        <!-- Right Match History -->
+        <section class="h-full w-7/12 px-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fa fa-history mr-3"></i>
+                Match History
+		    </h2>
+
+            <!-- Table Header -->
+            <div class="history-grid mb-1 px-4 font-semibold">
+                <span>Date</span>
+                <span>Match Type</span>
+                <span>Against</span>
+                <span>Result</span>
+            </div>
+
+            <!-- Table Entry -->
+            <section class="h-[72vh] overflow-y-auto pr-4 space-y-2">
+                
+                <!-- Entry -->
+				<div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>2 VS 2</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_1.jpg" alt="player">
+                            <span class="tooltip-2">Micheal</span>
+                        </div>
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_2.jpg" alt="player">
+                            <span class="tooltip-2">Mira</span>
+                        </div>
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_3.jfif" alt="player">
+                            <span class="tooltip-2">Faiz</span>
+                        </div>
+                    </div>
+                    <span class="result-lose">Lose</span>
+                </div>
+
+                <!-- Entry -->
+				<div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>Tournament (R1)</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_4.jpg" alt="player">
+                            <span class="tooltip-2">Siti</span>
+                        </div>
+                    </div>
+                    <span class="result-win">Win</span>
+                </div>
+
+                <!-- Entry -->
+				<div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>Tournament (R2)</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_5.jpg" alt="player">
+                            <span class="tooltip-2">Donald</span>
+                        </div>
+                    </div>
+                    <span class="result-lose">Lose</span>
+                </div>
+
+                <!-- Entry -->
+                <div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>1 VS 1</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_6.jpg" alt="player">
+                            <span class="tooltip-2">Trump</span>
+                        </div>
+                    </div>
+                    <span class="result-win">Win</span>
+                </div>
+
+                <!-- Entry -->
+				<div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>2 VS 2</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_1.jpg" alt="player">
+                            <span class="tooltip-2">Micheal</span>
+                        </div>
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_2.jpg" alt="player">
+                            <span class="tooltip-2">Mira</span>
+                        </div>
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_3.jfif" alt="player">
+                            <span class="tooltip-2">Faiz</span>
+                        </div>
+                    </div>
+                    <span class="result-lose">Lose</span>
+                </div>
+
+                <!-- Entry -->
+				<div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>Tournament (R1)</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_4.jpg" alt="player">
+                            <span class="tooltip-2">Siti</span>
+                        </div>
+                    </div>
+                    <span class="result-win">Win</span>
+                </div>
+
+                <!-- Entry -->
+				<div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>Tournament (R2)</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_5.jpg" alt="player">
+                            <span class="tooltip-2">Donald</span>
+                        </div>
+                    </div>
+                    <span class="result-lose">Lose</span>
+                </div>
+
+                <!-- Entry -->
+                <div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>1 VS 1</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_6.jpg" alt="player">
+                            <span class="tooltip-2">Trump</span>
+                        </div>
+                    </div>
+                    <span class="result-win">Win</span>
+                </div>
+                
+                <!-- Entry -->
+				<div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>2 VS 2</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_1.jpg" alt="player">
+                            <span class="tooltip-2">Micheal</span>
+                        </div>
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_2.jpg" alt="player">
+                            <span class="tooltip-2">Mira</span>
+                        </div>
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_3.jfif" alt="player">
+                            <span class="tooltip-2">Faiz</span>
+                        </div>
+                    </div>
+                    <span class="result-lose">Lose</span>
+                </div>
+
+                <!-- Entry -->
+				<div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>Tournament (R1)</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_4.jpg" alt="player">
+                            <span class="tooltip-2">Siti</span>
+                        </div>
+                    </div>
+                    <span class="result-win">Win</span>
+                </div>
+
+                <!-- Entry -->
+				<div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>Tournament (R2)</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_5.jpg" alt="player">
+                            <span class="tooltip-2">Donald</span>
+                        </div>
+                    </div>
+                    <span class="result-lose">Lose</span>
+                </div>
+
+                <!-- Entry -->
+                <div class="bg-white/20 rounded-lg py-1 pl-4 history-grid">
+                    <span>2025/08/05</span>
+					<span>1 VS 1</span>
+                    <div class="flex space-x-1">
+                        <!-- Against -->
+                        <div class="group relative w-10 h-10">
+                            <img class="size-full rounded-full object-cover" src="../asset/friend_6.jpg" alt="player">
+                            <span class="tooltip-2">Trump</span>
+                        </div>
+                    </div>
+                    <span class="result-win">Win</span>
+                </div>
+            </section>
+        </section>
+    </main>
+
+</body>
+</html>

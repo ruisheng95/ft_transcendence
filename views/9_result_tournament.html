@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9_Tournament_Result</title>
+    <link rel="stylesheet" href="../style/output.css">
+</head>
+
+
+<body class="bg-gray-950 h-screen text-white overflow-hidden font-inter">
+
+	<!-- Exit Button -->
+	<button class="absolute top-6 right-6 button-remove">
+		<i class="fas fa-times text-black text-xl"></i>
+	</button>
+
+	<!-- Game Layout -->
+	<div class="flex h-screen items-center justify-center">
+		
+		<!-- Court -->
+		<main class="w-[70vw] h-[80vh] relative border-4">
+			
+			<!-- Tournament Layout -->
+			<div class="p-8 h-full flex flex-col justify-between items-center">
+
+				<!-- Bracket Layout -->
+				<div class="space-y-4 w-full">
+
+					<!-- Tournament Title -->
+					<h1 class="text-3xl font-bold text-center">Tournament Result</h1>
+
+					<!-- Bracket Header -->
+					<section class="grid grid-cols-4 gap-4">
+						<h2 class="col-span-2 rounded text-black text-lg pl-2 font-bold bg-yellow-400">Semi-Final</h2>
+						<h2 class="rounded text-black text-lg pl-2 font-bold bg-yellow-400">Loser Bracket</h2>
+						<h2 class="rounded text-black text-lg pl-2 font-bold bg-yellow-400">
+							<i class="fas fa-trophy"></i>&nbsp;Final
+						</h2>
+					</section>
+
+					<!-- Bracket Details -->
+					<section class="grid grid-cols-4 gap-4">
+
+						<!-- Match 1 -->
+						<div class="space-y-1">
+							<div class="bg-white/20 px-4 py-2 rounded flex items-center justify-between">
+								<p class="overflow-hidden">Player Name</p>
+								<p class="result-lose">Lose</p>
+							</div>
+							<div class="bg-white/20 px-4 py-2 rounded flex items-center justify-between">
+								<p class="overflow-hidden">Player 2</p>
+								<p class="text-green-500 font-bold tracking-widest">Win</p>
+							</div>
+						</div>
+
+						<!-- Match 2 -->
+						<div class="space-y-1">
+							<div class="bg-white/20 px-4 py-2 rounded flex items-center justify-between">
+								<p class="overflow-hidden">Player 3</p>
+								<p class="result-lose">Lose</p>
+							</div>
+							<div class="bg-white/20 px-4 py-2 rounded flex items-center justify-between">
+								<p class="overflow-hidden">Player 4</p>
+								<p class="result-win">Win</p>
+							</div>
+						</div>
+
+						<!-- Match 3 -->
+						<div class="space-y-1">
+							<div class="bg-white/20 px-4 py-2 rounded flex items-center justify-between">
+								<p class="overflow-hidden">Player Name</p>
+								<p class="result-win">Win</p>
+							</div>
+							<div class="bg-white/20 px-4 py-2 rounded flex items-center justify-between">
+								<p class="overflow-hidden">Player 3</p>
+								<p class="result-lose">Lose</p>
+							</div>
+						</div>
+
+						<!-- Match 4 -->
+						<div class="space-y-1">
+							<div class="bg-white/20 px-4 py-2 rounded flex items-center justify-between">
+								<p class="overflow-hidden">Player 2</p>
+								<p class="result-lose">Lose</p>
+							</div>
+							<div class="bg-white/20 px-4 py-2 rounded flex items-center justify-between">
+								<p class="overflow-hidden">Player 4</p>
+								<p class="result-win">Win</p>
+							</div>
+						</div>
+
+					</section>
+
+					<!-- Progress Bar -->
+					<section class="relative grid grid-cols-4 gap-8 place-items-center hidden">
+
+						<!-- Match-1 -->
+						<div class="relative invisible">
+							<i class="fa-solid fa-caret-up text-yellow-400 text-5xl"></i>
+							<span class="absolute bottom-0 left-1/2 -translate-x-1/2 bg-yellow-400 rounded whitespace-nowrap text-black font-semibold px-3">Current Match</span>
+						</div>
+						<!-- Match-2 -->
+						<div class="relative ">
+							<i class="fa-solid fa-caret-up text-yellow-400 text-5xl"></i>
+							<span class="absolute bottom-0 left-1/2 -translate-x-1/2 bg-yellow-400 rounded whitespace-nowrap text-black font-semibold px-3">Current Match</span>
+						</div>
+						<!-- Match-3 -->
+						<div class="relative invisible">
+							<i class="fa-solid fa-caret-up text-yellow-400 text-5xl"></i>
+							<span class="absolute bottom-0 left-1/2 -translate-x-1/2 bg-yellow-400 rounded whitespace-nowrap text-black font-semibold px-3">Current Match</span>
+						</div>
+						<!-- Match-4 -->
+						<div class="relative invisible">
+							<i class="fa-solid fa-caret-up text-yellow-400 text-5xl"></i>
+							<span class="absolute bottom-0 left-1/2 -translate-x-1/2 bg-yellow-400 rounded whitespace-nowrap text-black font-semibold px-3">Current Match</span>
+						</div>
+					</section>
+				</div>
+
+				<!-- Result -->
+				<section class="divide-y w-1/2">
+					<!-- Small Size: grid grid-cols-2 gap-12 w-[60%] -->
+
+					<!-- 1st -->
+					<div class="flex items-center justify-between py-4">
+						
+						<!-- Player Name -->
+						<div class="flex items-center gap-5">
+							<span class="prize-1">1</span>
+							<span class="text-xl font-medium">Jason S.K</span>
+						</div>
+						<!-- Points Earned -->			
+						<div class="result-win">
+							<span class="text-4xl">+10</span>
+							<i class="fas fa-arrow-up text-3xl"></i>
+						</div>
+					</div>
+
+					<!-- 2nd -->
+					<div class="flex items-center justify-between py-4">
+						
+						<!-- Player Name -->
+						<div class="flex items-center gap-5">
+							<span class="prize-2">2</span>
+							<span class="text-xl font-medium">Donald</span>
+						</div>
+						<!-- Points Earned -->			
+						<div class="result-win">
+							<span class="text-4xl">+5</span>
+							<i class="fas fa-arrow-up text-3xl"></i>
+						</div>
+					</div>
+					
+					<!-- 3rd -->
+					<div class="flex items-center justify-between py-4">
+						
+						<!-- Player Name -->
+						<div class="flex items-center gap-5">
+							<span class="prize-3">3</span>
+							<span class="text-xl font-medium">Michael</span>
+						</div>
+						<!-- Points Earned -->			
+						<div class="result-lose">
+							<span class="text-4xl">-5</span>
+							<i class="fas fa-arrow-down text-3xl"></i>
+						</div>
+					</div>
+
+					<!-- 4th -->
+					<div class="flex items-center justify-between py-4">
+						
+						<!-- Player Name -->
+						<div class="flex items-center gap-5">
+							<span class="prize-4">4</span>
+							<span class="text-xl font-medium">Mira</span>
+						</div>
+						<!-- Points Earned -->			
+						<div class="result-lose">
+							<span class="text-4xl">-10</span>
+							<i class="fas fa-arrow-down text-3xl"></i>
+						</div>
+					</div>
+
+				</section>
+
+				<!-- Exit Game Button -->
+				<button class="button-primary">Exit</button>
+			</div>
+		</main>
+	</div>
+
+</body>
+</html>

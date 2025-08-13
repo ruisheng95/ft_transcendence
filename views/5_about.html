@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5_About</title>
+    <link rel="stylesheet" href="../style/output.css">
+</head>
+
+
+<body class="bg-gray-950 h-screen text-white overflow-hidden font-inter">
+
+    <!-- About Page Layout -->
+	<div class="h-full bg-gray-100 text-black">
+        
+        <!-- Top banner -->
+        <header class="bg-gray-950 px-12 flex items-center justify-between">
+            <span class="text-3xl font-bold text-white">About</span>
+            <img class="h-20 object-cover" src="../asset/42-KL.png" alt="42-KL">
+        </header>
+
+        <!-- Middle content -->
+        <main class="py-16 px-32 grid grid-cols-4 gap-12 items-center">
+
+            <!-- Project Description -->
+            <div class="col-span-2 space-y-6 text-lg">
+                <p>
+                    Part of the 42 school curriculum, this project focuses on the design, 
+                    development, and deployment of a full-stack web application.
+                </p>   
+                <p>
+                    The application features a modern take on the classic 1970s Pong 
+                    game. Players can compete in real-time matches with friends or 
+                    sharpen their skills in practice mode against AI. Progress can be tracked 
+                    through detailed analytics and game history.
+                </p>
+                <p>
+                    Feeling bored or want a change of pace? Try out our secondary game: 
+                    <br>Tic-Tac-Toe
+                </p>
+		    </div>
+
+            <!-- Frontend Tech -->
+            <div class="bg-white space-y-8 rounded-xl p-8 shadow-lg shadow-gray-200">
+                <span class="text-2xl font-bold">
+                    <i class="fas fa-code text-2xl mr-4"></i>
+                    Frontend
+                </span>
+                <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                    <li>HTML5</li>
+                    <li>Tailwind</li>
+                    <li>Typescript</li>
+                </ul>
+                <div class="flex justify-around">
+                    <img class="w-12 h-12" src="../asset/tailwind.svg" alt="logo">
+                    <img class="w-12 h-12" src="../asset/typescript.svg" alt="logo">
+                </div>
+            </div>
+
+            <!-- Backend Tech -->
+            <div class="bg-white space-y-8 rounded-xl p-8 shadow-lg shadow-gray-200">
+                <span class="text-2xl font-bold">
+                    <i class="fas fa-server text-2xl mr-4"></i>
+                    Backend
+                </span>
+                <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                    <li>Node.js</li>
+                    <li>Fastify</li>
+                    <li>Sqlite</li>
+                </ul>
+                <div class="flex justify-around">
+                    <img class="w-12 h-12" src="../asset/fastify.svg" alt="logo">
+                    <img class="w-12 h-12" src="../asset/sqlite.svg" alt="logo">
+                </div>
+            </div>
+        </main>
+
+        <div class="text-center text-3xl font-bold mb-8">Team members</div>
+
+        <!-- Team members -->
+        <footer class="flex justify-center items-center gap-20">
+
+            <!-- Member1 -->
+            <div class="flex flex-col text-center">
+                <img class="w-24 h-24 rounded-full object-cover" src="../asset/abinti-a.jpg" alt="member">
+                <span class="font-bold text-lg">Adya</span>
+                <span class="text-gray-500">abinti-a</span>
+		    </div>
+            
+            <!-- Member2 -->
+            <div class="flex flex-col text-center">
+                <img class="w-24 h-24 rounded-full object-cover" src="../asset/cheelim.jpg" alt="member">
+                <span class="font-bold text-lg">Chee Kit</span>
+                <span class="text-gray-500">cheelim</span>
+		    </div>
+
+            <!-- Member3 -->
+            <div class="flex flex-col text-center">
+                <img class="w-24 h-24 rounded-full object-cover" src="../asset/jpaul.jpg" alt="member">
+                <span class="font-bold text-lg">Jason</span>
+                <span class="text-gray-500">jpaul</span>
+		    </div>
+            
+            <!-- Member4 -->
+            <div class="flex flex-col text-center">
+                <img class="w-24 h-24 rounded-full object-cover" src="../asset/rng.jpg" alt="member">
+                <span class="font-bold text-lg">Rui Sheng</span>
+                <span class="text-gray-500">rng</span>
+		    </div>
+        </footer>
+
+    </div>
+
+</body>
+</html>

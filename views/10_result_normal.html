@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10_Normal_Result</title>
+    <link rel="stylesheet" href="../style/output.css">
+</head>
+
+
+<body class="bg-gray-950 h-screen text-white overflow-hidden font-inter">
+
+	<!-- Exit Button -->
+	<button class="absolute top-6 right-6 button-remove">
+		<i class="fas fa-times text-black text-xl"></i>
+	</button>
+
+	<!-- Game Layout -->
+	<div class="flex h-screen items-center justify-center">
+		
+		<!-- Court -->
+		<main class="w-[70vw] h-[80vh] relative border-4">
+			
+			<!-- Tournament Layout -->
+			<div class="p-8 h-full flex flex-col justify-between items-center">
+
+				<!-- Tournament Title -->
+				<h1 class="text-3xl font-bold text-center">Match Result</h1>
+
+				<!-- Result Layout -->
+				<section class="grid grid-cols-2 w-full place-items-center">
+					
+					<!-- Left Team -->
+					<div class="w-full space-y-10 px-12">
+
+						<!-- Result Status -->
+						<h2 class="match-lose mb-20">Loser</h2>
+						
+						<!-- Player Details -->
+						<div class="flex items-center justify-between px-4">
+							<span class="text-2xl font-medium">Jason S.K</span>		
+							<div class="result-lose">
+								<span class="text-5xl">-5</span>
+								<i class="fas fa-arrow-down text-5xl"></i>
+							</div>
+						</div>
+
+						<!-- Player Details -->
+						<div class="flex items-center justify-between px-4">
+							<span class="text-2xl font-medium">Donald</span>		
+							<div class="result-lose">
+								<span class="text-5xl">-5</span>
+								<i class="fas fa-arrow-down text-5xl"></i>
+							</div>
+						</div>
+
+					</div>
+
+					<!-- Right Team -->
+					<div class="w-full space-y-10 px-12">
+
+						<!-- Result Status -->
+						<h2 class="match-win mb-20">Winner</h2>
+						
+						<!-- Player Details -->
+						<div class="flex items-center justify-between px-4">
+							<span class="text-2xl font-medium">Trump</span>		
+							<div class="result-win">
+								<span class="text-5xl">+5</span>
+								<i class="fas fa-arrow-up text-5xl"></i>
+							</div>
+						</div>
+
+						<!-- Player Details -->
+						<div class="flex items-center justify-between px-4">
+							<span class="text-2xl font-medium">Michael</span>		
+							<div class="result-win">
+								<span class="text-5xl">+5</span>
+								<i class="fas fa-arrow-up text-5xl"></i>
+							</div>
+						</div>
+
+					</div>
+
+				</section>
+
+				<!-- Exit Game Button -->
+				<button class="button-primary">Exit</button>
+			</div>
+
+		</main>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11_Settings</title>
+    <link rel="stylesheet" href="../style/output.css">
+</head>
+
+
+<body class="bg-gray-950 h-screen text-white overflow-hidden font-inter">
+
+	<!-- Header Layout-->
+	<header class="border-b border-gray-600 flex items-center justify-between">
+		
+		<!-- Left: User profile -->
+		<section class="pl-4 flex space-x-4 items-center">
+			<img class="w-14 h-14 rounded-full" src="../asset/user-avatar.jpg" alt="profile">
+			<span class="text-xl font-semibold">John Lennon</span>
+		</section>
+
+		<!-- Right: Navigation -->
+		<section class="flex">
+
+			<!-- Game Section -->
+			<div class="border-l border-gray-600 pt-1 pb-2 px-4">
+				<div class="text-sm tracking-widest mb-1">Game</div>
+				<div class="flex items-center space-x-2">
+
+					<!-- Pong -->
+					<button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-table-tennis text-xl"></i>
+						<span class="tooltip-1">Pong</span>
+					</button>
+					
+					<!-- XOX -->
+					<button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-th text-xl"></i>
+						<span class="tooltip-1">Tic-Tac-Toe</span>
+					</button>
+					
+				</div>
+			</div>
+
+			<!-- Menu Selection -->
+			<div class="border-l border-gray-600 pt-1 pb-2 px-4">
+				<div class="text-sm tracking-widest mb-1">Menu</div>
+				<div class="flex items-center space-x-2">
+
+					<!-- Friends -->
+					<button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-users text-xl"></i>
+						<span class="tooltip-1">Friends</span>
+					</button>
+					
+					<!-- Profile -->
+					<button class="relative group px-3 py-1 rounded-lg bg-yellow-400">
+						<i class="fas fa-cog text-xl text-black"></i>
+						<span class="tooltip-1">Settings</span>
+					</button>
+
+					<!-- Exit -->
+					 <button class="relative group px-3 py-1 rounded-lg">
+						<i class="fas fa-sign-out-alt text-xl"></i>
+						<span class="tooltip-1">Exit</span>
+					</button>
+					
+				</div>
+			</div>
+		</section>
+	</header>
+
+	<!-- Setting Layout -->
+	<div class="px-20 mt-10 grid grid-cols-2 gap-20 h-4/6">
+		
+		<!-- Edit Profile -->
+		<section>
+			<!-- Subtitle -->
+			<div class="pl-4 space-x-3 mb-2">
+				<i class="fas fa-user text-4xl"></i>
+				<span class="text-2xl font-bold">Profile</span>
+			</div>
+			
+			<!-- Config Setting -->
+			<div class="border border-gray-600 h-full rounded-xl flex flex-col items-center justify-center space-y-12">
+
+				<!-- Avatar -->
+				<div class="relative">
+					<img class="w-32 h-32 rounded-full object-cover" src="../asset/user-avatar.jpg" alt="avatar">
+					<button class="absolute bottom-0 right-0 w-9 h-9 bg-yellow-400 rounded-full border-4 border-gray-950">
+						<i class="fas fa-pen text-sm text-black"></i>
+					</button>
+				</div>
+
+				<!-- Username Input -->
+				<div class="relative w-4/6 text-center text-black">
+					<input
+						class="w-full px-6 py-3 rounded-full text-center font-semibold focus:outline-none focus:ring-2 focus:ring-yellow-400"
+						value="John Lennon" 
+						type="text"
+						maxlength="24"
+						readonly
+						>
+					<i class="fas fa-lock absolute top-1/2 right-4 transform -translate-y-1/2 -translate-x-1/2 "></i>
+				</div>	
+			
+				<!-- Error Message -->
+				<p class="err-msg">
+					Error: Input validation message
+				</p>
+
+				<button class="button-primary">Edit</button>
+
+			</div>
+		</section>
+
+		<!-- Edit Language -->
+		<section>
+			<!-- Subtitle -->
+			<div class="pl-4 space-x-3 mb-2">
+				<i class="fas fa-language text-4xl"></i>
+				<span class="text-2xl font-bold">Language</span>
+			</div>
+			
+			<!-- Config Setting -->
+			<div class="border border-gray-600 h-full rounded-xl p-12 space space-y-12">
+
+				<!-- English -->
+				<label class="group flex items-center space-x-3 cursor-pointer">
+					<input class="radio-language"
+						type="radio"
+						name="language" 
+						value="english" 
+						checked >
+					<span class="text-2xl">English</span>
+            	</label>
+
+			
+				<!-- Malay -->
+				<label class="group flex items-center space-x-3 cursor-pointer">
+					<input class="radio-language"
+						type="radio"
+						name="language" 
+						value="malay" >
+					<span class="text-2xl">Malay</span>
+            	</label>
+
+				<!-- Mandrin -->
+				<label class="group flex items-center space-x-3 cursor-pointer">
+					<input class="radio-language"
+						type="radio"
+						name="language" 
+						value="mandarin" >
+					<span class="text-2xl">普通话</span>
+            	</label>
+
+			</div>
+		</section>
+	</div>
+
+</body>
+</html>
