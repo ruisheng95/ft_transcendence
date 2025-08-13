@@ -420,8 +420,6 @@ export function online_2v2_play()
 				
 				init_positions();
 				render_positions();
-				
-				start_the_fkin_game();
 			}
 		}, 1000);
 	}

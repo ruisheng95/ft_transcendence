@@ -6,11 +6,11 @@ export const defaultGameSetting2v2 = {
   board_border_width: 4,
   block_height: 75, // Smaller paddles for 2v2
   block_width: 10,
-  player_speed: 10,
+  player_speed: 5, 
   player_indent: 20,
   ball_len: 15,
-  dy: 4,
-  dx: 4,
+  dy: 2, 
+  dx: 2,
 };
 
 export class GameInstance2v2 {
