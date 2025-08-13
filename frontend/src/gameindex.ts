@@ -29,18 +29,23 @@ import { WS } from "./class/WS.ts";
 
 export function index_init()
 {
-
+    let websocketKeepAliveTimeout: number | undefined = undefined;
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
 
 	socket.addEventListener("message", process_msg_from_socket);
 	socket.addEventListener("close", (event) => {
-	if (!event.wasClean) {
-		// window.location.href = "/index.html";
-		display_login_page();
-	}
+		if (!event.wasClean) {
+			// window.location.href = "/index.html";
+			display_login_page();
+		}
+		clearInterval(websocketKeepAliveTimeout);
 	});
 	socket.addEventListener("open", () => {
-	socket.send(JSON.stringify({ type: "get_player_profile" }));
+		socket.send(JSON.stringify({ type: "get_player_profile" }));
+		websocketKeepAliveTimeout = setInterval(() => {
+			socket.send("{}");
+			// WebSocket will auto logout if no data is sent in 1 minute. Set send empty message of interval of every 10 seconds
+		}, 10000);
 	});
 
 	//

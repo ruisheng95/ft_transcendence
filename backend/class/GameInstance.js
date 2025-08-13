@@ -1,4 +1,3 @@
-// import fastify from "fastify"; //modified by ck
 import { MsgType } from "./MessageType.js";
 import { GameInstance2v2 } from "./GameInstance2v2.js";
 
@@ -46,10 +45,9 @@ export class GameInstance {
     leftplayer_down: false,
   };
 
-  constructor(fastify, players_emails)
-  {
-  	this.#fastify = fastify;
-	this.#emailsArray = players_emails;
+  constructor(fastify, players_emails) {
+    this.#fastify = fastify;
+    this.#emailsArray = players_emails;
   }
 
   #sendJson(json) {
@@ -155,11 +153,17 @@ export class GameInstance {
       clearInterval(this.#game_interval_id);
       this.#sendJson({ type: MsgType.GAME_OVER, winner: winner_p });
 
-	  //update db
-	  if(this.#ballX <= this.#ball_len / 2)
-		this.#update_playerstats_aftergame(this.#emailsArray[1], this.#emailsArray[0]);
-	  else
-		this.#update_playerstats_aftergame(this.#emailsArray[0], this.#emailsArray[1]);
+      //update db
+      if (this.#ballX <= this.#ball_len / 2)
+        this.#update_playerstats_aftergame(
+          this.#emailsArray[1],
+          this.#emailsArray[0]
+        );
+      else
+        this.#update_playerstats_aftergame(
+          this.#emailsArray[0],
+          this.#emailsArray[1]
+        );
     } else {
       if (
         !this.#game_hit_lock &&
@@ -200,12 +204,16 @@ export class GameInstance {
       //send game state to frontend
       const gameState = {
         type: MsgType.GAME_UPDATE,
-        ballX: this.#ballX,
-        ballY: this.#ballY,
-        leftplayerY: this.#leftplayerY,
-        rightplayerY: this.#rightplayerY,
-        speed_x: this.#dx,
-        speed_y: this.#dy,
+        // Send in this format:
+        // [ballX, ballY, leftPlayerY, rightPlayerY, speed_x, speed_y]
+        d: [
+          parseFloat(this.#ballX.toFixed(2)),
+          parseFloat(this.#ballY.toFixed(2)),
+          this.#leftplayerY,
+          this.#rightplayerY,
+          parseFloat(this.#dx.toFixed(2)),
+          parseFloat(this.#dy.toFixed(2)),
+        ],
       };
       this.#sendJson(gameState);
     }
@@ -256,7 +264,6 @@ export class GameInstance {
         ) {
           if (index === 0) {
             // Left
-			
             if (key === "w" || key === "ArrowUp") {
               this.#player_movement.leftplayer_up = type === "keydown";
             } else if (key === "s" || key === "ArrowDown") {
@@ -288,27 +295,32 @@ export class GameInstance {
 
   //functions ck coded:
 
-  #update_playerstats_aftergame(winner_email, loser_email)
-  {
-	//update winner
-	this.#fastify.betterSqlite3
-	.prepare("UPDATE USER SET TOTAL_WIN = TOTAL_WIN + 1, WINNING_STREAK = WINNING_STREAK + 1, RATING = RATING + 5 WHERE EMAIL = ?")
-	.run(winner_email);
+  #update_playerstats_aftergame(winner_email, loser_email) {
+    //update winner
+    this.#fastify.betterSqlite3
+      .prepare(
+        "UPDATE USER SET TOTAL_WIN = TOTAL_WIN + 1, WINNING_STREAK = WINNING_STREAK + 1, RATING = RATING + 5 WHERE EMAIL = ?"
+      )
+      .run(winner_email);
 
-	//update loser
-	this.#fastify.betterSqlite3
-	.prepare("UPDATE USER SET TOTAL_LOSE = TOTAL_LOSE + 1, WINNING_STREAK = 0, RATING = CASE WHEN RATING > 0 THEN RATING - 5 ELSE 0 END WHERE EMAIL = ?")
-	.run(loser_email);
+    //update loser
+    this.#fastify.betterSqlite3
+      .prepare(
+        "UPDATE USER SET TOTAL_LOSE = TOTAL_LOSE + 1, WINNING_STREAK = 0, RATING = CASE WHEN RATING > 0 THEN RATING - 5 ELSE 0 END WHERE EMAIL = ?"
+      )
+      .run(loser_email);
 
-	//update match history
-	const curr_date = new Date().toLocaleDateString(); // 8/5/2025 <- prints in this format
-	this.#fastify.betterSqlite3
-	.prepare("INSERT INTO PONG_MATCH (date, match_type, user1_email, user1_result, user2_email, user2_result) VALUES (?, ?, ?, ?, ?, ?)")
-	.run(curr_date, "pong 1v1", winner_email, 1, loser_email, 0);
+    //update match history
+    const curr_date = new Date().toLocaleDateString(); // 8/5/2025 <- prints in this format
+    this.#fastify.betterSqlite3
+      .prepare(
+        "INSERT INTO PONG_MATCH (date, match_type, user1_email, user1_result, user2_email, user2_result) VALUES (?, ?, ?, ?, ?, ?)"
+      )
+      .run(curr_date, "pong 1v1", winner_email, 1, loser_email, 0);
 
-	//personal notes:
-	// fields: TOTAL_WIN TOTAL_LOSE WINNING_STREAK RATING
-	// case when else statement = if else statement (CASE WHEN condition THEN value ELSE other_value END)
+    //personal notes:
+    // fields: TOTAL_WIN TOTAL_LOSE WINNING_STREAK RATING
+    // case when else statement = if else statement (CASE WHEN condition THEN value ELSE other_value END)
   }
 }
 
@@ -325,7 +337,7 @@ class Player {
     this.connection = connection;
     this.gameNoOfPlayers = gameNoOfPlayers;
     this.request = request;
-	this.username = username;
+    this.username = username;
   }
 }
 
@@ -333,9 +345,8 @@ export class OnlineMatchmaking {
   #playerArray = [];
   #fastify = null;
 
-  constructor(fastify)
-  {
-	this.#fastify = fastify;
+  constructor(fastify) {
+    this.#fastify = fastify;
   }
 
   registerPlayer(email, connection, gameNoOfPlayers, request, username) {
@@ -363,8 +374,7 @@ export class OnlineMatchmaking {
     
     const pendingPlayerLobby = playersWaitingForSameMode;
     const gameLobbySize = gameNoOfPlayers;
-    if (pendingPlayerLobby.length === gameLobbySize) {
-      // Start game - choose appropriate game instance based on lobby size
+    if (pendingPlayerLobby.length === gameLobbySize) {   
       let gameInstance;
       if (gameLobbySize === 2) {
         gameInstance = new GameInstance(this.#fastify, pendingPlayerLobby.map((player) => player.email));
@@ -392,24 +402,39 @@ export class OnlineMatchmaking {
             // ...defaultGameSetting,
             // playerId,
 
-			type: MsgType.MATCHMAKING_STATUS,
-			status: "Lobby full",
-			players: JSON.stringify(pendingPlayerLobby.map((player) => player.username))
+            type: MsgType.MATCHMAKING_STATUS,
+            status: "Lobby full",
+            players: JSON.stringify(
+              pendingPlayerLobby.map((player) => player.username)
+            ),
           })
         );
       });
     } else {
+
       // push pending status to ALL players in the lobby
-      const statusMessage = JSON.stringify({
-        type: MsgType.MATCHMAKING_STATUS,
-        status: "Waiting for players",
-        players: JSON.stringify(pendingPlayerLobby.map((player) => player.username)),
-      });
+//       const statusMessage = JSON.stringify({
+//         type: MsgType.MATCHMAKING_STATUS,
+//         status: "Waiting for players",
+//         players: JSON.stringify(pendingPlayerLobby.map((player) => player.username)),
+//       });
       
-      // Send update to all players in the current lobby
-      pendingPlayerLobby.forEach((player) => {
-        player.connection.send(statusMessage);
-      });
+//       // Send update to all players in the current lobby
+//       pendingPlayerLobby.forEach((player) => {
+//         player.connection.send(statusMessage);
+//       });
+
+      // push pending status
+      connection.send(
+        JSON.stringify({
+          type: MsgType.MATCHMAKING_STATUS,
+          status: "Waiting for players",
+          players: JSON.stringify(
+            pendingPlayerLobby.map((player) => player.username)
+          ),
+        })
+      );
+
     }
   }
 

@@ -8,16 +8,21 @@
 // rmb to send back the friends list whenever it changes
 
 const root = async function (fastify) {
+  const emailToWebsocketMap = {};
   fastify.get(
     "/ws_profile",
     { websocket: true, onRequest: fastify.verify_session },
     async (connection, request) => {
-      connection.on("message", recv_msg);
+    connection.on("message", recv_msg);
+    emailToWebsocketMap[fastify.get_email_by_session(request)] = connection;
+    refresh_all_friend_list();
       //functions
 
       function recv_msg(message) {
         const message_obj = JSON.parse(message.toString());
-        request.log.info(message_obj, "Received:");
+        if (Object.keys(message_obj).length !== 0) {
+          request.log.info(message_obj, "Received:");
+        }
 
         if (message_obj.type === "get_player_profile") send_player_profile();
         else if (message_obj.type === "get_player_friends") send_fren_list();
@@ -130,6 +135,7 @@ const root = async function (fastify) {
                 username: friend.USERNAME,
                 pfp: friend.AVATAR,
                 status: isOnline ? "online" : "offline",
+                email: row.FRIEND_EMAIL,
             };
         });
           return friends;
@@ -506,10 +512,44 @@ const root = async function (fastify) {
               connection.send(JSON.stringify(error_obj));
           }
       }
+
+      function refresh_all_friend_list(is_logout) {
+        const email = fastify.get_email_by_session(request);
+
+        const emailsToNotify = [
+          email,
+          ...get_friend_list_data(email)
+            .filter((friend) => friend.status === "online")
+            .map((friend) => friend.email),
+        ];
+        if (is_logout) {
+          // Remove first email, no need to notify logged out email
+          emailsToNotify.shift();
+        }
+        for (const innerEmail of emailsToNotify) {
+          const friends = get_friend_list_data(innerEmail);
+          if (is_logout) {
+            // Notify friends that user is offline now
+            friends.forEach((friend) => {
+              if (friend.email === email) {
+                friend.status = "offline";
+              }
+            });
+          }
+          const friends_obj = {
+            type: "player_friends",
+            friends: friends,
+          };
+          const connection = emailToWebsocketMap[innerEmail];
+          connection.send(JSON.stringify(friends_obj));
+        }
+      }
     
       function logout() {
+        refresh_all_friend_list(true);
         const session = request.query.session;
         delete fastify.conf.session[session];
+        delete emailToWebsocketMap[fastify.get_email_by_session(request)];
       }
     }
   );
