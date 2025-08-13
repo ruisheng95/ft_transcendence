@@ -127,18 +127,18 @@ export class GameInstance2v2 {
       clearInterval(this.#game_interval_id);
       this.#sendJson({ type: MsgType.GAME_OVER, winner: winning_team });
 
-      // Update database for team-based scoring
+      // Update database
       if (this.#ballX <= this.#ball_len / 2) {
         // Team 2 wins (right side)
         this.#update_team_stats_aftergame(
-          [this.#emailsArray[2], this.#emailsArray[3]], // winners (team 2)
-          [this.#emailsArray[0], this.#emailsArray[1]]  // losers (team 1)
+          [this.#emailsArray[2], this.#emailsArray[3]],
+          [this.#emailsArray[0], this.#emailsArray[1]] 
         );
       } else {
         // Team 1 wins (left side)
         this.#update_team_stats_aftergame(
-          [this.#emailsArray[0], this.#emailsArray[1]], // winners (team 1)
-          [this.#emailsArray[2], this.#emailsArray[3]]  // losers (team 2)
+          [this.#emailsArray[0], this.#emailsArray[1]],
+          [this.#emailsArray[2], this.#emailsArray[3]]  
         );
       }
     } else {
@@ -146,26 +146,30 @@ export class GameInstance2v2 {
       if (
         !this.#game_hit_lock &&
         (
-          // Left team player 1 paddle hit (at player_indent position)
-          (this.#ballX <= this.#player_indent + this.#block_width + Math.abs(this.#dx) &&
+          // Left team player 1 paddle hit (at player_indent position) - ball coming from right
+          (this.#dx < 0 && 
+           this.#ballX <= this.#player_indent + this.#block_width + Math.abs(this.#dx) &&
            this.#ballX >= this.#player_indent - Math.abs(this.#dx) &&
            this.#ballY + this.#ball_len >= this.#leftplayer1Y - 2 &&
            this.#ballY <= this.#leftplayer1Y + this.#block_height + 2) ||
           
-          // Left team player 2 paddle hit (at 8 * player_indent position)
-          (this.#ballX <= (8 * this.#player_indent) + this.#block_width + Math.abs(this.#dx) &&
+          // Left team player 2 paddle hit (at 8 * player_indent position) - ball coming from right
+          (this.#dx < 0 &&
+           this.#ballX <= (8 * this.#player_indent) + this.#block_width + Math.abs(this.#dx) &&
            this.#ballX >= (8 * this.#player_indent) - Math.abs(this.#dx) &&
            this.#ballY + this.#ball_len >= this.#leftplayer2Y - 2 &&
            this.#ballY <= this.#leftplayer2Y + this.#block_height + 2) ||
           
-          // Right team player 1 paddle hit (at 8 * player_indent from right)
-          (this.#ballX + this.#ball_len >= this.#boardWidth - (8 * this.#player_indent) - this.#block_width - Math.abs(this.#dx) &&
+          // Right team player 1 paddle hit (at 8 * player_indent from right) - ball coming from left
+          (this.#dx > 0 &&
+           this.#ballX + this.#ball_len >= this.#boardWidth - (8 * this.#player_indent) - this.#block_width - Math.abs(this.#dx) &&
            this.#ballX + this.#ball_len <= this.#boardWidth - (8 * this.#player_indent) + Math.abs(this.#dx) &&
            this.#ballY + this.#ball_len >= this.#rightplayer1Y - 2 &&
            this.#ballY <= this.#rightplayer1Y + this.#block_height + 2) ||
           
-          // Right team player 2 paddle hit (at player_indent from right)
-          (this.#ballX + this.#ball_len >= this.#boardWidth - this.#player_indent - this.#block_width - Math.abs(this.#dx) &&
+          // Right team player 2 paddle hit (at player_indent from right) - ball coming from left
+          (this.#dx > 0 &&
+           this.#ballX + this.#ball_len >= this.#boardWidth - this.#player_indent - this.#block_width - Math.abs(this.#dx) &&
            this.#ballX + this.#ball_len <= this.#boardWidth - this.#player_indent + Math.abs(this.#dx) &&
            this.#ballY + this.#ball_len >= this.#rightplayer2Y - 2 &&
            this.#ballY <= this.#rightplayer2Y + this.#block_height + 2)
@@ -204,7 +208,6 @@ export class GameInstance2v2 {
   }
 
   registerPlayer(connection) {
-    // Max 4 players for 2v2
     if (this.#connectionArray.length == 4) {
       return -1;
     }
@@ -232,7 +235,7 @@ export class GameInstance2v2 {
     this.#ballX = this.#boardWidth / 2;
     this.#ballY = this.#boardHeight / 2;
     
-    // Position players: 2 on each side, vertically distributed
+    // Position players: 2 on each side
     const quarterHeight = this.#boardHeight / 4;
     this.#leftplayer1Y = quarterHeight - this.#block_height / 2;
     this.#leftplayer2Y = 3 * quarterHeight - this.#block_height / 2;
