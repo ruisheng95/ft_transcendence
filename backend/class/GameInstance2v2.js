@@ -246,36 +246,39 @@ export class GameInstance2v2 {
   performKeyPress(type, key, connection) {
     this.#connectionArray.forEach((conn, index) => {
       if (conn === connection) {
-        // Player 0 (left team, player 1) - W/S keys
-        if (index === 0) {
-          if (key === "w") {
-            this.#player_movement.leftplayer1_up = type === "keydown";
-          } else if (key === "s") {
-            this.#player_movement.leftplayer1_down = type === "keydown";
+        if (
+          key === "w" ||
+          key === "s" ||
+          key === "ArrowUp" ||
+          key === "ArrowDown" 
+        ) {
+          if (index === 0) {
+            if (key === "w" || key === "ArrowUp") {
+              this.#player_movement.leftplayer1_up = type === "keydown";
+            } else if (key === "s" || key === "ArrowDown") {
+              this.#player_movement.leftplayer1_down = type === "keydown";
+            }
           }
-        }
-        // Player 1 (left team, player 2) - Q/A keys
-        else if (index === 1) {
-          if (key === "q") {
-            this.#player_movement.leftplayer2_up = type === "keydown";
-          } else if (key === "a") {
-            this.#player_movement.leftplayer2_down = type === "keydown";
+          else if (index === 1) {
+            if (key === "w" || key === "ArrowUp") {
+              this.#player_movement.leftplayer2_up = type === "keydown";
+            } else if (key === "s" || key === "ArrowDown") {
+              this.#player_movement.leftplayer2_down = type === "keydown";
+            }
           }
-        }
-        // Player 2 (right team, player 1) - Arrow Up/Down
-        else if (index === 2) {
-          if (key === "ArrowUp") {
-            this.#player_movement.rightplayer1_up = type === "keydown";
-          } else if (key === "ArrowDown") {
-            this.#player_movement.rightplayer1_down = type === "keydown";
+          else if (index === 2) {
+            if (key === "w" || key === "ArrowUp") {
+              this.#player_movement.rightplayer1_up = type === "keydown";
+            } else if (key === "s" || key === "ArrowDown") {
+              this.#player_movement.rightplayer1_down = type === "keydown";
+            }
           }
-        }
-        // Player 3 (right team, player 2) - I/K keys
-        else if (index === 3) {
-          if (key === "i") {
-            this.#player_movement.rightplayer2_up = type === "keydown";
-          } else if (key === "k") {
-            this.#player_movement.rightplayer2_down = type === "keydown";
+          else if (index === 3) {
+            if (key === "w" || key === "ArrowUp") {
+              this.#player_movement.rightplayer2_up = type === "keydown";
+            } else if (key === "s" || key === "ArrowDown") {
+              this.#player_movement.rightplayer2_down = type === "keydown";
+            }
           }
         }
       }
