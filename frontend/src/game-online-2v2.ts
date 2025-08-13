@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { add_history, disable_navigation, enable_navigation, terminate_history } from "./spa-navigation";
+import { add_history, disable_navigation, enable_navigation } from "./spa-navigation";
 
-let first_call_flag = false;
+// let first_call_flag = false;
 
 function add_2v2_popups_to_dom() {
 	if (document.querySelector("#online2v2_matchmaking_popup")) {
@@ -108,12 +108,12 @@ export function online_2v2_play()
 	const rightplayer1 = document.querySelector<HTMLDivElement>("#online2v2_rightplayer1");
 	const rightplayer2 = document.querySelector<HTMLDivElement>("#online2v2_rightplayer2");
 	const ball = document.querySelector<HTMLDivElement>("#online2v2_game_ball");
-	const close_game_button = document.querySelector<HTMLButtonElement>("#online_close_game");
+	// const close_game_button = document.querySelector<HTMLButtonElement>("#online_close_game");
 	const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 
 	//bruh stupid ts
-	if(!board || !leftplayer1 || !leftplayer2 || !rightplayer1 || !rightplayer2 || !ball || !start_game_button || !close_game_button || !game_popup)
-		throw new Error("Required game elements not found");
+	if(!board || !leftplayer1 || !leftplayer2 || !rightplayer1 || !rightplayer2 || !ball || !start_game_button || !game_popup)
+		throw new Error("Required game elements not found 4");
 
 	//vars
 	let ball_len = 0, ballX = 0, ballY = 0, dy = 0, dx = 0,
@@ -139,17 +139,17 @@ export function online_2v2_play()
 	document.addEventListener('keyup', handleKeyUp);
 	start_game_button.addEventListener("click", start_the_fkin_game)
 
-	if(first_call_flag == false)
-	{
-		first_call_flag = true;
-		close_game_button.addEventListener("click", () => {
-			game_popup.classList.add("hidden");
-			playing = false;
-			cleanup_2v2_ui();
-			terminate_history();
-			socket.close();
-		});
-	}
+	// if(first_call_flag == false)
+	// {
+	// 	first_call_flag = true;
+	// 	close_game_button.addEventListener("click", () => {
+	// 		game_popup.classList.add("hidden");
+	// 		playing = false;
+	// 		cleanup_2v2_ui();
+	// 		terminate_history();
+	// 		socket.close();
+	// 	});
+	// }
 
 	setup_2v2_ui();
 
@@ -316,9 +316,8 @@ export function online_2v2_play()
 		const team2_names_div = document.querySelector<HTMLDivElement>("#online2v2_mm_team2_names");
 		const mm_status_div = document.querySelector<HTMLDivElement>("#online2v2_mm_status");
 		const exit_mm = document.querySelector<HTMLButtonElement>("#online2v2_exit_matchmaking");
-		const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
 
-		if(!online_play_menus_popup || !exit_mm || !mm_status_div || !matchmaking_popup || !team1_names_div || !team2_names_div) 
+		if(!exit_mm || !mm_status_div || !matchmaking_popup || !team1_names_div || !team2_names_div) 
 			throw new Error("Display matchmaking popup elements not found");
 
 		const players = JSON.parse(msg_obj.players);
@@ -386,7 +385,6 @@ export function online_2v2_play()
 			exit_mm.classList.add("hidden");
 		}
 
-		online_play_menus_popup.classList.add("hidden");
 		matchmaking_popup.classList.remove("hidden");
 	}
 

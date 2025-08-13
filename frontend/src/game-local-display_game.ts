@@ -91,7 +91,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 
 	//bruh stupid ts
 	if(!board || !rightplayer || !leftplayer || !ball || !start_game_button || !close_game_button || !game_popup)
-		throw new Error("Required game elements not found");
+		throw new Error("Required game elements not found 2");
 
 	//playing status
 	let playing = true;

@@ -57,7 +57,7 @@ export function online_1v1_play()
 
 	//bruh stupid ts
 	if(!board || !rightplayer || !leftplayer || !ball || !start_game_button || !close_game_button || !game_popup)
-		throw new Error("Required game elements not found");
+		throw new Error("Required game elements not found 3");
 
 	//vars
 	let ball_len = 0, ballX = 0, ballY = 0, dy = 0, dx = 0,
