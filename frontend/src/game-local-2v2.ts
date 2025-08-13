@@ -2,6 +2,10 @@
 import "./gamestyle.css";
 import { add_history } from "./spa-navigation";
 
+//important notes:
+// if paddles stop appearing again for some reason, hardcode the paddle height to 100px or change player_height = 150
+// somehow it will renders
+
 //local 2v2 game
 export function local_2v2_game_setup()
 {
@@ -148,7 +152,7 @@ function local_2v2_game_init()
 	const board_border_width = 4;
 
 	//players settings
-	const block_height = 150;
+	const block_height = 100;
 	const block_width = 10;
 	const player_speed = 5;
 	const player1Y = boardHeight / 4 - block_height / 2;
@@ -203,10 +207,10 @@ function local_2v2_game_init()
 		<div id="local2v2_board" class="bg-black relative border-4 border-white w-[${boardWidth}px] h-[${boardHeight}px]">
 			<div id="local2v2_center_line" class="w-[1px] h-full border-l-4 border-dashed border-gray-500 mx-auto"></div>
 			<div id="local2v2_ball" class="bg-yellow-300 rounded-full absolute" style="width: ${ball_len}px; height: ${ball_len}px; left: ${ballX}px; top: ${ballY}px;"></div>
-			<div id="local2v2_player1" class="bg-red-500 rounded absolute w-[${block_width}px] h-[${block_height}px] left-[${player_indent}px] top-[${player1Y}px]"></div>
-			<div id="local2v2_player2" class="bg-green-500 rounded absolute w-[${block_width}px] h-[${block_height}px] left-[${8 * player_indent}px] top-[${player2Y}px]"></div>
-			<div id="local2v2_player3" class="bg-blue-500 rounded absolute w-[${block_width}px] h-[${block_height}px] left-[calc(100%-${8 * player_indent}px-${block_width}px] top-[${player3Y}px]"></div>
-			<div id="local2v2_player4" class="bg-pink-500 rounded absolute w-[${block_width}px] h-[${block_height}px] left-[calc(100%-${player_indent}px-${block_width}px)] top-[${player4Y}px]"></div>
+			<div id="local2v2_player1" class="bg-red-500 rounded absolute w-[${block_width}px] h-[100px] left-[${player_indent}px] top-[${player1Y}px]"></div>
+			<div id="local2v2_player2" class="bg-green-500 rounded absolute w-[${block_width}px] h-[100px] left-[${8 * player_indent}px] top-[${player2Y}px]"></div>
+			<div id="local2v2_player3" class="bg-blue-500 rounded absolute w-[${block_width}px] h-[100px] left-[calc(100%-${8 * player_indent}px-${block_width}px] top-[${player3Y}px]"></div>
+			<div id="local2v2_player4" class="bg-pink-500 rounded absolute w-[${block_width}px] h-[100px] left-[calc(100%-${player_indent}px-${block_width}px)] top-[${player4Y}px]"></div>
 		</div>
 
 		<!-- Right side controls -->
