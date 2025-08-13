@@ -58,6 +58,20 @@ function setup_2v2_ui() {
 	team2_display.classList.remove("hidden");
 }
 
+function cleanup_2v2_ui() {
+	const team1_display = document.querySelector("#online2v2_team1_name_display");
+	const team2_display = document.querySelector("#online2v2_team2_name_display");
+	
+	if (team1_display) team1_display.classList.add("hidden");
+	if (team2_display) team2_display.classList.add("hidden");
+	
+	// Restore the shared title to 1v1
+	const shared_title = document.querySelector("#online_game_popup h1");
+	if (shared_title) {
+		shared_title.innerHTML = "<center>Online 1v1 Game</center>";
+	}
+}
+
 export function online_2v2_play()
 {
 	add_2v2_popups_to_dom();
@@ -131,6 +145,7 @@ export function online_2v2_play()
 		close_game_button.addEventListener("click", () => {
 			game_popup.classList.add("hidden");
 			playing = false;
+			cleanup_2v2_ui();
 			terminate_history();
 			socket.close();
 		});
@@ -323,6 +338,7 @@ export function online_2v2_play()
 			exit_mm.addEventListener("click", () => {
 				matchmaking_popup.classList.add("hidden");
 				socket.close();
+				cleanup_2v2_ui();
 				add_history("");
 			});
 
@@ -451,6 +467,7 @@ export function online_2v2_play()
 		game_popup.classList.add("hidden");
 
 		socket.close();
+		cleanup_2v2_ui();
 
 		close_online_2v2_winner_popup_button.addEventListener("click", () => {
 			online2v2_winner_popup.classList.add("hidden");
