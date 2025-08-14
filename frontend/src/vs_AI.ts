@@ -13,11 +13,16 @@ export function vs_AI_game_setup ()
 	const close_vs_AI_winner_popup = document.querySelector<HTMLDivElement>("#close_vs_AI_winner_popup");
 	const vs_AI_winner_popup = document.querySelector<HTMLDivElement>("#vs_AI_winner_popup");
 
-	if(!vs_AI_game_button || !game_popup || !close_vs_AI_winner_popup || !vs_AI_winner_popup)
+	const vs_AI_p1_name_display = document.querySelector<HTMLDivElement>("#p1_name_display");
+	const vs_AI_p2_name_display = document.querySelector<HTMLDivElement>("#p2_name_display");
+
+	if(!vs_AI_game_button || !game_popup || !close_vs_AI_winner_popup || !vs_AI_winner_popup || !vs_AI_p2_name_display || !vs_AI_p1_name_display)
 		throw new Error("Error vs_AI_game buttons not found");
 
 	vs_AI_game_button.addEventListener("click", () => {
 		game_popup.classList.remove("hidden");
+		vs_AI_p1_name_display.innerHTML = "player";
+		vs_AI_p2_name_display.innerHTML = "Ai";
 		display_game(handle_game_end_vs_AI, true);
 		add_history("vs_AI_game");
 	});
