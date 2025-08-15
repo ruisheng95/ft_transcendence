@@ -239,8 +239,8 @@ export class GameInstance2v2 {
     const quarterHeight = this.#boardHeight / 4;
     this.#leftplayer1Y = quarterHeight - this.#block_height / 2;
     this.#leftplayer2Y = 3 * quarterHeight - this.#block_height / 2;
-    this.#rightplayer1Y = quarterHeight - this.#block_height / 2;
-    this.#rightplayer2Y = 3 * quarterHeight - this.#block_height / 2;
+    this.#rightplayer1Y = 3 * quarterHeight - this.#block_height / 2; 
+    this.#rightplayer2Y = quarterHeight - this.#block_height / 2; 
 
     // Start the game loop
     this.#game_interval_id = setInterval(this.#frame.bind(this), 10);

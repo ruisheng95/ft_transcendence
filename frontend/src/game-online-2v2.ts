@@ -280,8 +280,8 @@ export function online_2v2_play()
 			const quarterHeight = boardHeight / 4;
 			leftplayer1Y = quarterHeight - block_height / 2;
 			leftplayer2Y = 3 * quarterHeight - block_height / 2;
-			rightplayer1Y = quarterHeight - block_height / 2;
-			rightplayer2Y = 3 * quarterHeight - block_height / 2;
+			rightplayer1Y = 3 * quarterHeight - block_height / 2; 
+			rightplayer2Y = quarterHeight - block_height / 2;
 		}
 	}
 
