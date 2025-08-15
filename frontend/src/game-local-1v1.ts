@@ -4,6 +4,8 @@ import { display_game } from "./game-local-display_game";
 import { add_history } from "./spa-navigation";
 
 
+const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
+  String.raw({ raw: strings }, ...values);
 
 //local 1v1 game
 export function local_1v1_game_setup()
@@ -60,17 +62,29 @@ export function local_1v1_game_setup()
 	});
 }
 
-const local1v1_winner_popup = `
-	<div id="local1v1_winner_popup" class="border border-2 border-white flex flex-col justify-center items-center hidden fixed bg-black bg-opacity-90 inset-0" style="background-color: rgba(0,0,0,0.9)">
-		<div id="local1v1_popup_screen" class="bg-black border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center">
+const local1v1_winner_popup = html`
+	<div id="local1v1_winner_popup" class="bg-black flex h-screen items-center justify-center hidden fixed inset-0 text-white inter-font">
+		<div id="local1v1_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
-			<div class="text-center">
-				<h1 class="text-[50px] text-white">WINNER! 🎉:</h1>
-				<div id="local1v1_winner_name" class="text-[40px] font-bold mb-6 text-white"></div>
-				<div class="text-[50px] mb-6 text-white">Congratulations</div>
-			</div>
+			<!-- Tournament Title -->
+			<h1 class="text-5xl font-bold text-center">Match Result</h1>	
+			
+			<!-- Result Layout -->
+			<section class="grid grid-cols-2 w-full place-items-center">
+				<!-- Left -->
+				<div class="w-full space-y-10 px-12 text-center">
+					<div id="local1v1_left_result" class="mb-20"></div>
+					<div id="local1v1_left_name" class="text-4xl font-bold"></div>	
+				</div>
+				<!-- Right -->
+				<div class="w-full space-y-10 px-12 text-center">
+					<div id="local1v1_right_result" class="mb-20"></div>
+					<div id="local1v1_right_name" class="text-4xl font-bold"></div>	
+				</div>
+			</section>
 
-			<button id="close_local1v1_winner_popup" class="border-1 border-white text-white text-[20px] px-[5px] py-[5px]">close</button>
+			<!-- Exit Game Button -->
+			<button id="close_local1v1_winner_popup"  class="button-primary">Exit</button>
 		</div>
 	</div>
 `
@@ -116,20 +130,32 @@ function verify_name_input(event : Event)
 
 function local1v1_display_winner(gameover_obj : any)
 {
-	const local1v1_winner_div = document.querySelector<HTMLDivElement>("#local1v1_winner_name");
+	const local1v1_left_result = document.querySelector<HTMLDivElement>("#local1v1_left_result");
+	const local1v1_left_name = document.querySelector<HTMLDivElement>("#local1v1_left_name");
+	const local1v1_right_result = document.querySelector<HTMLDivElement>("#local1v1_right_result");
+	const local1v1_right_name = document.querySelector<HTMLDivElement>("#local1v1_right_name");
+
 	const local1v1_winner_popup = document.querySelector<HTMLDivElement>("#local1v1_winner_popup");
 	const p1_name_input_element = document.querySelector<HTMLInputElement>("#local1v1_p1_name_input");
 	const p2_name_input_element = document.querySelector<HTMLInputElement>("#local1v1_p2_name_input");
 	const game_popup = document.querySelector<HTMLDivElement>("#game_popup");
 	
-	if(!game_popup || !local1v1_winner_popup || !local1v1_winner_div || !p1_name_input_element || !p2_name_input_element)
+	if(!game_popup || !local1v1_winner_popup || !p1_name_input_element || !p2_name_input_element
+		|| !local1v1_left_result || !local1v1_left_name || !local1v1_right_result || !local1v1_right_name)
 		throw new Error("Local1v1 winner display elements not found");
-
-	if(gameover_obj.winner == "leftplayer")
-		local1v1_winner_div.innerHTML = `<h1 class="text-white text-[40px]">${p1_name_input_element.value != "" ? p1_name_input_element.value : "Player1"}</h1>`;
-	else
-		local1v1_winner_div.innerHTML = `<h1 class="text-white text-[40px]">${p2_name_input_element.value != "" ? p2_name_input_element.value : "Player2"}</h1>`;
 	
+	local1v1_left_name.innerText = p1_name_input_element.value || "Player1";
+	local1v1_right_name.innerText = p2_name_input_element.value || "Player2";
+
+	if(gameover_obj.winner == "leftplayer") {
+		local1v1_left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+		local1v1_right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+	}
+	else {
+		local1v1_right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+		local1v1_left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+	}
+
 	local1v1_winner_popup.classList.remove("hidden");
 	game_popup.classList.add("hidden");
 

@@ -76,17 +76,31 @@ export function local_2v2_game_setup()
 	});
 }
 
-const local2v2_winner_popup = `
-	<div id="local2v2_winner_popup" class="border border-2 border-white flex flex-col justify-center items-center hidden fixed bg-black bg-opacity-90 inset-0" style="background-color: rgba(0,0,0,0.9)">
-		<div id="local2v2_popup_screen" class="bg-black border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center">
+const local2v2_winner_popup = html`
+	<div id="local2v2_winner_popup" class="bg-black flex h-screen items-center justify-center hidden fixed inset-0 text-white">
+		<div id="local2v2_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
-			<div class="text-center text-white">
-				<h1 class="text-[50px] text-white">WINNER! 🎉:</h1>
-				<div id="local2v2_winner_name" class="text-[40px] font-bold mb-6 text-white"></div>
-				<div class="text-[50px] mb-6 text-white">Congratulations</div>
-			</div>
+			<!-- Tournament Title -->
+			<h1 class="text-5xl font-bold text-center">Match Result</h1>	
+			
+			<!-- Result Layout -->
+			<section class="grid grid-cols-2 w-full place-items-center">
+				<!-- Left -->
+				<div class="w-full space-y-10 px-12 text-center">
+					<div id="local2v2_left_result" class="mb-20"></div>
+					<div id="local2v2_left_name1" class="text-4xl font-bold"></div>
+					<div id="local2v2_left_name2" class="text-4xl font-bold"></div>	
+				</div>
+				<!-- Right -->
+				<div class="w-full space-y-10 px-12 text-center">
+					<div id="local2v2_right_result" class="mb-20"></div>
+					<div id="local2v2_right_name1" class="text-4xl font-bold"></div>
+					<div id="local2v2_right_name2" class="text-4xl font-bold"></div>		
+				</div>
+			</section>
 
-			<button id="close_local2v2_winner_popup" class="border-1 border-white text-white text-[20px] px-[5px] py-[5px]">close</button>
+			<!-- Exit Game Button -->
+			<button id="close_local2v2_winner_popup" class="button-primary">Exit</button>
 		</div>
 	</div>
 `
@@ -371,7 +385,15 @@ function local_2v2_game_init()
 
 	function local2v2_display_winner(gameover_obj : any)
 	{
-		const local2v2_winner_div = document.querySelector<HTMLDivElement>("#local2v2_winner_name");
+
+		const local2v2_left_result = document.querySelector<HTMLDivElement>("#local2v2_left_result");
+		const local2v2_left_name1 = document.querySelector<HTMLDivElement>("#local2v2_left_name1");
+		const local2v2_left_name2 = document.querySelector<HTMLDivElement>("#local2v2_left_name2");
+
+		const local2v2_right_result = document.querySelector<HTMLDivElement>("#local2v2_right_result");
+		const local2v2_right_name1 = document.querySelector<HTMLDivElement>("#local2v2_right_name1");
+		const local2v2_right_name2 = document.querySelector<HTMLDivElement>("#local2v2_right_name2");
+
 		const local2v2_winner_popup = document.querySelector<HTMLDivElement>("#local2v2_winner_popup");
 		const p1_name_input_element = document.querySelector<HTMLInputElement>("#local2v2_p1_name_input");
 		const p2_name_input_element = document.querySelector<HTMLInputElement>("#local2v2_p2_name_input");
@@ -379,13 +401,25 @@ function local_2v2_game_init()
 		const p4_name_input_element = document.querySelector<HTMLInputElement>("#local2v2_p4_name_input");
 		const local_2v2_game_popup = document.querySelector<HTMLDivElement>("#local_2v2_game_popup");
 		
-		if(!local_2v2_game_popup || !local2v2_winner_popup || !local2v2_winner_div || !p1_name_input_element || !p2_name_input_element || !p3_name_input_element || !p4_name_input_element)
+		if(!local_2v2_game_popup || !local2v2_winner_popup || !p1_name_input_element ||
+			!p2_name_input_element || !p3_name_input_element || !p4_name_input_element || 
+			!local2v2_left_result || !local2v2_left_name1 || !local2v2_left_name2 ||
+			!local2v2_right_result || !local2v2_right_name1 || !local2v2_right_name2 )
 			throw new Error("Local2v2 winner display elements not found");
+		
+		local2v2_left_name1.innerText = p1_name_input_element.value || "Player1";
+		local2v2_left_name2.innerText = p2_name_input_element.value || "Player2";
+		local2v2_right_name1.innerText = p3_name_input_element.value || "Player3";
+		local2v2_right_name2.innerText = p4_name_input_element.value || "Player4";
 
-		if(gameover_obj.winner == "leftside")
-			local2v2_winner_div.innerHTML = (p1_name_input_element.value || "player1") + " and " + (p2_name_input_element.value || "player2");
-		else
-			local2v2_winner_div.innerHTML = (p3_name_input_element.value || "player3") + " and " + (p4_name_input_element.value || "player4");
+		if(gameover_obj.winner == "leftside") {
+			local2v2_left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			local2v2_right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+		}
+		else {
+			local2v2_right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			local2v2_left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+		}
 		
 		local2v2_winner_popup.classList.remove("hidden");
 		local_2v2_game_popup.classList.add("hidden");

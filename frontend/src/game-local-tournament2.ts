@@ -224,9 +224,9 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 		close_finalwinner_button.classList.remove("hidden");
 
 		finalwinner_name_display.innerHTML = Tournament_state.final_ranking[0];
-		ranking_1st.innerHTML = `1st ${Tournament_state.final_ranking[0]}`;
-		ranking_2nd.innerHTML = `2nd ${Tournament_state.final_ranking[1]}`;
-		ranking_3rd.innerHTML = `3rd ${Tournament_state.final_ranking[2]}`;
-		ranking_4th.innerHTML = `4th ${Tournament_state.final_ranking[3]}`;
+		ranking_1st.innerText = Tournament_state.final_ranking[0];
+		ranking_2nd.innerText = Tournament_state.final_ranking[1];
+		ranking_3rd.innerText = Tournament_state.final_ranking[2];
+		ranking_4th.innerText = Tournament_state.final_ranking[3];
 	}
 }
