@@ -58,6 +58,8 @@ export function friends_page_setup()
 	open_friends_page_button.addEventListener("click", () => {
 		hide_all_main_pages();
 		friends_popup.classList.remove("hidden");
+		open_friends_page_button.classList.add("bg-yellow-400");
+		open_friends_page_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
 		addfriend_search_bar.value = "";
 		player_list_div.innerHTML = "";
 		if(socket.readyState == WebSocket.OPEN)

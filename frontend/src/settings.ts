@@ -41,6 +41,8 @@ export function settings_setup ()
 	settings_button.addEventListener("click", () => {
 		hide_all_main_pages();
 		settings_popup.classList.remove("hidden");
+		settings_button.classList.add("bg-yellow-400");
+		settings_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
 		error_display.innerText = "";
 		name_input.value = header_name.innerText;
 		pfp_img_preview.src = header_pfp.src;

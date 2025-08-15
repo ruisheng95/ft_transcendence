@@ -3,6 +3,8 @@ import "./gamestyle.css";
 import { display_game } from "./game-local-display_game";
 import { add_history } from "./spa-navigation";
 
+
+
 //local 1v1 game
 export function local_1v1_game_setup()
 {
