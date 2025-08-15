@@ -3,6 +3,8 @@ import { add_history, disable_navigation, enable_navigation, terminate_history }
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 
+const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
+  String.raw({ raw: strings }, ...values);
 
 export function online_1v1_play()
 {
@@ -13,14 +15,16 @@ export function online_1v1_play()
 	if(!game_obj) throw new Error("Game obj not found");
 	
 	game_obj.innerHTML = "";
+	const el = document.querySelector<HTMLDivElement>('[data-game="online1v1"]');
+	el?.click();
 
-	game_obj.innerHTML = `
+	game_obj.innerHTML = html`
 	<div id="online_game_buttons" class="flex gap-[400px] mb-[20px]">
 		<button id="online_close_game" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
 		<button id="online_game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
 	</div>
-	<div class="flex">
-		<div class="flex flex-col space-y-2 mr-[20px]">
+	<div class="flex ">
+		<div class="flex flex-col space-y-2  mr-[20px]">
 			<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
 				<i class="fa fa-arrow-up"></i>
 			</div>
@@ -29,14 +33,14 @@ export function online_1v1_play()
 			</div>
 		</div>
 
-		<div id="online_game_board" class="bg-black w-[1000px] h-[500px] relative justify-center border-4 border-white">
+		<div id="online_game_board" class="bg-black/60 w-[1000px] h-[500px] relative justify-center border-4 border-white">
 			<div id="online_game_center_line" class="w-[1px] h-full border-l-4 border-dashed border-gray-500 mx-auto"></div>
 			<div id="online_game_ball" class="bg-yellow-500 rounded-full w-[15px] h-[15px] absolute top-[100px]"></div>
 			<div id="online_game_leftplayer" class="bg-red-500 rounded w-[10px] h-[150px] absolute"></div>
 			<div id="online_game_rightplayer" class="bg-blue-500 rounded w-[10px] h-[150px] absolute"></div>
 		</div>
 
-		<div class="flex flex-col space-y-2 ml-[20px]">
+		<div class="flex flex-col space-y-2  ml-[20px]">
 			<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
 				<i class="fa fa-arrow-up"></i>
 			</div>
@@ -280,8 +284,9 @@ export function online_1v1_play()
 		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
 		const p1_name_div = document.querySelector<HTMLDivElement>("#online_p1_name_display");
 		const p2_name_div = document.querySelector<HTMLDivElement>("#online_p2_name_display");
+		const map_input = document.querySelector<HTMLInputElement>("#input-map");
 
-		if(!game_popup || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("start match countdown elements not found");
+		if(!game_popup || !matchmaking_popup || !p1_name_div || !p2_name_div || !map_input) throw new Error("start match countdown elements not found");
 
 		let countdown = 3;
 
@@ -308,6 +313,7 @@ export function online_1v1_play()
 			{
 				clearInterval(interval);
 				game_popup.classList.remove("hidden");
+				game_popup.style.backgroundImage = map_input.value;
 				matchmaking_popup.classList.add("hidden");
 				p1_name_div.innerHTML = p1_name;
 				p2_name_div.innerHTML = p2_name;
@@ -353,28 +359,58 @@ export function online_1v1_play()
 	}
 }
 
-const online1v1_matchmaking_popup = `
-	<div id="online1v1_matchmaking_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
-		<div class="relative p-6 bg-black text-white border border-white">
-			<h1 class="text-[5vh] font-semibold mt-[3vh] mb-[10vh]"><center>Online 1v1 matchmaking lobby</center></h1>
-			
-			<div class="flex justify-center items-center gap-8">
-				<div id="online_mm_p1_name" class="text-white text-[3vh] font-bold border border-white px-4 py-2">
-					<h1>player1</h1>
-				</div>
-				<div class="text-white text-[3vh] font-bold">VS</div>
-				<div id="online_mm_p2_name" class="text-white text-[3vh] font-bold border border-white px-4 py-2">
-					<h1>player2</h1>
-				</div>
-			</div>
+const online1v1_matchmaking_popup = html`
+		<div id="online1v1_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
+		
+		<!--Title -->
+		<h1 class="text-4xl text-center mb-10 font-bold">Online Lobby</h1>
 
-			<div class="flex flex-col items-center">
-			<div id="mm_status" class="text-white mt-[10vh] text-[4vh]"></div>
-			<button id="online1v1_exit_matchmaking" class="border border-white px-[4vw] py-2 mt-[3vh]">Exit</button>
-			</div>
-		</div>
+		<!-- Game Information -->
+		<section class="flex items-center space-x-4">
+			<h2 class="text-xl font-medium">Match Info :</h2>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
+		</section>
+		
+		<!-- Game Setting Header -->
+		<header class="grid grid-cols-[3fr_2fr] gap-10">
+			<h2 class="text-xl font-medium">Map Selection :</h2>
+			<h2 class="text-xl font-medium">Players :</h2>
+		</header>
+
+		<!-- Game Setting Details -->
+		<main class="grid grid-cols-[3fr_2fr] gap-10 place-items-center mb-10">
+		
+			<!-- Map Selection -->
+			<section class="grid grid-cols-2 gap-6 px-12">
+				<div data-map="" data-game="online1v1" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
+				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
+				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
+				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
+			</section>
+
+			<!-- Player List -->
+			<section class="w-full px-12 text-2xl font-bold divide-y">
+				<span class="flex p-4">
+					P1 : &nbsp;<div id="online_mm_p1_name"></div>
+				</span>
+				<span class="flex p-4">
+					P2 : &nbsp;<div id="online_mm_p2_name"></div>
+				</span>
+			</section>
+		</main>
+
+		<!-- Status Msg -->
+		<div id="mm_status" class="text-4xl mt-10"></div>
+		
+		<!--Exit Button -->
+		<button id="online1v1_exit_matchmaking" class="absolute top-10 right-10 button-remove">
+			<i class="fas fa-times text-black text-xl"></i>
+		</button>
 	</div>
-`
+`;
+
 
 const online_1v1_winner_popup = `
 	<div id="online_1v1_winner_popup" class="border border-2 border-white flex flex-col justify-center items-center hidden fixed bg-black bg-opacity-90 inset-0" style="background-color: rgba(0,0,0,0.9)">
@@ -394,15 +430,17 @@ const online_1v1_winner_popup = `
 	</div>
 `
 
-export const online_game_popup = `
+export const online_game_popup = html`
 
 	${online1v1_matchmaking_popup}
-	<div id="online_game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
-		<div class="flex flex-col items-center bg-black text-white">
-			<div id="online_game_board_area"></div>
-			<div id="online_names" class="flex gap-[600px] mb-[16px]">
-				<div id="online_p1_name_display" class="text-red-500 text-[3vh] font-bold mr-[20px]"><h1>player1</h1></div>
-				<div id="online_p2_name_display" class="text-blue-500 text-[3vh] font-bold ml-[20px]"><h1>player2</h1></div>
+	<div id="online_game_popup" class="hidden bg-black bg-cover bg-center fixed inset-0">
+		<div class="bg-black/70 h-full flex flex-col justify-center items-center">
+			<div class="flex flex-col items-center bg-transparent text-white">
+				<div id="online_game_board_area"></div>
+				<div id="online_names" class="flex gap-[600px] mb-[16px]">
+					<div id="online_p1_name_display" class="text-red-500 text-[3vh] font-bold mr-[20px]"><h1>player1</h1></div>
+					<div id="online_p2_name_display" class="text-blue-500 text-[3vh] font-bold ml-[20px]"><h1>player2</h1></div>
+				</div>
 			</div>
 		</div>
 	</div>

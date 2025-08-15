@@ -2,6 +2,9 @@
 import "./gamestyle.css";
 import { add_history } from "./spa-navigation";
 
+const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
+  String.raw({ raw: strings }, ...values);
+
 //important notes:
 // if paddles stop appearing again for some reason, hardcode the paddle height to 100px or change player_height = 150
 // somehow it will renders
@@ -20,8 +23,10 @@ export function local_2v2_game_setup()
 	
 	const close_local2v2_winner_popup = document.querySelector<HTMLButtonElement>("#close_local2v2_winner_popup");
 	const local2v2_winner_popup = document.querySelector<HTMLDivElement>("#local2v2_winner_popup");
+	
+	const map_input = document.querySelector<HTMLInputElement>("#input-map");
 
-	if (!local2v2_regist_page || !local2v2_winner_popup || !close_local2v2_winner_popup || !p1_name_input_element || !p2_name_input_element || !p3_name_input_element || !p4_name_input_element || !local_2v2_start_button || !local_2v2_game_popup)
+	if (!local2v2_regist_page || !local2v2_winner_popup || !close_local2v2_winner_popup || !p1_name_input_element || !p2_name_input_element || !p3_name_input_element || !p4_name_input_element || !local_2v2_start_button || !local_2v2_game_popup || !map_input)
 		throw new Error("Error local_2v2_game buttons not found");
 
 	p1_name_input_element.addEventListener("input", (event : Event) => {
@@ -61,6 +66,7 @@ export function local_2v2_game_setup()
 		local2v2_regist_page.classList.add("hidden");
 
 		local_2v2_game_popup.classList.remove("hidden");
+		local_2v2_game_popup.style.backgroundImage = map_input.value;
 		local_2v2_game_init();
 	});
 
@@ -85,9 +91,9 @@ const local2v2_winner_popup = `
 	</div>
 `
 
-export const local_2v2_game_popup = `
-	<div id="local_2v2_game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
-		<div class="flex flex-col items-center bg-black text-white">
+export const local_2v2_game_popup = html`
+	<div id="local_2v2_game_popup" class="hidden bg-black bg-cover bg-center fixed inset-0">
+		<div class="bg-black/70 h-full flex flex-col justify-center items-center text-white">
 			<div id="local_2v2_game_board_area"></div>
 			<div id="local2v2_player_names" class="flex gap-[600px] mb-[16px] mt-[20px]">
 				<div id="local2v2_team1_name_display" class="text-2xl font-bold"><h1>Team 1</h1></div>
@@ -114,7 +120,6 @@ function verify_name_input(event : Event)
 
 		for (const input_char of input)
 		{
-			local2v2_error_msg_div.classList.add("hidden");
 			if (valid_chars.includes(input_char))
 				clean_input += input_char;
 			else
@@ -124,17 +129,14 @@ function verify_name_input(event : Event)
 
 		if(input.length > 20)
 		{
-			local2v2_error_msg_div.classList.remove("hidden");
-			local2v2_error_msg_div.innerHTML = `<h1 class="text-red-500 text-[15px]"> Input too long </h1>`;
+			local2v2_error_msg_div.innerText = "Input too long";
 			clean_input = clean_input.substring(0, 20);
 		}
 		else if (invalid_char == true)
-		{
-			local2v2_error_msg_div.classList.remove("hidden");
-			local2v2_error_msg_div.innerHTML = `<h1 class="text-red-500 text-[15px]"> Numbers, alphabets and '_' only </h1>`;
-		}
+
+			local2v2_error_msg_div.innerText = "Numbers, alphabets and '_' only";
 		else
-			local2v2_error_msg_div.classList.add("hidden");
+			local2v2_error_msg_div.innerText = ""
 
 		target.value = clean_input;
 	}
@@ -204,7 +206,7 @@ function local_2v2_game_init()
 		</div>
 
 		<!-- Game board -->
-		<div id="local2v2_board" class="bg-black relative border-4 border-white w-[${boardWidth}px] h-[${boardHeight}px]">
+		<div id="local2v2_board" class="bg-black/60 relative border-4 border-white w-[${boardWidth}px] h-[${boardHeight}px]">
 			<div id="local2v2_center_line" class="w-[1px] h-full border-l-4 border-dashed border-gray-500 mx-auto"></div>
 			<div id="local2v2_ball" class="bg-yellow-300 rounded-full absolute" style="width: ${ball_len}px; height: ${ball_len}px; left: ${ballX}px; top: ${ballY}px;"></div>
 			<div id="local2v2_player1" class="bg-red-500 rounded absolute w-[${block_width}px] h-[100px] left-[${player_indent}px] top-[${player1Y}px]"></div>

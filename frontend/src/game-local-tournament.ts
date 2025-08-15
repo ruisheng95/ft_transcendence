@@ -175,7 +175,6 @@ function verify_name_input(event : Event)
 
 		for (const input_char of input)
 		{
-			localTour_error_msg_div.classList.add("hidden");
 			if (valid_chars.includes(input_char))
 				clean_input += input_char;
 			else
@@ -185,17 +184,13 @@ function verify_name_input(event : Event)
 
 		if(input.length > 9)
 		{
-			localTour_error_msg_div.classList.remove("hidden");
-			localTour_error_msg_div.innerHTML = `<h1 class="text-red-500 text-[15px]"> Input too long </h1>`;
+			localTour_error_msg_div.innerText = "Input too long";
 			clean_input = clean_input.substring(0, 9);
 		}
 		else if (invalid_char == true)
-		{
-			localTour_error_msg_div.classList.remove("hidden");
-			localTour_error_msg_div.innerHTML = `<h1 class="text-red-500 text-[15px]"> Numbers, alphabets and '_' only </h1>`;
-		}
+			localTour_error_msg_div.innerText = "Numbers, alphabets and '_' only";
 		else
-			localTour_error_msg_div.classList.add("hidden");
+			localTour_error_msg_div.innerText = "";
 
 		target.value = clean_input;
 	}

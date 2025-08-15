@@ -63,7 +63,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">S</div>
 	</div>
 
-	<div id="game_board" class="bg-transparent w-[${boardWidth}px] h-[${boardHeight}px] relative border-4 border-white">
+	<div id="game_board" class="bg-black/60 w-[${boardWidth}px] h-[${boardHeight}px] relative border-4 border-white">
 		<div id="game_center_line" class="w-[1px] h-full border-l-4 border-dashed border-gray-500 mx-auto"></div>
 		<div id="game_ball" class="bg-yellow-300 rounded-full w-[${ball_len}px] h-[${ball_len}px] absolute"></div>
 		<div id="game_leftplayer" class="bg-red-500 rounded w-[${block_width}px] h-[${block_height}px] absolute"></div>

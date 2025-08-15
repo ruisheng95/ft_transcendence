@@ -18,6 +18,7 @@ export function vs_AI_game_setup ()
 
 	vs_AI_game_button.addEventListener("click", () => {
 		game_popup.classList.remove("hidden");
+		game_popup.style.backgroundImage = "";
 		display_game(handle_game_end_vs_AI, true);
 		add_history("vs_AI_game");
 	});
