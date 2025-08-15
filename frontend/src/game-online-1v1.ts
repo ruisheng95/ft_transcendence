@@ -325,25 +325,41 @@ export function online_1v1_play()
 
 	function handle_game_end(gameover_obj : any)
 	{
-		const online1v1_winner_div = document.querySelector<HTMLDivElement>("#online1v1_winner_name");
-		const online1v1_loser_div = document.querySelector<HTMLDivElement>("#online1v1_loser_name");
+		const online1v1_left_result = document.querySelector<HTMLDivElement>("#online1v1_left_result");
+		const online1v1_left_name = document.querySelector<HTMLDivElement>("#online1v1_left_name");
+		const online1v1_left_point = document.querySelector<HTMLDivElement>("#online1v1_left_point");
+		const online1v1_right_result = document.querySelector<HTMLDivElement>("#online1v1_right_result");
+		const online1v1_right_name = document.querySelector<HTMLDivElement>("#online1v1_right_name");
+		const online1v1_right_point = document.querySelector<HTMLDivElement>("#online1v1_right_point");
+
 		const online1v1_winner_popup = document.querySelector<HTMLDivElement>("#online_1v1_winner_popup");
 		const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 		const close_online_1v1_winner_popup_button = document.querySelector<HTMLButtonElement>("#close_online1v1_winner_popup");
 
-		if(!online1v1_loser_div || !game_popup || !online1v1_winner_popup || !online1v1_winner_div || !close_online_1v1_winner_popup_button)
+		if(!game_popup || !online1v1_winner_popup ||!close_online_1v1_winner_popup_button ||
+			!online1v1_left_result || !online1v1_left_name || !online1v1_right_result || !online1v1_right_name ||
+			!online1v1_left_point || !online1v1_right_point
+		)
 			throw new Error("Online1v1 winner display elements not found");
 
 		enable_navigation();
-		if(gameover_obj.winner == "leftplayer")
-		{
-			online1v1_winner_div.innerHTML = `Winner🏆: ${p1_name} <p class="text-green-500">+5</p>`;
-			online1v1_loser_div.innerHTML = `Loser💔: ${p2_name} <p class="text-red-500">-5</p1>`;
+
+		online1v1_left_name.innerText = p1_name;
+		online1v1_right_name.innerText = p2_name;
+
+		if(gameover_obj.winner == "leftplayer") {
+			online1v1_left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			online1v1_left_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+
+			online1v1_right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			online1v1_right_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
 		}
-		else
-		{
-			online1v1_winner_div.innerHTML = `Winner: ${p2_name} <p class="text-green-500">+5</p1>`;
-			online1v1_loser_div.innerHTML = `Loser: ${p1_name} <p class="text-red-500">-5</p1>`;
+		else {
+			online1v1_right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			online1v1_right_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+
+			online1v1_left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			online1v1_left_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
 		}
 
 		online1v1_winner_popup.classList.remove("hidden");
@@ -412,20 +428,40 @@ const online1v1_matchmaking_popup = html`
 `;
 
 
-const online_1v1_winner_popup = `
-	<div id="online_1v1_winner_popup" class="border border-2 border-white flex flex-col justify-center items-center hidden fixed bg-black bg-opacity-90 inset-0" style="background-color: rgba(0,0,0,0.9)">
-		<div id="online_1v1_popup_screen" class="bg-black border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center">
+const online_1v1_winner_popup = html`
+	<div id="online_1v1_winner_popup" class="bg-black flex h-screen items-center justify-center hidden fixed inset-0 text-white inter-font">
+		<div id="online_1v1_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
-			<div class="text-center flex flex-col items-center">
-				<h1 class="text-[50px] text-white mb-6">Game over!</h1>
+			<!-- Tournament Title -->
+			<h1 class="text-5xl font-bold text-center">Match Result</h1>	
+			
+			<!-- Result Layout -->
+			<section class="grid grid-cols-2 w-full place-items-center">
+				<!-- Left -->
+				<div class="w-full space-y-10 px-12 text-center">
+					<!-- Result Status -->
+					<div id="online1v1_left_result" class="mb-20"></div>
+					<!-- Player Details -->
+					<div class="flex items-center justify-between px-4">
+						<span id="online1v1_left_name" class="text-2xl font-medium"></span>
+						<div id="online1v1_left_point" class="text-5xl flex"></div>
+					</div>
+				</div>
+				
+				<!-- Right -->
+				<div class="w-full space-y-10 px-12 text-center">
+					<!-- Result Status -->
+					<div id="online1v1_right_result" class="mb-20"></div>
+					<!-- Player Details -->
+					<div class="flex items-center justify-between px-4">
+						<span id="online1v1_right_name" class="text-2xl font-medium"></span>
+						<div id="online1v1_right_point" class="text-5xl flex"></div>
+					</div>
+				</div>
+			</section>
 
-				<h1 class="text-[30px] text-white mb-2">Results:</h1>
-				<div class="w-[60%] border-t-2 border-white mb-4"></div>
-				<div id="online1v1_winner_name" class="text-[20px] font-bold mb-2 text-white flex gap-2"></div>
-				<div id="online1v1_loser_name" class="text-[20px] font-bold mb-6 text-white flex gap-2"></div>
-			</div>
-
-			<button id="close_online1v1_winner_popup" class="border-1 border-white text-white text-[20px] px-[5px] py-[5px]">close</button>
+			<!-- Exit Game Button -->
+			<button id="close_online1v1_winner_popup" class="button-primary">Exit</button>
 		</div>
 	</div>
 `
