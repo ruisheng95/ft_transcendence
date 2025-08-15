@@ -27,45 +27,51 @@ function setup_2v2_ui() {
 	if (p1_display) p1_display.classList.add("hidden");
 	if (p2_display) p2_display.classList.add("hidden");
 	
+	let player_names_container = document.querySelector("#online2v2_player_names");
+	if (!player_names_container) {
+		player_names_container = document.createElement("div");
+		player_names_container.id = "online2v2_player_names";
+		player_names_container.className = "flex gap-[600px] mb-[16px] mt-[20px]";
+		
+		const gameBoard = document.querySelector("#online_game_board_area");
+		if (gameBoard && gameBoard.parentNode) {
+			gameBoard.parentNode.insertBefore(player_names_container, gameBoard.nextSibling);
+		}
+	}
+	
 	let team1_display = document.querySelector("#online2v2_team1_name_display");
 	let team2_display = document.querySelector("#online2v2_team2_name_display");
 	
 	if (!team1_display) {
 		team1_display = document.createElement("div");
 		team1_display.id = "online2v2_team1_name_display";
-		team1_display.className = "text-white text-[3vh] font-bold mr-[20px]";
+		team1_display.className = "text-2xl font-bold";
 		team1_display.innerHTML = "<h1>Team 1</h1>";
-		
-		const gameBoard = document.querySelector("#online_game_board_area");
-		if (gameBoard && gameBoard.parentNode) {
-			gameBoard.parentNode.insertBefore(team1_display, gameBoard);
-		}
+		player_names_container.appendChild(team1_display);
 	}
 	
 	if (!team2_display) {
 		team2_display = document.createElement("div");
 		team2_display.id = "online2v2_team2_name_display";
-		team2_display.className = "text-white text-[3vh] font-bold ml-[20px]";
+		team2_display.className = "text-2xl font-bold";
 		team2_display.innerHTML = "<h1>Team 2</h1>";
-		
-		const gameBoard = document.querySelector("#online_game_board_area");
-		if (gameBoard && gameBoard.parentNode) {
-			gameBoard.parentNode.insertBefore(team2_display, gameBoard.nextSibling);
-		}
+		player_names_container.appendChild(team2_display);
 	}
 	
+	player_names_container.classList.remove("hidden");
 	team1_display.classList.remove("hidden");
 	team2_display.classList.remove("hidden");
 }
 
 function cleanup_2v2_ui() {
+	const player_names_container = document.querySelector("#online2v2_player_names");
 	const team1_display = document.querySelector("#online2v2_team1_name_display");
 	const team2_display = document.querySelector("#online2v2_team2_name_display");
 	
+	if (player_names_container) player_names_container.classList.add("hidden");
 	if (team1_display) team1_display.classList.add("hidden");
 	if (team2_display) team2_display.classList.add("hidden");
 	
-	// Restore the shared title to 1v1
 	const shared_title = document.querySelector("#online_game_popup h1");
 	if (shared_title) {
 		shared_title.innerHTML = "<center>Online 1v1 Game</center>";
@@ -89,17 +95,47 @@ export function online_2v2_play()
 	game_obj.innerHTML = "";
 
 	game_obj.innerHTML = `
-	<div id="game_buttons" class="flex gap-[400px] mb-[20px]">
+	<div id="game_buttons" class="flex gap-[400px] mb-[20px] mt-[20px]">
 		<button id="online2v2_close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
 		<button id="online2v2_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
 	</div>
-	<div id="online2v2_game_board" class="bg-black w-[1000px] h-[500px] relative justify-center border-4 border-white">
-		<div id="online2v2_center_line" class="w-[1px] h-full border-l-4 border-dashed border-gray-500 mx-auto"></div>
-		<div id="online2v2_game_ball" class="bg-yellow-500 rounded-full w-[15px] h-[15px] absolute top-[100px]"></div>
-		<div id="online2v2_leftplayer1" class="bg-red-500 rounded w-[10px] h-[75px] absolute"></div>
-		<div id="online2v2_leftplayer2" class="bg-green-500 rounded w-[10px] h-[75px] absolute"></div>
-		<div id="online2v2_rightplayer1" class="bg-blue-500 rounded w-[10px] h-[75px] absolute"></div>
-		<div id="online2v2_rightplayer2" class="bg-pink-500 rounded w-[10px] h-[75px] absolute"></div>
+
+	<div class="flex items-center">
+		<!-- Left side controls -->
+		<div class="flex flex-col space-y-4 mr-4">
+			<div class="text-white text-center mb-2">Team 1</div>
+			<div class="flex flex-col space-y-2">
+				<div class="bg-red-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-red-500 text-white">W / ↑</div>
+				<div class="bg-red-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-red-500 text-white">S / ↓</div>
+			</div>
+			<div class="flex flex-col space-y-2 mt-4">
+				<div class="bg-green-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-green-500 text-white">W / ↑</div>
+				<div class="bg-green-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-green-500 text-white">S / ↓</div>
+			</div>
+		</div>
+
+		<!-- Game board -->
+		<div id="online2v2_game_board" class="bg-black relative border-4 border-white w-[1000px] h-[500px]">
+			<div id="online2v2_center_line" class="w-[1px] h-full border-l-4 border-dashed border-gray-500 mx-auto"></div>
+			<div id="online2v2_game_ball" class="bg-yellow-300 rounded-full w-[15px] h-[15px] absolute"></div>
+			<div id="online2v2_leftplayer1" class="bg-red-500 rounded w-[10px] h-[100px] absolute"></div>
+			<div id="online2v2_leftplayer2" class="bg-green-500 rounded w-[10px] h-[100px] absolute"></div>
+			<div id="online2v2_rightplayer1" class="bg-blue-500 rounded w-[10px] h-[100px] absolute"></div>
+			<div id="online2v2_rightplayer2" class="bg-pink-500 rounded w-[10px] h-[100px] absolute"></div>
+		</div>
+
+		<!-- Right side controls -->
+		<div class="flex flex-col space-y-4 ml-4">
+			<div class="text-white text-center mb-2">Team 2</div>
+			<div class="flex flex-col space-y-2">
+				<div class="bg-blue-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-blue-500 text-white">W / ↑</div>
+				<div class="bg-blue-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-blue-500 text-white">S / ↓</div>
+			</div>
+			<div class="flex flex-col space-y-2 mt-4">
+				<div class="bg-pink-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-pink-500 text-white">W / ↑</div>
+				<div class="bg-pink-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-pink-500 text-white">S / ↓</div>
+			</div>
+		</div>
 	</div>
 	`;
 
@@ -244,8 +280,8 @@ export function online_2v2_play()
 			const quarterHeight = boardHeight / 4;
 			leftplayer1Y = quarterHeight - block_height / 2;
 			leftplayer2Y = 3 * quarterHeight - block_height / 2;
-			rightplayer1Y = quarterHeight - block_height / 2;
-			rightplayer2Y = 3 * quarterHeight - block_height / 2;
+			rightplayer1Y = 3 * quarterHeight - block_height / 2; 
+			rightplayer2Y = quarterHeight - block_height / 2;
 		}
 	}
 
@@ -424,10 +460,10 @@ export function online_2v2_play()
 				matchmaking_popup.classList.add("hidden");
 				
 				team1_display_div.innerHTML = `
-					<h1>${team1_player1_name}<br>and<br>${team1_player2_name}</h1>
+					<h1 class="text-red-500">${team1_player1_name}</h1> <h1 class="text-white">&</h1> <h1 class="text-green-500">${team1_player2_name}</h1>
 				`;
 				team2_display_div.innerHTML = `
-					<h1>${team2_player1_name}<br>and<br>${team2_player2_name}</h1>
+					<h1 class="text-blue-500">${team2_player1_name}</h1> <h1 class="text-white">&</h1> <h1 class="text-pink-500">${team2_player2_name}</h1>
 				`;
 				
 				init_positions();

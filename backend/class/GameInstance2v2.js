@@ -4,7 +4,7 @@ export const defaultGameSetting2v2 = {
   boardWidth: 1000,
   boardHeight: 500,
   board_border_width: 4,
-  block_height: 75, // Smaller paddles for 2v2
+  block_height: 100,
   block_width: 10,
   player_speed: 5, 
   player_indent: 20,
@@ -239,8 +239,8 @@ export class GameInstance2v2 {
     const quarterHeight = this.#boardHeight / 4;
     this.#leftplayer1Y = quarterHeight - this.#block_height / 2;
     this.#leftplayer2Y = 3 * quarterHeight - this.#block_height / 2;
-    this.#rightplayer1Y = quarterHeight - this.#block_height / 2;
-    this.#rightplayer2Y = 3 * quarterHeight - this.#block_height / 2;
+    this.#rightplayer1Y = 3 * quarterHeight - this.#block_height / 2; 
+    this.#rightplayer2Y = quarterHeight - this.#block_height / 2; 
 
     // Start the game loop
     this.#game_interval_id = setInterval(this.#frame.bind(this), 10);
