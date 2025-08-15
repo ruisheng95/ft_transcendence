@@ -28,7 +28,7 @@ export function pf_config_setup()
 		throw new Error("Error pf_config stuff not found");
 
 	pf_config_button.addEventListener("click", () => {
-		error_display.innerHTML = "";
+		error_display.innerText = "";
 		name_input.value = "";
 		pf_config_popup.classList.remove("hidden");
 		settings_popup.classList.add("hidden");
@@ -52,17 +52,17 @@ export function pf_config_setup()
 		if(!valid_chars.includes(input_str[input_str.length - 1]))
 		{
 			error_display.classList.remove("hidden");
-			error_display.innerHTML = `<h1 class="text-[13px] text-red-500">Alphabets, numbers or '_' only</h1>`;
+			error_display.innerText = "Alphabets, numbers or '_' only";
 			name_input.value = input_str.substring(0, input_str.length - 1);
 		}
 		else if(input_str.length > 30)
 		{
 			error_display.classList.remove("hidden");
-			error_display.innerHTML = `<h1 class="text-[13px] text-red-500">Search too long</h1>`;
+			error_display.innerText = "Search too long";
 			name_input.value = input_str.substring(0, input_str.length - 1);
 		}
 		else
-			error_display.innerHTML = "";
+			error_display.innerText = "";
 	});
 
 	//REMEMBER TO UNCOMMENT THIS FOR NEW PLAYER CONFIG TO POPUP (commented this cuz very mafan during testing)
@@ -129,7 +129,7 @@ export function pf_config_setup()
 			
 			if (!file.type.startsWith('image/')) //checks the MIME type for image files only
 			{
-				error_display.innerHTML = `<p class="text-red-500">Error: Please choose an image file only!</p>`;
+				error_display.innerText = "Error: Please choose an image file only!";
 				return;
 			}
 			
@@ -185,7 +185,7 @@ export const pf_config_popup = html`
 				placeholder="Input username" type="text" maxlength="30">
 
 			<!-- Error -->
-			<div id="error_display" class="h-8"></div>
+			<div id="error_display" class="h-8 err-msg"></div>
 			
 			<!-- Button -->
 			<button type="button" id="close_pf_config" class="absolute top-6 right-6 button-remove">

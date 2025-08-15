@@ -6,6 +6,8 @@ import { terminate_history } from "./spa-navigation";
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let stop_game_ft = () => {};
 
+const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
+  String.raw({ raw: strings }, ...values);
 
 export function display_game(handle_game_end : (msg_obj : object) => void, AI_flag = false)
 {
@@ -49,7 +51,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	//put the main frame of the game into the html
 	game_obj.innerHTML = "";
 
-	game_obj.innerHTML = `
+	game_obj.innerHTML = html`
 	<div id="game_buttons" class="flex gap-[400px] mb-[20px]">
 		<button id="close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
 		<button id="game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
@@ -61,7 +63,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">S</div>
 	</div>
 
-	<div id="game_board" class="bg-black w-[${boardWidth}px] h-[${boardHeight}px] relative border-4 border-white">
+	<div id="game_board" class="bg-transparent w-[${boardWidth}px] h-[${boardHeight}px] relative border-4 border-white">
 		<div id="game_center_line" class="w-[1px] h-full border-l-4 border-dashed border-gray-500 mx-auto"></div>
 		<div id="game_ball" class="bg-yellow-300 rounded-full w-[${ball_len}px] h-[${ball_len}px] absolute"></div>
 		<div id="game_leftplayer" class="bg-red-500 rounded w-[${block_width}px] h-[${block_height}px] absolute"></div>
@@ -329,13 +331,15 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	}
 }
 
-export const game_popup = `
-	<div id="game_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
-		<div class="flex flex-col items-center bg-black text-white">
-			<div id="game_board_area"></div>
-			<div id="player_names" class="flex gap-[800px] mb-[16px]">
-				<div id="p1_name_display" class="text-red-500 text-2xl font-bold"><h1>player1</h1></div>
-				<div id="p2_name_display" class="text-blue-500 text-2xl font-bold"><h1>player2</h1></div>
+export const game_popup = html`
+	<div id="game_popup" class="hidden bg-black bg-cover bg-center fixed inset-0">
+		<div class="bg-black/70 h-full flex flex-col justify-center items-center">
+			<div class="flex flex-col items-center text-white">
+				<div id="game_board_area"></div>
+				<div id="player_names" class="flex gap-[800px] mb-[16px]">
+					<div id="p1_name_display" class="text-red-500 text-2xl font-bold"><h1>player1</h1></div>
+					<div id="p2_name_display" class="text-blue-500 text-2xl font-bold"><h1>player2</h1></div>
+				</div>
 			</div>
 		</div>
 	</div>

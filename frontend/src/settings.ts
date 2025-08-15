@@ -212,7 +212,7 @@ export const settings_popup = html`
 					</div>	
 				
 					<!-- Error Message -->
-					<p id="show_error" class="text-red-500 h-8 text-lg"></p>
+					<p id="show_error" class="h-8 err-msg"></p>
 					<!-- Edit Button -->
 					<button id="edit_profile" class="button-primary">Edit</button>
 

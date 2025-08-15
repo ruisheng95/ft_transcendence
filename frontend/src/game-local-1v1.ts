@@ -16,7 +16,9 @@ export function local_1v1_game_setup()
 	const close_local1v1_winner_popup = document.querySelector<HTMLButtonElement>("#close_local1v1_winner_popup");
 	const local1v1_winner_popup = document.querySelector<HTMLDivElement>("#local1v1_winner_popup");
 
-	if (!local1v1_regist_page || !local1v1_winner_popup || !close_local1v1_winner_popup || !p1_name_input_element || !p2_name_input_element || !local_1v1_start_button || !game_popup)
+	const map_input = document.querySelector<HTMLInputElement>("#input-map");
+
+	if (!local1v1_regist_page || !local1v1_winner_popup || !close_local1v1_winner_popup || !p1_name_input_element || !p2_name_input_element || !local_1v1_start_button || !game_popup || !map_input)
 		throw new Error("Error local_1v1_game buttons not found");
 
 	p1_name_input_element.addEventListener("input", (event : Event) => {
@@ -46,6 +48,7 @@ export function local_1v1_game_setup()
 		local1v1_regist_page.classList.add("hidden");
 
 		game_popup.classList.remove("hidden");
+		game_popup.style.backgroundImage = map_input.value;
 		display_game(local1v1_display_winner);
 	});
 
@@ -89,27 +92,21 @@ function verify_name_input(event : Event)
 
 		for (const input_char of input)
 		{
-			local1v1_error_msg_div.classList.add("hidden");
 			if (valid_chars.includes(input_char))
 				clean_input += input_char;
 			else
 				invalid_char = true;
-
 		}
 
 		if(input.length > 20)
 		{
-			local1v1_error_msg_div.classList.remove("hidden");
-			local1v1_error_msg_div.innerHTML = `<h1 class="text-red-500 text-[15px]"> Input too long </h1>`;
+			local1v1_error_msg_div.innerText = "Input too long";
 			clean_input = clean_input.substring(0, 20);
 		}
 		else if (invalid_char == true)
-		{
-			local1v1_error_msg_div.classList.remove("hidden");
-			local1v1_error_msg_div.innerHTML = `<h1 class="text-red-500 text-[15px]"> Numbers, alphabets and '_' only </h1>`;
-		}
+			local1v1_error_msg_div.innerText = "Numbers, alphabets and '_' only";
 		else
-			local1v1_error_msg_div.classList.add("hidden");
+			local1v1_error_msg_div.innerText = "";
 
 		target.value = clean_input;
 	}
