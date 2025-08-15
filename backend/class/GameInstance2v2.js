@@ -4,7 +4,7 @@ export const defaultGameSetting2v2 = {
   boardWidth: 1000,
   boardHeight: 500,
   board_border_width: 4,
-  block_height: 75, // Smaller paddles for 2v2
+  block_height: 100,
   block_width: 10,
   player_speed: 5, 
   player_indent: 20,

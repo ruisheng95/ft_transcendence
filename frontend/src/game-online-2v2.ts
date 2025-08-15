@@ -118,10 +118,10 @@ export function online_2v2_play()
 		<div id="online2v2_game_board" class="bg-black relative border-4 border-white w-[1000px] h-[500px]">
 			<div id="online2v2_center_line" class="w-[1px] h-full border-l-4 border-dashed border-gray-500 mx-auto"></div>
 			<div id="online2v2_game_ball" class="bg-yellow-300 rounded-full w-[15px] h-[15px] absolute"></div>
-			<div id="online2v2_leftplayer1" class="bg-red-500 rounded w-[10px] h-[75px] absolute"></div>
-			<div id="online2v2_leftplayer2" class="bg-green-500 rounded w-[10px] h-[75px] absolute"></div>
-			<div id="online2v2_rightplayer1" class="bg-blue-500 rounded w-[10px] h-[75px] absolute"></div>
-			<div id="online2v2_rightplayer2" class="bg-pink-500 rounded w-[10px] h-[75px] absolute"></div>
+			<div id="online2v2_leftplayer1" class="bg-red-500 rounded w-[10px] h-[100px] absolute"></div>
+			<div id="online2v2_leftplayer2" class="bg-green-500 rounded w-[10px] h-[100px] absolute"></div>
+			<div id="online2v2_rightplayer1" class="bg-blue-500 rounded w-[10px] h-[100px] absolute"></div>
+			<div id="online2v2_rightplayer2" class="bg-pink-500 rounded w-[10px] h-[100px] absolute"></div>
 		</div>
 
 		<!-- Right side controls -->
