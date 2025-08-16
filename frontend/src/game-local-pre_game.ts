@@ -235,20 +235,19 @@ const local1v1_Registration = html`
 	<div id="local1v1_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
 		
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-10 font-bold">Match Registration</h1>
+		<h1 class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
 
 		<!-- Game Information -->
-		<section class="flex items-center space-x-4">
-			<h2 class="text-xl font-medium">Match Info :</h2>
+		<section class="flex items-center justify-center space-x-4">
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
-		<header class="grid grid-cols-[3fr_2fr] gap-10">
-			<h2 class="text-xl font-medium">Map Selection :</h2>
-			<h2 class="text-xl font-medium">Players :</h2>
+		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
+			<h2 class="text-2xl font-bold">Map Selection</h2>
+			<h2 class="text-2xl font-bold">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->
@@ -298,20 +297,19 @@ const localTour_Registration = html`
 	<div id="localTour_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
 		
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-10 font-bold">Match Registration</h1>
+		<h1 class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
 
 		<!-- Game Information -->
-		<section class="flex items-center space-x-4">
-			<h2 class="text-xl font-medium">Match Info :</h2>
+		<section class="flex items-center justify-center space-x-4">
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Tournament</span>
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">4 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
-		<header class="grid grid-cols-[3fr_2fr] gap-10">
-			<h2 class="text-xl font-medium">Map Selection :</h2>
-			<h2 class="text-xl font-medium">Players :</h2>
+		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
+			<h2 class="text-2xl font-bold">Map Selection</h2>
+			<h2 class="text-2xl font-bold">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->
@@ -371,20 +369,19 @@ const local2v2_Registration = html`
 	<div id="local2v2_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
 		
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-10 font-bold">Match Registration</h1>
+		<h1 class="text-4xl text-center mb-b font-bold">Match Registration</h1>
 
 		<!-- Game Information -->
-		<section class="flex items-center space-x-4">
-			<h2 class="text-xl font-medium">Match Info :</h2>
+		<section class="flex items-center justify-center space-x-4">
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 vs 2</span>
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">4 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
-		<header class="grid grid-cols-[3fr_2fr] gap-10">
-			<h2 class="text-xl font-medium">Map Selection :</h2>
-			<h2 class="text-xl font-medium">Players :</h2>
+		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
+			<h2 class="text-xl font-medium">Map Selection</h2>
+			<h2 class="text-xl font-medium">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->

@@ -260,7 +260,7 @@ export function online_1v1_play()
 			});
 
 			p1_name = players[0];
-			p2_name = `<div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>` //spinning circle animation
+			p2_name = `<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>` //spinning circle animation
 		}
 		else if(msg_obj.status === "Lobby full")
 		{
@@ -379,24 +379,23 @@ const online1v1_matchmaking_popup = html`
 		<div id="online1v1_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
 		
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-10 font-bold">Online Lobby</h1>
+		<h1 class="text-4xl text-center mb-6 font-bold">Online Lobby</h1>
 
 		<!-- Game Information -->
-		<section class="flex items-center space-x-4">
-			<h2 class="text-xl font-medium">Match Info :</h2>
+		<section class="flex items-center justify-center space-x-4 mb-10">
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
-		<header class="grid grid-cols-[3fr_2fr] gap-10">
-			<h2 class="text-xl font-medium">Map Selection :</h2>
-			<h2 class="text-xl font-medium">Players :</h2>
+		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
+			<h2 class="text-2xl font-bold pb-2">Map Selection</h2>
+			<h2 class="text-2xl font-bold pb-2">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->
-		<main class="grid grid-cols-[3fr_2fr] gap-10 place-items-center mb-10">
+		<main class="grid grid-cols-[3fr_2fr] gap-10 mb-10">
 		
 			<!-- Map Selection -->
 			<section class="grid grid-cols-2 gap-6 px-12">
@@ -407,13 +406,12 @@ const online1v1_matchmaking_popup = html`
 			</section>
 
 			<!-- Player List -->
-			<section class="w-full px-12 text-2xl font-bold divide-y">
-				<span class="flex p-4">
-					P1 : &nbsp;<div id="online_mm_p1_name"></div>
-				</span>
-				<span class="flex p-4">
-					P2 : &nbsp;<div id="online_mm_p2_name"></div>
-				</span>
+			<section class="w-full text-4xl font-bold flex flex-col items-center justify-center text-center space-y-12 bg-white/20 py-12 rounded-xl">
+
+				<div id="online_mm_p1_name"></div>
+				<div class="w-1/4 pixel-font text-5xl text-yellow-400">VS</div>
+				<div id="online_mm_p2_name"></div>
+
 			</section>
 		</main>
 
