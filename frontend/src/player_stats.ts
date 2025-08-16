@@ -92,13 +92,12 @@ function insert_playerstats_and_history_main()
 			}
 			else
 			{
-				for(const entry of msg_obj.history)
+				for(let i = msg_obj.history.length - 1; i >= 0; i--)
 				{
+					const entry = msg_obj.history[i];
 					let user_result = '';
 					const username = localStorage.getItem("current_username");
 					
-					// Assuming the current user is user1 for simplicity
-					// You might need to adjust this based on your actual user identification logic
 					if(entry.user1_name == username)
 					{
 						if(entry.user1_result == 1)
@@ -133,14 +132,28 @@ function insert_playerstats_and_history_main()
 					
 					history += `
 						<!-- Entry -->
-						<div class="bg-white/20 rounded-lg px-4 py-1 grid grid-cols-[2fr_2fr_3fr_1fr] gap-4 items-center">
+						<div class="bg-white/20 rounded-lg px-4 py-2 grid grid-cols-[2fr_2fr_3fr_1fr] gap-4 items-center">
 							<span>${entry.date}</span>
 							<span>${entry.match_type}</span>
-							<div class="flex space-x-1">
-								<img class="w-10 h-10 rounded-full object-cover" src="${entry.user1_avatar ? entry.user1_avatar : "/src/defaultpfp.png"}" alt="player">
-								<img class="w-10 h-10 rounded-full object-cover" src="${entry.user2_avatar ? entry.user2_avatar : "/src/defaultpfp.png"}" alt="player">
-								${entry.user3_name ? `<img class="w-10 h-10 rounded-full object-cover" src="${entry.user3_avatar ? entry.user3_avatar : "/src/defaultpfp.png"}" alt="player">` : ""}
-								${entry.user3_name ? `<img class="w-10 h-10 rounded-full object-cover" src="${entry.user4_avatar ? entry.user4_avatar : "/src/defaultpfp.png"}" alt="player">` : ""}
+							<div class="flex space-x-1 relative">
+								<div class="relative group">
+									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user1_avatar ? entry.user1_avatar : "/src/defaultpfp.png"}" alt="player">
+									<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">${entry.user1_name}</span>
+								</div>
+								<div class="relative group">
+									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user2_avatar ? entry.user2_avatar : "/src/defaultpfp.png"}" alt="player">
+									<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">${entry.user2_name}</span>
+								</div>
+								${entry.user3_name ? `
+								<div class="relative group">
+									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user3_avatar ? entry.user3_avatar : "/src/defaultpfp.png"}" alt="player">
+									<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">${entry.user3_name}</span>
+								</div>` : ""}
+								${entry.user3_name ? `
+								<div class="relative group">
+									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user4_avatar ? entry.user4_avatar : "/src/defaultpfp.png"}" alt="player">
+									<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">${entry.user4_name}</span>
+								</div>` : ""}
 							</div>
 							<span class="${user_result == "Win" ? "text-green-500" : "text-red-500"} font-semibold">${user_result}</span>
 						</div>`;
