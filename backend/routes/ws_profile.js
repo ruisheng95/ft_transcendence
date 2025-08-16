@@ -14,7 +14,7 @@ const root = async function (fastify) {
     { websocket: true, onRequest: fastify.verify_session },
     async (connection, request) => {
     connection.on("message", recv_msg);
-    emailToWebsocketMap[fastify.get_email_by_session(request)] = connection;
+    init_websocket_session();
     refresh_all_friend_list();
       //functions
 
@@ -532,6 +532,19 @@ const root = async function (fastify) {
         const session = request.query.session;
         delete fastify.conf.session[session];
         delete emailToWebsocketMap[fastify.get_email_by_session(request)];
+      }
+
+      /**
+       * Check if have duplicate session (and remove old session)
+       * And add websocket into emailToWebsocketMap
+       */
+      function init_websocket_session() {
+        const oldConnection =
+          emailToWebsocketMap[fastify.get_email_by_session(request)];
+        if (oldConnection) {
+          oldConnection.close();
+        }
+        emailToWebsocketMap[fastify.get_email_by_session(request)] = connection;
       }
     }
   );
