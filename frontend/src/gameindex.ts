@@ -31,11 +31,11 @@ export function index_init()
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
 
 	socket.addEventListener("message", process_msg_from_socket);
-	socket.addEventListener("close", (event) => {
-		if (!event.wasClean) {
-			// window.location.href = "/index.html";
-			display_login_page();
-		}
+	socket.addEventListener("close", () => {
+		// if (!event.wasClean) {
+		// 	display_login_page();
+		// }
+		display_login_page();
 		clearInterval(websocketKeepAliveTimeout);
 	});
 	socket.addEventListener("open", () => {
