@@ -260,7 +260,7 @@ function local_2v2_game_init()
 
 	//bruh stupid ts
 	if(!local_2v2_game_popup || !board || !player1 || !player2 || !player3 || !player4 || !ball || !start_game_button || !close_local_2v2_game)
-		throw new Error("Required game elements not found");
+		throw new Error("Required game elements not found 1");
 
 	let playing = true;
 	// Initial render to position elements correctly
