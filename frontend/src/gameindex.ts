@@ -25,6 +25,8 @@ import { add_history } from "./spa-navigation.ts";
 import { WS } from "./class/WS.ts";
 import { pong_modes_popup, pong_modes_setup } from "./pong_modes.ts";
 
+import DOMPurify from 'dompurify';
+
 export function index_init()
 {
     let websocketKeepAliveTimeout: number | undefined = undefined;
@@ -181,7 +183,7 @@ export function index_init()
 	`;
 
 
-	game.innerHTML = `
+	game.innerHTML = DOMPurify.sanitize(`
 		<div id = "screen" class = "min-h-screen bg-black">
 			${header_sec}
 			${pong_modes_popup}
@@ -197,7 +199,7 @@ export function index_init()
 			${online_game_popup}
 
 			</div>
-		`;
+		`);
 
 	pong_modes_setup();
 	playerstats_setup();
