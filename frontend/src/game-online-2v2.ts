@@ -3,6 +3,9 @@ import { add_history, disable_navigation, enable_navigation, terminate_history }
 
 // let first_call_flag = false;
 
+const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
+  String.raw({ raw: strings }, ...values);
+
 function add_2v2_popups_to_dom() {
 	if (document.querySelector("#online2v2_matchmaking_popup")) {
 		return;
@@ -420,6 +423,8 @@ export function online_2v2_play()
 		}
 
 		matchmaking_popup.classList.remove("hidden");
+		const el = document.querySelector<HTMLDivElement>('[data-game="online2v2"]');
+		el?.click();
 	}
 
 	function start_match_countdown(mm_status_div: HTMLDivElement)
@@ -474,25 +479,57 @@ export function online_2v2_play()
 
 	function handle_game_end(gameover_obj : any)
 	{
-		const online2v2_winner_div = document.querySelector<HTMLDivElement>("#online2v2_winner_name");
-		const online2v2_loser_div = document.querySelector<HTMLDivElement>("#online2v2_loser_name");
+
+		const online2v2_left_result = document.querySelector<HTMLDivElement>("#online2v2_left_result");
+		const online2v2_left_name1 = document.querySelector<HTMLDivElement>("#online2v2_left_name1");
+		const online2v2_left_name2 = document.querySelector<HTMLDivElement>("#online2v2_left_name2");
+		const online2v2_left_point = document.querySelectorAll<HTMLDivElement>(".online2v2_left_point");
+
+		const online2v2_right_result = document.querySelector<HTMLDivElement>("#online2v2_right_result");
+		const online2v2_right_name1 = document.querySelector<HTMLDivElement>("#online2v2_right_name1");
+		const online2v2_right_name2 = document.querySelector<HTMLDivElement>("#online2v2_right_name2");
+		const online2v2_right_point = document.querySelectorAll(".online2v2_right_point");
+
 		const online2v2_winner_popup = document.querySelector<HTMLDivElement>("#online_2v2_winner_popup");
 		const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 		const close_online_2v2_winner_popup_button = document.querySelector<HTMLButtonElement>("#close_online2v2_winner_popup");
 
-		if(!online2v2_loser_div || !game_popup || !online2v2_winner_popup || !online2v2_winner_div || !close_online_2v2_winner_popup_button)
+		if(!game_popup || !online2v2_winner_popup || !close_online_2v2_winner_popup_button ||
+			!online2v2_left_result || !online2v2_left_name1 || !online2v2_left_name2 || !online2v2_left_point ||
+			!online2v2_right_result || !online2v2_right_name1 || !online2v2_right_name2 || !online2v2_right_point
+		)
 			throw new Error("Online2v2 winner display elements not found");
 
 		enable_navigation();
+
+		online2v2_left_name1.innerText = team1_player1_name;
+		online2v2_left_name2.innerText = team1_player2_name;
+		online2v2_right_name1.innerText = team2_player1_name;
+		online2v2_right_name2.innerText = team2_player2_name;
+
 		if(gameover_obj.winner == "team1")
 		{
-			online2v2_winner_div.innerHTML = `Winners🏆: ${team1_player1_name} & ${team1_player2_name} <p class="text-green-500">+5 each</p>`;
-			online2v2_loser_div.innerHTML = `Losers💔: ${team2_player1_name} & ${team2_player2_name} <p class="text-red-500">-5 each</p>`;
+			online2v2_left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			online2v2_left_point.forEach(e => {
+				e.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+			})
+
+			online2v2_right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			online2v2_right_point.forEach(e => {
+				e.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
+			})
 		}
 		else
 		{
-			online2v2_winner_div.innerHTML = `Winners🏆: ${team2_player1_name} & ${team2_player2_name} <p class="text-green-500">+5 each</p>`;
-			online2v2_loser_div.innerHTML = `Losers💔: ${team1_player1_name} & ${team1_player2_name} <p class="text-red-500">-5 each</p>`;
+			online2v2_right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			online2v2_right_point.forEach(e => {
+				e.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+			})
+
+			online2v2_left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			online2v2_left_point.forEach(e => {
+				e.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
+			})
 		}
 
 		online2v2_winner_popup.classList.remove("hidden");
@@ -508,47 +545,99 @@ export function online_2v2_play()
 	}
 }
 
-const online2v2_matchmaking_popup = `
-	<div id="online2v2_matchmaking_popup" class="flex flex-col justify-center items-center hidden fixed bg-black inset-0">
-		<div class="relative p-6 bg-black text-white border border-white">
-			<h1 class="text-[5vh] font-semibold mt-[3vh] mb-[10vh]"><center>Online 2v2 matchmaking lobby</center></h1>
-			
-			<div class="flex justify-center items-center gap-8">
-				<div class="text-center">
-					<h2 class="text-white text-[3vh] font-bold mb-4">Team 1</h2>
-					<div id="online2v2_mm_team1_names" class="text-white text-[3vh] font-bold border border-white px-4 py-2 min-h-[120px]">
-					</div>
-				</div>
-				<div class="text-white text-[3vh] font-bold">VS</div>
-				<div class="text-center">
-					<h2 class="text-white text-[3vh] font-bold mb-4">Team 2</h2>
-					<div id="online2v2_mm_team2_names" class="text-white text-[3vh] font-bold border border-white px-4 py-2 min-h-[120px]">
-					</div>
-				</div>
-			</div>
+const online2v2_matchmaking_popup = html`
+	<div id="online2v2_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
 
-			<div class="flex flex-col items-center">
-			<div id="online2v2_mm_status" class="text-white mt-[10vh] text-[4vh]"></div>
-				<button id="online2v2_exit_matchmaking" class="border border-white px-[4vw] py-2 mt-[3vh]">Exit</button>
-			</div>
-		</div>
+		<!--Title -->
+		<h1 class="text-4xl text-center mb-6 font-bold">Online Lobby</h1>
+
+		<!-- Game Information -->
+		<section class="flex items-center justify-center space-x-4 mb-10">
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 vs 2</span>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">4 Players</span>
+		</section>
+		
+		<!-- Game Setting Header -->
+		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
+			<h2 class="text-2xl font-bold pb-2">Map Selection</h2>
+			<h2 class="text-2xl font-bold pb-2">Players</h2>
+		</header>
+
+		<!-- Game Setting Details -->
+		<main class="grid grid-cols-[3fr_2fr] gap-10 mb-10">
+		
+			<!-- Map Selection -->
+			<section class="grid grid-cols-2 gap-6 px-12">
+				<div data-map="" data-game="online2v2" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
+				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
+				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
+				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
+			</section>
+
+			<!-- Player List -->
+			<section class="w-full text-4xl font-bold flex flex-col items-center justify-center text-center space-y-6 rounded-xl">
+				<h2 class="text-xl font-bold mb-4 border py-1 px-6 rounded-xl">Team 1</h2>
+				<div id="online2v2_mm_team1_names"></div>
+				<div class="w-1/4 pixel-font text-5xl text-yellow-400">VS</div>
+				<h2 class="text-xl font-bold mb-4 border py-1 px-6 rounded-xl">Team 2</h2>
+				<div id="online2v2_mm_team2_names"></div>
+			</section>
+		</main>
+
+		<!-- Status Msg -->
+		<div id="online2v2_mm_status" class="text-4xl mt-10"></div>
+		
+		<!--Exit Button -->
+		<button id="online2v2_exit_matchmaking" class="absolute top-10 right-10 button-remove">
+			<i class="fas fa-times text-black text-xl"></i>
+		</button>
+		
 	</div>
 `
 
-const online_2v2_winner_popup = `
-	<div id="online_2v2_winner_popup" class="border border-2 border-white flex flex-col justify-center items-center hidden fixed bg-black bg-opacity-90 inset-0" style="background-color: rgba(0,0,0,0.9)">
-		<div id="online_2v2_popup_screen" class="bg-black border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center">
+const online_2v2_winner_popup = html`
+	<div id="online_2v2_winner_popup" class="bg-black flex h-screen items-center justify-center hidden fixed inset-0 text-white inter-font">
+		<div id="online_2v2_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
-			<div class="text-center flex flex-col items-center">
-				<h1 class="text-[50px] text-white mb-6">Game over!</h1>
+			<!-- Tournament Title -->
+			<h1 class="text-5xl font-bold text-center">Match Result</h1>
 
-				<h1 class="text-[30px] text-white mb-2">Results:</h1>
-				<div class="w-[60%] border-t-2 border-white mb-4"></div>
-				<div id="online2v2_winner_name" class="text-[20px] font-bold mb-2 text-white flex gap-2"></div>
-				<div id="online2v2_loser_name" class="text-[20px] font-bold mb-6 text-white flex gap-2"></div>
-			</div>
+			<!-- Result Layout -->
+			<section class="grid grid-cols-2 w-full place-items-center">
+				<!-- Left -->
+				<div class="w-full space-y-10 px-12 text-center">
+					<!-- Result Status -->
+					<div id="online2v2_left_result" class="mb-20"></div>
+					<!-- Player Details -->
+					<div class="flex items-center justify-between px-4">
+						<span id="online2v2_left_name1" class="text-2xl font-medium"></span>
+						<div class="online2v2_left_point text-5xl flex"></div>
+					</div>
+					<div class="flex items-center justify-between px-4">
+						<span id="online2v2_left_name2" class="text-2xl font-medium"></span>
+						<div class="online2v2_left_point text-5xl flex"></div>
+					</div>
+				</div>
+				
+				<!-- Right -->
+				<div class="w-full space-y-10 px-12 text-center">
+					<!-- Result Status -->
+					<div id="online2v2_right_result" class="mb-20"></div>
+					<!-- Player Details -->
+					<div class="flex items-center justify-between px-4">
+						<span id="online2v2_right_name1" class="text-2xl font-medium"></span>
+						<div class="text-5xl flex online2v2_right_point"></div>
+					</div>
+					<div class="flex items-center justify-between px-4">
+						<span id="online2v2_right_name2" class="text-2xl font-medium"></span>
+						<div class="text-5xl flex online2v2_right_point"></div>
+					</div>
+				</div>
+			</section>
+	
 
-			<button id="close_online2v2_winner_popup" class="border-1 border-white text-white text-[20px] px-[5px] py-[5px]">close</button>
+			<button id="close_online2v2_winner_popup" class="button-primary">Exit</button>
 		</div>
 	</div>
 `

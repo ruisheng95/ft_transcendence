@@ -380,8 +380,8 @@ const local2v2_Registration = html`
 		
 		<!-- Game Setting Header -->
 		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
-			<h2 class="text-xl font-medium">Map Selection</h2>
-			<h2 class="text-xl font-medium">Players</h2>
+			<h2 class="text-2xl font-bold">Map Selection</h2>
+			<h2 class="text-2xl font-bold">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->

@@ -406,7 +406,7 @@ const online1v1_matchmaking_popup = html`
 			</section>
 
 			<!-- Player List -->
-			<section class="w-full text-4xl font-bold flex flex-col items-center justify-center text-center space-y-12 bg-white/20 py-12 rounded-xl">
+			<section class="w-full text-4xl font-bold flex flex-col items-center justify-center text-center space-y-12  py-12 rounded-xl">
 
 				<div id="online_mm_p1_name"></div>
 				<div class="w-1/4 pixel-font text-5xl text-yellow-400">VS</div>
