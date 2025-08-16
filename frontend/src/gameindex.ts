@@ -127,7 +127,7 @@ export function index_init()
 			<!-- User Profile Section -->
 			<div class="flex space-x-4 items-center">
 				<img id="header_img" src="${player.pfp ? player.pfp : "/src/defaultpfp.png"}" 
-					class="w-14 h-14 rounded-full border-2 border-white">
+					class="w-14 h-14 object-cover rounded-full border-2 border-white">
 				<span id="header_name" class="text-xl font-semibold">${player.username}</span>
 			</div>
 
@@ -186,7 +186,7 @@ export function index_init()
 
 
 	game.innerHTML = `
-		<div id = "screen" class = "min-h-screen bg-black">
+		<div id = "screen" class = "h-screen overflow-hidden bg-gray-950">
 			${header_sec}
 			${pong_modes_popup}
 			${friends_popup}

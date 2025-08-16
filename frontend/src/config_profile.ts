@@ -161,7 +161,7 @@ export function pf_config_setup()
 
 export const pf_config_popup = html`
 	
-	<div id="pf_config_popup" class="flex justify-center items-center h-screen hidden fixed bg-black inset-0 inter-font text-white">
+	<div id="pf_config_popup" class="flex justify-center items-center h-screen hidden fixed bg-gray-950 inset-0 inter-font text-white">
 		
 		<section id="pf_config_screen" class="relative h-3/4 w-1/2 border-2 rounded-xl flex flex-col items-center justify-center space-y-16">
 			<h2 class="text-2xl font-bold">Registration Form</h2>

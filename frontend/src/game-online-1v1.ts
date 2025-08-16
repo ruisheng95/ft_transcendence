@@ -2,6 +2,7 @@
 import { add_history, disable_navigation, enable_navigation, terminate_history } from "./spa-navigation";
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
+import "./gamestyle.css";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -376,7 +377,7 @@ export function online_1v1_play()
 }
 
 const online1v1_matchmaking_popup = html`
-		<div id="online1v1_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
+		<div id="online1v1_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
 		<h1 class="text-4xl text-center mb-6 font-bold">Online Lobby</h1>
@@ -427,7 +428,7 @@ const online1v1_matchmaking_popup = html`
 
 
 const online_1v1_winner_popup = html`
-	<div id="online_1v1_winner_popup" class="bg-black flex h-screen items-center justify-center hidden fixed inset-0 text-white inter-font">
+	<div id="online_1v1_winner_popup" class="bg-gray-950 flex h-screen items-center justify-center hidden fixed inset-0 text-white inter-font">
 		<div id="online_1v1_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
 			<!-- Tournament Title -->
@@ -467,7 +468,7 @@ const online_1v1_winner_popup = html`
 export const online_game_popup = html`
 
 	${online1v1_matchmaking_popup}
-	<div id="online_game_popup" class="hidden bg-black bg-cover bg-center fixed inset-0">
+	<div id="online_game_popup" class="hidden bg-gray-950 bg-cover bg-center fixed inset-0">
 		<div class="bg-black/70 h-full flex flex-col justify-center items-center">
 			<div class="flex flex-col items-center bg-transparent text-white">
 				<div id="online_game_board_area"></div>

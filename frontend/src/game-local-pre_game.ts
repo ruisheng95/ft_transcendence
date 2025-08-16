@@ -232,7 +232,7 @@ export function local_play_menus_setup()
 // `;
 
 const local1v1_Registration = html`
-	<div id="local1v1_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
+	<div id="local1v1_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
 		<h1 class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
@@ -294,7 +294,7 @@ const local1v1_Registration = html`
 `;
 
 const localTour_Registration = html`
-	<div id="localTour_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
+	<div id="localTour_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
 		<h1 class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
@@ -366,7 +366,7 @@ const localTour_Registration = html`
 `;
 
 const local2v2_Registration = html`
-	<div id="local2v2_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
+	<div id="local2v2_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
 		<h1 class="text-4xl text-center mb-b font-bold">Match Registration</h1>

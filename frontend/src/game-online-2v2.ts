@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { add_history, disable_navigation, enable_navigation, terminate_history } from "./spa-navigation";
-
+import "./gamestyle.css";
 // let first_call_flag = false;
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
@@ -546,7 +546,7 @@ export function online_2v2_play()
 }
 
 const online2v2_matchmaking_popup = html`
-	<div id="online2v2_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-black inset-0 text-white inter-font">
+	<div id="online2v2_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 
 		<!--Title -->
 		<h1 class="text-4xl text-center mb-6 font-bold">Online Lobby</h1>
@@ -597,7 +597,7 @@ const online2v2_matchmaking_popup = html`
 `
 
 const online_2v2_winner_popup = html`
-	<div id="online_2v2_winner_popup" class="bg-black flex h-screen items-center justify-center hidden fixed inset-0 text-white inter-font">
+	<div id="online_2v2_winner_popup" class="bg-gray-950 flex h-screen items-center justify-center hidden fixed inset-0 text-white inter-font">
 		<div id="online_2v2_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
 			<!-- Tournament Title -->

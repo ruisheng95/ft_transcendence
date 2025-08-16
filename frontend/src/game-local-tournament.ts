@@ -73,7 +73,7 @@ export function local_tour_game_setup()
 }
 
 const localTour_matchmaking_popup = html`
-	<div id="localTour_matchmaking_popup" class="bg-black flex h-screen p-20 justify-center hidden fixed inset-0 text-white inter-font">
+	<div id="localTour_matchmaking_popup" class="bg-gray-950 flex h-screen p-20 justify-center hidden fixed inset-0 text-white inter-font">
 		<div id="localTour_matchmaking_popup_screen" class="w-full h-[80vh] flex flex-col justify-between items-center">
 
 			<div id="localTour_matchmaking_header" class="text-center mb-6">

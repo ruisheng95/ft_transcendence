@@ -63,7 +63,7 @@ export function local_1v1_game_setup()
 }
 
 const local1v1_winner_popup = html`
-	<div id="local1v1_winner_popup" class="bg-black flex h-screen items-center justify-center hidden fixed inset-0 text-white inter-font">
+	<div id="local1v1_winner_popup" class="bg-gray-950 flex h-screen items-center justify-center hidden fixed inset-0 text-white inter-font">
 		<div id="local1v1_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
 			<!-- Tournament Title -->

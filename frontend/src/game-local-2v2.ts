@@ -77,7 +77,7 @@ export function local_2v2_game_setup()
 }
 
 const local2v2_winner_popup = html`
-	<div id="local2v2_winner_popup" class="bg-black flex h-screen items-center justify-center hidden fixed inset-0 text-white">
+	<div id="local2v2_winner_popup" class="bg-gray-950 flex h-screen items-center justify-center hidden fixed inset-0 text-white">
 		<div id="local2v2_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
 			<!-- Tournament Title -->
@@ -106,7 +106,7 @@ const local2v2_winner_popup = html`
 `
 
 export const local_2v2_game_popup = html`
-	<div id="local_2v2_game_popup" class="hidden bg-black bg-cover bg-center fixed inset-0">
+	<div id="local_2v2_game_popup" class="hidden bg-gray-950 bg-cover bg-center fixed inset-0">
 		<div class="bg-black/70 h-full flex flex-col justify-center items-center text-white">
 			<div id="local_2v2_game_board_area"></div>
 			<div id="local2v2_player_names" class="flex gap-[600px] mb-[16px] mt-[20px]">

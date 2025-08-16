@@ -63,8 +63,8 @@ export function vs_AI_spa_nav()
 }
 
 const vs_AI_winner_popup = `
-   <div id="vs_AI_winner_popup" class="bg-black flex h-screen items-center justify-center hidden fixed inset-0 text-white">
-   	<div id="local1v1_popup_screen" class="bg-black border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center gap-8 rounded-lg shadow-2xl">
+   <div id="vs_AI_winner_popup" class="bg-gray-950 flex h-screen items-center justify-center hidden fixed inset-0 text-white">
+   	<div id="local1v1_popup_screen" class="bg-gray-950 border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center gap-8 rounded-lg shadow-2xl">
 
    		<div id="vs_AI_text" class="text-white text-center text-[32px] font-bold mx-8"></div>
 
