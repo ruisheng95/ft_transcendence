@@ -46,7 +46,6 @@ export function local_play_menus_setup()
 	
 	all_maps.forEach(map => {
 		map.addEventListener("click", () => {
-
 			all_maps.forEach(m => {
 				m.classList.add("grayscale");
 				m.classList.remove("border-yellow-400", "shadow-md");

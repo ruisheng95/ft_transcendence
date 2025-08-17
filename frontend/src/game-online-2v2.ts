@@ -16,6 +16,23 @@ function add_2v2_popups_to_dom() {
 		${online_2v2_winner_popup}
 	`;
 	document.body.insertAdjacentHTML('beforeend', popupHTML);
+
+	//setting up event listeners for maps
+	const all_maps2 = document.querySelectorAll<HTMLButtonElement>(".mapselect-logic2");
+	const map_input = document.querySelector<HTMLInputElement>("#input-map");
+	all_maps2.forEach(map => {
+		map.addEventListener("click", () => {
+			all_maps2.forEach(m => {
+				m.classList.add("grayscale");
+				m.classList.remove("border-yellow-400", "shadow-md");
+			});
+			
+			map.classList.remove("grayscale");
+			map.classList.add("border-yellow-400", "shadow-md");
+			if (map_input && map.dataset.map !== undefined)
+ 				map_input.value = map.dataset.map;
+		})
+	})
 }
 
 function setup_2v2_ui() {
@@ -83,6 +100,7 @@ function cleanup_2v2_ui() {
 
 export function online_2v2_play()
 {
+
 	add_2v2_popups_to_dom();
 
 	// Add unique ID to test using the same browser
@@ -96,6 +114,10 @@ export function online_2v2_play()
 	if(!game_obj) throw new Error("Game obj not found");
 	
 	game_obj.innerHTML = "";
+
+	//click the "none" map option
+	const el = document.querySelector<HTMLDivElement>('[data-game="online2v2"]');
+		el?.click();
 
 	game_obj.innerHTML = `
 	<div id="game_buttons" class="flex gap-[400px] mb-[20px] mt-[20px]">
@@ -423,8 +445,6 @@ export function online_2v2_play()
 		}
 
 		matchmaking_popup.classList.remove("hidden");
-		const el = document.querySelector<HTMLDivElement>('[data-game="online2v2"]');
-		el?.click();
 	}
 
 	function start_match_countdown(mm_status_div: HTMLDivElement)
@@ -433,8 +453,9 @@ export function online_2v2_play()
 		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online2v2_matchmaking_popup");
 		const team1_display_div = document.querySelector<HTMLDivElement>("#online2v2_team1_name_display");
 		const team2_display_div = document.querySelector<HTMLDivElement>("#online2v2_team2_name_display");
+		const map_input = document.querySelector<HTMLInputElement>("#input-map");
 
-		if(!game_popup || !matchmaking_popup || !team1_display_div || !team2_display_div) 
+		if(!game_popup || !matchmaking_popup || !team1_display_div || !team2_display_div || !map_input) 
 			throw new Error("start match countdown elements not found");
 
 		let countdown = 3;
@@ -471,6 +492,8 @@ export function online_2v2_play()
 					<h1 class="text-blue-500">${team2_player1_name}</h1> <h1 class="text-white">&</h1> <h1 class="text-pink-500">${team2_player2_name}</h1>
 				`;
 				
+				//change the map background style
+				game_popup.style.backgroundImage = map_input.value;
 				init_positions();
 				render_positions();
 			}
@@ -569,10 +592,10 @@ const online2v2_matchmaking_popup = html`
 		
 			<!-- Map Selection -->
 			<section class="grid grid-cols-2 gap-6 px-12">
-				<div data-map="" data-game="online2v2" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
-				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
-				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
-				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
+				<div data-map="" data-game="online2v2" class="mapselect-logic2 text-2xl flex items-center justify-center select-map">None</div>
+				<img data-map="url('/map-1.avif')" class="mapselect-logic2 object-cover select-map" src="/map-1.avif" alt="map">
+				<img data-map="url('/map-2.avif')" class="mapselect-logic2 object-cover select-map" src="/map-2.avif" alt="map">
+				<img data-map="url('/map-3.png')" class="mapselect-logic2 object-cover select-map" src="/map-3.png" alt="map">
 			</section>
 
 			<!-- Player List -->
