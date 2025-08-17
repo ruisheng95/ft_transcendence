@@ -142,13 +142,13 @@ export function index_init()
 						<!-- Pong -->
 						<button id="pong_modes_button" class="relative group px-3 py-2 rounded-lg bg-yellow-400">
 							<i class="fas fa-table-tennis text-xl text-black"></i>
-							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Pong</span>
+							<span class="tooltip-1">Pong</span>
 						</button>
 
 						<!-- XOX -->
 						<button class="relative group px-3 py-2 rounded-lg">
 							<i class="fas fa-th text-xl"></i>
-							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg   whitespace-nowrap">Tic-Tac-Toe</span>
+							<span class="tooltip-1">Tic-Tac-Toe</span>
 						</button>
 
 					</div>
@@ -162,19 +162,19 @@ export function index_init()
 						<!-- Friends -->
 						<button id ="display_friends_page_button" class="relative group px-3 py-2 rounded-lg">
 							<i class="fas fa-users text-xl"></i>
-							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Friends</span>
+							<span class="tooltip-1">Friends</span>
 						</button>
 
 						<!-- Settings -->
 						<button id="settings_button" class="relative group px-3 py-2 rounded-lg">
 							<i class="fas fa-cog text-xl"></i>
-							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Settings</span>
+							<span class="tooltip-1">Settings</span>
 						</button>
 
 						<!-- Logout -->
 						<button id="logout_button" class="relative group px-3 py-2 rounded-lg">
 							<i class="fas fa-sign-out-alt text-xl"></i>
-							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Logout</span>
+							<span class="tooltip-1">Logout</span>
 						</button>
 
 					</div>
@@ -188,15 +188,15 @@ export function index_init()
 	game.innerHTML = `
 		<div id = "screen" class = "h-screen overflow-hidden bg-gray-950">
 			${header_sec}
+			
 			${pong_modes_popup}
 			${friends_popup}
-
 			${playerstats_popup}
 			${settings_popup}
 
 			${local_play_menus_popup}
 			${vs_AI_game_popup}
-				
+	
 			${game_popup}
 			${online_game_popup}
 
