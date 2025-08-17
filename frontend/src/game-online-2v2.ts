@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { add_history, disable_navigation, enable_navigation, terminate_history } from "./spa-navigation";
+import { add_history, disable_back_navigation, enable_back_navigation} from "./spa-navigation";
 import "./gamestyle.css";
 // let first_call_flag = false;
 
@@ -206,7 +206,6 @@ export function online_2v2_play()
 		game_popup.classList.add("hidden");
 		playing = false;
 		cleanup_2v2_ui();
-		terminate_history();
 		socket.close();
 	});
 
@@ -424,7 +423,7 @@ export function online_2v2_play()
 		}
 		else if(msg_obj.status === "Lobby full")
 		{
-			disable_navigation();
+			disable_back_navigation();
 			start_match_countdown(mm_status_div);
 			
 			team1_player1_name = players[0];
@@ -523,7 +522,7 @@ export function online_2v2_play()
 		)
 			throw new Error("Online2v2 winner display elements not found");
 
-		enable_navigation();
+		enable_back_navigation();
 
 		online2v2_left_name1.innerText = team1_player1_name;
 		online2v2_left_name2.innerText = team1_player2_name;

@@ -1,7 +1,6 @@
 // => void means return value is void
 //AI flag is optional arg wif default value set as false
 
-import { terminate_history } from "./spa-navigation";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let stop_game_ft = () => {};
@@ -104,10 +103,9 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	document.addEventListener('keyup', handleKeyUp);
 	start_game_button.addEventListener("click", start_the_fkin_game);
 	close_game_button.addEventListener("click", () => {
-			game_popup.classList.add("hidden");
-			start_game_button.classList.remove("hidden");
-			playing = false;
-			terminate_history();
+		game_popup.classList.add("hidden");
+		start_game_button.classList.remove("hidden");
+		playing = false;
 		});
 
 	// AI STUFF

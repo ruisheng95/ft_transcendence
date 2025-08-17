@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { add_history, disable_navigation, enable_navigation, terminate_history } from "./spa-navigation";
+import { add_history, disable_back_navigation, enable_back_navigation } from "./spa-navigation";
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
@@ -86,7 +86,6 @@ export function online_1v1_play()
 	close_game_button.addEventListener("click", () => {
 		game_popup.classList.add("hidden");
 		playing = false;
-		terminate_history();
 		socket.close();
 		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 	});
@@ -265,7 +264,7 @@ export function online_1v1_play()
 		}
 		else if(msg_obj.status === "Lobby full")
 		{
-			disable_navigation();
+			disable_back_navigation();
 			start_match_countdown(mm_status_div);
 			p1_name = players[0];
 			p2_name = players[1];
@@ -343,7 +342,7 @@ export function online_1v1_play()
 		)
 			throw new Error("Online1v1 winner display elements not found");
 
-		enable_navigation();
+		enable_back_navigation();
 
 		online1v1_left_name.innerText = p1_name;
 		online1v1_right_name.innerText = p2_name;

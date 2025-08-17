@@ -86,7 +86,7 @@ export function index_init()
 	localStorage.setItem("current_username", player.username);
 	main_ft();
 
-	add_history(""); //temporarily add /gameindex.html/ to history cuz wanna have the popstate effect
+	add_history("/pong"); //temporarily add /gameindex.html/ to history cuz wanna have the popstate effect
 	// socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
 	}
 

@@ -24,26 +24,12 @@ export function local_play_menus_setup()
 	const all_maps = document.querySelectorAll<HTMLButtonElement>(".mapselect-logic");
 	const map_input = document.querySelector<HTMLInputElement>("#input-map");
 
-	const p1_name_input = document.querySelector<HTMLInputElement>("#local1v1_p1_name_input");
-	const p2_name_input = document.querySelector<HTMLInputElement>("#local1v1_p2_name_input");
-	
-	const p1_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p1_name_input");
-	const p2_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p2_name_input");
-	const p3_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p3_name_input");
-	const p4_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p4_name_input");
-
-	const p1_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p1_name_input");
-	const p2_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p2_name_input");
-	const p3_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p3_name_input");
-	const p4_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p4_name_input");
-
 	if (!local_1v1_button || !local_2v2_button || !local_tournament_button || !registration_1v1 || 
 		!registration_2v2 || !registration_tournament || !close_1v1_registration || !close_2v2_registration || 
-		!close_tournament_registration || !all_maps || !map_input || !p1_name_input || !p2_name_input ||
-		!p1_name_input_tour || !p2_name_input_tour || !p3_name_input_tour || !p4_name_input_tour ||
-		!p1_name_input_2v2 || !p2_name_input_2v2 || !p3_name_input_2v2 || !p4_name_input_2v2)
+		!close_tournament_registration || !all_maps || !map_input)
 		throw new Error("some navigation stuff not found");
-	
+
+	//init ALL maps
 	all_maps.forEach(map => {
 		map.addEventListener("click", () => {
 			all_maps.forEach(m => {
@@ -59,54 +45,90 @@ export function local_play_menus_setup()
 	})
 
 	local_1v1_button.addEventListener("click", () => {
-		registration_1v1.classList.remove("hidden");
-		p1_name_input.value = "";
-		p2_name_input.value = "";
-		const el = document.querySelector<HTMLDivElement>('[data-game="local1v1"]');
-		el?.click();
-		add_history("localgame/1v1");
+		open_local1v1();
+		add_history("/pong/local1v1");
 	});
 
 	local_2v2_button.addEventListener("click", () => {
-		registration_2v2.classList.remove("hidden");
-		p1_name_input_2v2.value = "";
-		p2_name_input_2v2.value = "";
-		p3_name_input_2v2.value = "";
-		p4_name_input_2v2.value = "";
-		const el = document.querySelector<HTMLDivElement>('[data-game="local2v2"]');
-		el?.click();
-		add_history("localgame/2v2");
+		open_local2v2();
+		add_history("/pong/localgame/2v2");
 	});
 
 	local_tournament_button.addEventListener("click", () => {
-		registration_tournament.classList.remove("hidden");
-		p1_name_input_tour.value = "";
-		p2_name_input_tour.value = "";
-		p3_name_input_tour.value = "";
-		p4_name_input_tour.value = "";
-		const el = document.querySelector<HTMLDivElement>('[data-game="localTour"]');
-		el?.click();
-		add_history("localgame/tournament");
+		open_localTour();
+		add_history("/pong/tournament");
 	});
 
 	close_1v1_registration.addEventListener("click", () => {
 		registration_1v1.classList.add("hidden");
-		add_history("localgame");
+		add_history("/pong");
 	});
 
 	close_2v2_registration.addEventListener("click", () => {
 		registration_2v2.classList.add("hidden");
-		add_history("localgame");
+		add_history("/pong");
 	});
 
 	close_tournament_registration.addEventListener("click", () => {
 		registration_tournament.classList.add("hidden");
-		add_history("localgame");
+		add_history("/pong");
 	});
 
 	local_1v1_game_setup();
 	local_2v2_game_setup();
 	local_tour_game_setup();
+}
+
+export function open_local1v1()
+{
+	const registration_1v1 = document.querySelector<HTMLDivElement>("#local1v1_registration");
+	const p1_name_input = document.querySelector<HTMLInputElement>("#local1v1_p1_name_input");
+	const p2_name_input = document.querySelector<HTMLInputElement>("#local1v1_p2_name_input");
+
+	if(!registration_1v1 || !p1_name_input || !p2_name_input) throw new Error("open local1v1 elements not found");
+	registration_1v1.classList.remove("hidden");
+	p1_name_input.value = "";
+	p2_name_input.value = "";
+	const el = document.querySelector<HTMLDivElement>('[data-game="local1v1"]');
+	el?.click();
+}
+
+export function open_local2v2()
+{
+	const registration_2v2 = document.querySelector<HTMLDivElement>("#local2v2_registration");
+	const p1_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p1_name_input");
+	const p2_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p2_name_input");
+	const p3_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p3_name_input");
+	const p4_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p4_name_input");
+
+	if(!registration_2v2 || !p1_name_input_2v2 || !p2_name_input_2v2 || !p3_name_input_2v2 || !p4_name_input_2v2) throw new Error("open local2v2 elements not found");
+	
+	registration_2v2.classList.remove("hidden");
+	p1_name_input_2v2.value = "";
+	p2_name_input_2v2.value = "";
+	p3_name_input_2v2.value = "";
+	p4_name_input_2v2.value = "";
+	const el = document.querySelector<HTMLDivElement>('[data-game="local2v2"]');
+	el?.click();
+}
+
+export function open_localTour()
+{
+	const registration_tournament = document.querySelector<HTMLDivElement>("#localTour_registration");
+	const p1_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p1_name_input");
+	const p2_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p2_name_input");
+	const p3_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p3_name_input");
+	const p4_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p4_name_input");
+
+	if(!registration_tournament || !p1_name_input_tour || !p2_name_input_tour || !p3_name_input_tour || !p4_name_input_tour) throw new Error("open localTour elements not found");
+
+	registration_tournament.classList.remove("hidden");
+	p1_name_input_tour.value = "";
+	p2_name_input_tour.value = "";
+	p3_name_input_tour.value = "";
+	p4_name_input_tour.value = "";
+	const el = document.querySelector<HTMLDivElement>('[data-game="localTour"]');
+	el?.click();
 }
 
 // export const local_play_menus_popup = `
