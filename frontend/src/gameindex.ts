@@ -29,17 +29,19 @@ import { add_history } from "./spa-navigation.ts";
 import { WS } from "./class/WS.ts";
 import { pong_modes_popup, pong_modes_setup } from "./pong_modes.ts";
 
+import DOMPurify from 'dompurify';
+
 export function index_init()
 {
     let websocketKeepAliveTimeout: number | undefined = undefined;
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
 
 	socket.addEventListener("message", process_msg_from_socket);
-	socket.addEventListener("close", (event) => {
-		if (!event.wasClean) {
-			// window.location.href = "/index.html";
-			display_login_page();
-		}
+	socket.addEventListener("close", () => {
+		// if (!event.wasClean) {
+		// 	display_login_page();
+		// }
+		display_login_page();
 		clearInterval(websocketKeepAliveTimeout);
 	});
 	socket.addEventListener("open", () => {
@@ -185,8 +187,9 @@ export function index_init()
 	`;
 
 
-	game.innerHTML = `
-		<div id = "screen" class = "h-screen overflow-hidden bg-gray-950">
+
+	game.innerHTML = DOMPurify.sanitize(`
+		<div id = "screen" class = "min-h-screen bg-black">
 			${header_sec}
 			${pong_modes_popup}
 			${friends_popup}
@@ -201,7 +204,7 @@ export function index_init()
 			${online_game_popup}
 
 			</div>
-		`;
+		`);
 
 	pong_modes_setup();
 	playerstats_setup();
