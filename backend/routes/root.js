@@ -48,6 +48,14 @@ const root = async function (fastify) {
           );
       }
 
+      // Remove duplicate session here
+      const sessionArray = Object.keys(fastify.conf.session);
+      for (const key of sessionArray) {
+        if (fastify.conf.session[key] === payload.email.toLowerCase()) {
+          delete fastify.conf.session[key];
+        }
+      }
+
       const session = crypto.randomUUID();
       fastify.conf.session[session] = payload.email.toLowerCase();
       return { session };
