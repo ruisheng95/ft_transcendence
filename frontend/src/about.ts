@@ -6,7 +6,7 @@ export const about_popup = `
 	 <div class="bg-gray-950 text-white px-8 flex items-center justify-between">
 		<span class="text-3xl font-bold">About</span>
 		<div class="flex items-center space-x-4">
-			<img class="h-20 object-cover" src="./src/asset/42-KL.png" alt="42-KL">
+			<img class="h-20 object-cover" src="/42-KL.png" alt="42-KL">
 			<button id="close_about_button" class="text-white hover:text-red-400 transition-colors">
 				X
 			</button>
@@ -46,8 +46,8 @@ export const about_popup = `
 				<li>Typescript</li>
 			</ul>
 			<div class="flex justify-around">
-				<img class="w-12 h-12" src="./src/asset/tailwind.svg" alt="tailwind-logo">
-				<img class="w-12 h-12" src="./src/asset/typescript.svg" alt="typescript-logo">
+				<img class="w-12 h-12" src="/tailwind.svg" alt="tailwind-logo">
+				<img class="w-12 h-12" src="/typescript.svg" alt="typescript-logo">
 			</div>
 		</div>
 
@@ -63,8 +63,8 @@ export const about_popup = `
 				<li>Sqlite</li>
 			</ul>
 			<div class="flex justify-around">
-				<img class="w-12 h-12" src="./src/asset/fastify.svg" alt="tailwind-logo">
-				<img class="w-12 h-12" src="./src/asset/sqlite.svg" alt="typescript-logo">
+				<img class="w-12 h-12" src="/fastify.svg" alt="tailwind-logo">
+				<img class="w-12 h-12" src="/sqlite.svg" alt="typescript-logo">
 			</div>
 		</div>
 	</div>
@@ -74,22 +74,22 @@ export const about_popup = `
 	
 	<div class=" px-32 flex justify-center items-center gap-20">
 		<div class="flex flex-col text-center">
-			<img class="w-24 h-24 rounded-full object-cover" src="./src/asset/abinti-a.jpg" alt="member">
+			<img class="w-24 h-24 rounded-full object-cover" src="/abinti-a.jpg" alt="member">
 			<span class="font-bold text-gray-700 text-lg">Adya</span>
 			<span class="text-gray-500">abinti-a</span>
 		</div>
 		<div class="flex flex-col text-center">
-			<img class="w-24 h-24 rounded-full object-cover" src="./src/asset/cheelim.jpg" alt="member">
+			<img class="w-24 h-24 rounded-full object-cover" src="/cheelim.jpg" alt="member">
 			<span class="font-bold text-gray-700 text-lg">Chee Kit</span>
 			<span class="text-gray-500">cheelim</span>
 		</div>
 		<div class="flex flex-col text-center">
-			<img class="w-24 h-24 rounded-full object-cover" src="./src/asset/jpaul.jpg" alt="member">
+			<img class="w-24 h-24 rounded-full object-cover" src="/jpaul.jpg" alt="member">
 			<span class="font-bold text-gray-700 text-lg">Jason</span>
 			<span class="text-gray-500">jpaul</span>
 		</div>
 		<div class="flex flex-col text-center">
-			<img class="w-24 h-24 rounded-full object-cover" src="./src/asset/rng.jpg" alt="member">
+			<img class="w-24 h-24 rounded-full object-cover" src="/rng.jpg" alt="member">
 			<span class="font-bold text-gray-700 text-lg">Rui Sheng</span>
 			<span class="text-gray-500">rng</span>
 		</div>

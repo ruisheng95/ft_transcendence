@@ -4,6 +4,10 @@
 //notes
 //only init - ing the webpage after i recv JSON of profile from socket
 
+const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
+  String.raw({ raw: strings }, ...values);
+
+
 import "./gameindex.css";
 import { playerstats_setup, playerstats_popup } from "./player_stats.ts";
 import { settings_setup, settings_popup } from "./settings.ts";
@@ -118,14 +122,14 @@ export function index_init()
 	// 	`;
 
 //header sec - simplified version
-	const header_sec = `
+	const header_sec = html`
 	<div id="header_sec" class="inter-font">
 		<div class="text-white flex items-center justify-between w-full h-[10vh] bg-gray-950 border-b border-gray-700 px-4">
 			
 			<!-- User Profile Section -->
 			<div class="flex space-x-4 items-center">
 				<img id="header_img" src="${player.pfp ? player.pfp : "/src/defaultpfp.png"}" 
-					class="w-14 h-14 rounded-full border-2 border-white">
+					class="w-14 h-14 object-cover rounded-full border-2 border-white">
 				<span id="header_name" class="text-xl font-semibold">${player.username}</span>
 			</div>
 
@@ -138,15 +142,15 @@ export function index_init()
 					<div class="flex items-center space-x-2">
 
 						<!-- Pong -->
-						<button id="pong_modes_button" class="relative group px-3 py-1 rounded-lg">
-							<i class="fas fa-table-tennis text-xl"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Pong</span>
+						<button id="pong_modes_button" class="relative group px-3 py-2 rounded-lg bg-yellow-400">
+							<i class="fas fa-table-tennis text-xl text-black"></i>
+							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Pong</span>
 						</button>
 
 						<!-- XOX -->
-						<button class="relative group px-3 py-1 rounded-lg">
+						<button class="relative group px-3 py-2 rounded-lg">
 							<i class="fas fa-th text-xl"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg   whitespace-nowrap">Tic-Tac-Toe</span>
+							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg   whitespace-nowrap">Tic-Tac-Toe</span>
 						</button>
 
 					</div>
@@ -158,21 +162,21 @@ export function index_init()
 					<div class="flex items-center space-x-2">
 
 						<!-- Friends -->
-						<button id ="display_friends_page_button" class="relative group px-3 py-1 rounded-lg">
-							<i class="fas fa-users text-xl text-white"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Friends</span>
+						<button id ="display_friends_page_button" class="relative group px-3 py-2 rounded-lg">
+							<i class="fas fa-users text-xl"></i>
+							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Friends</span>
 						</button>
 
 						<!-- Settings -->
-						<button id="settings_button" class="relative group px-3 py-1 rounded-lg">
-							<i class="fas fa-cog text-xl text-white"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Settings</span>
+						<button id="settings_button" class="relative group px-3 py-2 rounded-lg">
+							<i class="fas fa-cog text-xl"></i>
+							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Settings</span>
 						</button>
 
 						<!-- Logout -->
-						<button id="logout_button" class="relative group px-3 py-1 rounded-lg">
-							<i class="fas fa-sign-out-alt text-xl text-white"></i>
-							<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Logout</span>
+						<button id="logout_button" class="relative group px-3 py-2 rounded-lg">
+							<i class="fas fa-sign-out-alt text-xl"></i>
+							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Logout</span>
 						</button>
 
 					</div>
@@ -181,6 +185,7 @@ export function index_init()
 		</div>
 	</div>
 	`;
+
 
 
 	game.innerHTML = DOMPurify.sanitize(`

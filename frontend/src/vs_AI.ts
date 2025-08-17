@@ -23,6 +23,7 @@ export function vs_AI_game_setup ()
 		game_popup.classList.remove("hidden");
 		vs_AI_p1_name_display.innerHTML = "player";
 		vs_AI_p2_name_display.innerHTML = "Ai";
+		game_popup.style.backgroundImage = "";
 		display_game(handle_game_end_vs_AI, true);
 		add_history("vs_AI_game");
 	});
@@ -62,12 +63,12 @@ export function vs_AI_spa_nav()
 }
 
 const vs_AI_winner_popup = `
-   <div id="vs_AI_winner_popup" class="border border-2 border-white flex flex-col justify-center items-center hidden fixed bg-black bg-opacity-90 inset-0" style="background-color: rgba(0,0,0,0.9)">
-   	<div id="local1v1_popup_screen" class="bg-black border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center gap-8 rounded-lg shadow-2xl">
+   <div id="vs_AI_winner_popup" class="bg-gray-950 flex h-screen items-center justify-center hidden fixed inset-0 text-white">
+   	<div id="local1v1_popup_screen" class="bg-gray-950 border border-2 border-white w-[50%] h-[50%] flex flex-col justify-center items-center gap-8 rounded-lg shadow-2xl">
 
    		<div id="vs_AI_text" class="text-white text-center text-[32px] font-bold mx-8"></div>
 
-   		<button id="close_vs_AI_winner_popup" class="border-2 border-white text-white text-[18px] px-6 py-3">Close</button>
+   		<button id="close_vs_AI_winner_popup" class="button-primary">Exit</button>
    	</div>
    </div>
 `

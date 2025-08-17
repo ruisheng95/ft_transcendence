@@ -123,8 +123,10 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 		const game_popup = document.querySelector<HTMLDivElement>("#game_popup");
 		const p1_name_display_ingame = document.querySelector<HTMLDivElement>("#p1_name_display");
 		const p2_name_display_ingame = document.querySelector<HTMLDivElement>("#p2_name_display");
+
+		const map_input = document.querySelector<HTMLInputElement>("#input-map");
 		
-		if(!p1_name_display_ingame || !p2_name_display_ingame || !game_popup || !open_game_button || !localTour_matchmaking_popup || !p1_name_display || !p2_name_display || !p1_bracket || !p2_bracket || !p3_bracket || !p4_bracket || !winner1_bracket || !winner2_bracket || !loser1_bracket || !loser2_bracket || !loser_final)
+		if(!p1_name_display_ingame || !p2_name_display_ingame || !game_popup || !open_game_button || !localTour_matchmaking_popup || !p1_name_display || !p2_name_display || !p1_bracket || !p2_bracket || !p3_bracket || !p4_bracket || !winner1_bracket || !winner2_bracket || !loser1_bracket || !loser2_bracket || !loser_final || !map_input)
 			throw new Error("localTour matchmaking elements not found");
 
 		p1_bracket.innerHTML = Tournament_state.players[0];
@@ -151,6 +153,7 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 			p2_name_display_ingame.innerHTML = Tournament_state.current_players[1];
 			localTour_matchmaking_popup.classList.add("hidden");
 			game_popup.classList.remove("hidden");
+			game_popup.style.backgroundImage = map_input.value;
 			display_game(handle_game_end);
 		});
 	}
@@ -221,9 +224,9 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 		close_finalwinner_button.classList.remove("hidden");
 
 		finalwinner_name_display.innerHTML = Tournament_state.final_ranking[0];
-		ranking_1st.innerHTML = `1st ${Tournament_state.final_ranking[0]}`;
-		ranking_2nd.innerHTML = `2nd ${Tournament_state.final_ranking[1]}`;
-		ranking_3rd.innerHTML = `3rd ${Tournament_state.final_ranking[2]}`;
-		ranking_4th.innerHTML = `4th ${Tournament_state.final_ranking[3]}`;
+		ranking_1st.innerText = Tournament_state.final_ranking[0];
+		ranking_2nd.innerText = Tournament_state.final_ranking[1];
+		ranking_3rd.innerText = Tournament_state.final_ranking[2];
+		ranking_4th.innerText = Tournament_state.final_ranking[3];
 	}
 }
