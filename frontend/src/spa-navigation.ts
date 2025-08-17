@@ -2,17 +2,28 @@
 //prev_url will always include gameindex cuz i using location.pathname
 let front_navigation_disabled = false;
 let back_navigation_disabled = false;
+let prev_url = "";
 
 import { vs_AI_spa_nav} from "./vs_AI";
 import { exported_stop_game_ft } from "./game-local-display_game";
 import { open_local1v1, open_local2v2, open_localTour } from "./game-local-pre_game";
+import { open_pong_modes } from "./pong_modes";
+import { open_settings_page } from "./settings";
+import { open_friend_page } from "./friends";
+import { open_playerstats_page } from "./player_stats";
 
 export function add_history(path : string)
 {
 	//console.log("Add history called = Path: ", path);
 	history.pushState({ page: path }, path, `${path}`);
+	prev_url = path;
 }
 
+export function add_prev_url_to_history()
+{
+	console.log("prev url: ", prev_url);
+	history.pushState({ page: prev_url }, prev_url, `${prev_url}`);
+}
 
 export function disable_back_navigation()
 {
@@ -34,7 +45,6 @@ export function enable_front_navigation()
 	front_navigation_disabled = false;
 }
 
-
 window.addEventListener("popstate", (event) => {
 
 	if (front_navigation_disabled)
@@ -48,6 +58,7 @@ window.addEventListener("popstate", (event) => {
 		history.go(1);
 		return;
 	}
+
 	//console.log("user changed history");
 	console.log("Current URL:", location.pathname);
 
@@ -63,6 +74,7 @@ function rmv_all_pgs_except_index()
 	const playerstats_popup = document.querySelector<HTMLDivElement>("#playerstats_popup");
 	const settings_popup = document.querySelector<HTMLDivElement>("#settings_popup");
 	const pong_modes_popup = document.querySelector<HTMLDivElement>("#pong_modes_popup");
+	const friends_popup = document.querySelector<HTMLDivElement>("#friends_popup");
 	
 	const vs_AI_winner_popup = document.querySelector<HTMLDivElement>("#vs_AI_winner_popup");
 	
@@ -78,7 +90,7 @@ function rmv_all_pgs_except_index()
 	const online1v1_winner_popup = document.querySelector<HTMLDivElement>("#online_1v1_winner_popup");
 
 
-	if(!pong_modes_popup || !registration_1v1 || !local1v1_winner_popup
+	if(!pong_modes_popup || !registration_1v1 || !local1v1_winner_popup || !friends_popup
 		|| !registration_2v2 || !local2v2_winner_popup
 		|| !registration_tournament || !localTour_matchmaking_popup
 		|| !vs_AI_winner_popup
@@ -100,19 +112,19 @@ function rmv_all_pgs_except_index()
 	
 	exported_stop_game_ft();
 	vs_AI_winner_popup.classList.add("hidden");
+	friends_popup.classList.add("hidden");
 }
 
 function display_other_pages(path : string)
 {
 	const playerstats_popup = document.querySelector<HTMLDivElement>("#playerstats_popup");
 	const settings_popup = document.querySelector<HTMLDivElement>("#settings_popup");
-	const pong_modes_popup = document.querySelector<HTMLDivElement>("#pong_modes_popup");
 
 	const vs_AI_game_button = document.querySelector<HTMLButtonElement>("#vs_AI_game_button");
 	const logout_button = document.querySelector<HTMLButtonElement>("#logout_button");
 
 
-	if(!logout_button || !pong_modes_popup
+	if(!logout_button
 		|| !playerstats_popup || !settings_popup
 		|| !vs_AI_game_button) throw new Error("display othar pages elements not found");
 
@@ -122,20 +134,22 @@ function display_other_pages(path : string)
 	
 	switch(path)
 	{
-		case "playerstats":
-			playerstats_popup.classList.remove("hidden"); break;
+		case "/playerstats":
+			open_playerstats_page(); break;
 		case "settings":
-			settings_popup.classList.remove("hidden"); break;
+			open_settings_page(); break;
 		case "vs_AI_game":
 			vs_AI_spa_nav(); break;
 		case "/pong/local1v1":
 			open_local1v1(); break;
 		case "/pong/local2v2":
 			open_local2v2(); break;
-		case "/pong/tournament":
+		case "/pong/localtournament":
 			open_localTour(); break;
 		case "/pong":
-			pong_modes_popup.classList.remove("hidden"); break;
+			open_pong_modes(); break;
+		case "/friends":
+			open_friend_page(); break;
 		case "login": 
 			logout_button.click(); break;
 	}

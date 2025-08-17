@@ -1,3 +1,5 @@
+import { add_history } from "./spa-navigation";
+
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
 
@@ -39,11 +41,22 @@ export function pong_modes_setup()
 	if(!pong_modes_button || !pong_modes_popup) throw new Error("pong modes setup elements not found");
 
 	pong_modes_button.addEventListener("click", () => {
-		hide_all_main_pages();
-		pong_modes_popup.classList.remove("hidden");
-		pong_modes_button.classList.add("bg-yellow-400");
-		pong_modes_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
+		open_pong_modes();
+		add_history("/pong");
 	})
+}
+
+export function open_pong_modes()
+{
+	const pong_modes_button = document.querySelector<HTMLButtonElement>("#pong_modes_button");
+	const pong_modes_popup = document.querySelector<HTMLDivElement>("#pong_modes_popup");
+	
+	if(!pong_modes_button || !pong_modes_popup) throw new Error("open pong modes elements not found");
+	
+	hide_all_main_pages();
+	pong_modes_popup.classList.remove("hidden");
+	pong_modes_button.classList.add("bg-yellow-400");
+	pong_modes_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
 }
 
 export const pong_modes_popup = html`

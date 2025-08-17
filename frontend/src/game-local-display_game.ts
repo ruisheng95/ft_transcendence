@@ -1,6 +1,9 @@
 // => void means return value is void
 //AI flag is optional arg wif default value set as false
 
+// import { add_prev_url_to_history } from "./spa-navigation";
+import { add_history } from "./spa-navigation";
+
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let stop_game_ft = () => {};
@@ -106,6 +109,8 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		game_popup.classList.add("hidden");
 		start_game_button.classList.remove("hidden");
 		playing = false;
+		// add_prev_url_to_history();
+		add_history("/pong");
 		});
 
 	// AI STUFF

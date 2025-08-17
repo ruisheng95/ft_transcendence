@@ -214,7 +214,7 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 		close_finalwinner_popup_button.addEventListener("click", () =>{
 			if(localTour_matchmaking_popup)
 				localTour_matchmaking_popup.classList.add("hidden");
-			add_history("");
+			add_history("/pong");
 		});
 
 		currentbattle_div.classList.add("hidden");

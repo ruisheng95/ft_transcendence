@@ -24,7 +24,9 @@ export function pf_config_setup()
 
 	const settings_popup = document.querySelector<HTMLButtonElement>("#settings_popup");
 
-	if(!settings_popup || !error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config || !pfp_button || !input_pfp || !pfp_img_preview)
+	if(!settings_popup || !error_display || !header_pfp || !header_name || !name_input
+		|| !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config
+		|| !pfp_button || !input_pfp || !pfp_img_preview)
 		throw new Error("Error pf_config stuff not found");
 
 	pf_config_button.addEventListener("click", () => {
@@ -192,8 +194,6 @@ export const pf_config_popup = html`
 				<i class="fas fa-times text-black text-xl"></i>
 			</button>
 			<button type="button" id="save_pf_config" class="button-primary">Register</button>
-		
-
 		</section>
 	</div>
 `

@@ -58,7 +58,7 @@ export function local_1v1_game_setup()
 
 	close_local1v1_winner_popup.addEventListener("click", () => {
 		local1v1_winner_popup.classList.add("hidden");
-		add_history("");
+		add_history("/pong");
 	});
 }
 

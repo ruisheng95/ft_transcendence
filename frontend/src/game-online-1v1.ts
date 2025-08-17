@@ -256,7 +256,7 @@ export function online_1v1_play()
 				matchmaking_popup.classList.add("hidden");
 				socket.close();
 				WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-				add_history("");
+				add_history("/pong");
 			});
 
 			p1_name = players[0];

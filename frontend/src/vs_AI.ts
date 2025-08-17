@@ -30,7 +30,7 @@ export function vs_AI_game_setup ()
 
 	close_vs_AI_winner_popup.addEventListener("click", () => {
 		vs_AI_winner_popup.classList.add("hidden");
-		add_history("");
+		add_history("/pong");
 	});
 }
 

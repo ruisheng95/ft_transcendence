@@ -14,16 +14,27 @@ export function playerstats_setup ()
 		throw new Error("Error playerstats buttons not found");
 
 	playerstats_button.addEventListener("click", () => {
-		playerstats_popup.classList.remove("hidden");
-		pong_modes_popup.classList.add("hidden");
-		insert_playerstats_and_history_main();
-		add_history("playerstats");
+		open_playerstats_page();
+		add_history("/playerstats");
 	});
 
 	close_playerstats.addEventListener("click", () => {
 		playerstats_popup.classList.add("hidden");
 		pong_modes_popup.classList.remove("hidden");
+		add_history("/pong")
 	});
+}
+
+export function open_playerstats_page()
+{
+	const playerstats_popup = document.querySelector<HTMLButtonElement>("#playerstats_popup");
+	const pong_modes_popup = document.querySelector<HTMLDivElement>("#pong_modes_popup");
+
+	if(!playerstats_popup || !pong_modes_popup) throw new Error("open playerstats page elements not found");
+
+	playerstats_popup.classList.remove("hidden");
+	pong_modes_popup.classList.add("hidden");
+	insert_playerstats_and_history_main();
 }
 
 function insert_playerstats_and_history_main()

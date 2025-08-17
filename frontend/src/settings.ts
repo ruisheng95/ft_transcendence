@@ -39,16 +39,7 @@ export function settings_setup ()
 	});
 
 	settings_button.addEventListener("click", () => {
-		hide_all_main_pages();
-		settings_popup.classList.remove("hidden");
-		settings_button.classList.add("bg-yellow-400");
-		settings_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
-		error_display.innerText = "";
-		name_input.value = header_name.innerText;
-		pfp_img_preview.src = header_pfp.src;
-		name_input.disabled = false;
-		name_lock.click();
-
+		open_settings_page();
 		add_history("settings");
 	});
 
@@ -165,6 +156,31 @@ export function settings_setup ()
 	pf_config_setup();
 }
 
+export function open_settings_page()
+{
+	const settings_button = document.querySelector<HTMLButtonElement>("#settings_button");
+    const settings_popup  = document.querySelector<HTMLButtonElement>("#settings_popup");
+	const error_display = document.querySelector<HTMLDivElement>("#show_error");
+	const name_input = document.querySelector<HTMLInputElement>("#username_input");
+	const pfp_img_preview = document.querySelector<HTMLImageElement>("#avatar_img");
+	const name_lock = document.querySelector<HTMLInputElement>("#username_lock");
+	const header_pfp = document.querySelector<HTMLImageElement>("#header_img");
+	const header_name = document.querySelector<HTMLDivElement>("#header_name");
+
+	if(!settings_button || !settings_popup || !error_display || !name_input || !pfp_img_preview
+		|| !name_lock || !header_pfp || !header_name)
+		throw new Error("open settings page elements not found");
+
+	hide_all_main_pages();
+	settings_popup.classList.remove("hidden");
+	settings_button.classList.add("bg-yellow-400");
+	settings_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
+	error_display.innerText = "";
+	name_input.value = header_name.innerText;
+	pfp_img_preview.src = header_pfp.src;
+	name_input.disabled = false;
+	name_lock.click();
+}
 
 export const settings_popup = html`
 
