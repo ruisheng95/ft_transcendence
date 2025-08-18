@@ -295,3 +295,10 @@ export function display_login_page()
 	if(location.pathname != "/login")
 		history.pushState({ page: "login" }, "login", `/login`);
 }
+
+export function removeAllEventListenersFromButton(button: HTMLButtonElement): HTMLButtonElement
+{
+    const newButton = button.cloneNode(true) as HTMLButtonElement;
+    button.parentNode?.replaceChild(newButton, button);
+    return newButton;
+}

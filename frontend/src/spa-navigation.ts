@@ -1,4 +1,8 @@
 
+/// important note:
+// the online game front back fr have damn alot of bugs and rly hard to handle all cases cuz of the socket open close thing, might wanna remove it in the future completely,
+// have to see evaluator whether is strict on this ornot
+
 //prev_url will always include gameindex cuz i using location.pathname
 let front_navigation_disabled = false;
 let back_navigation_disabled = false;
@@ -61,7 +65,8 @@ window.addEventListener("popstate", (event) => {
 		return;
 	}
 
-	if(prev_url == "/pong/online1v1")
+	console.log(prev_url);
+	if(prev_url == "/pong/online1v1" || prev_url == "/pong")
 	{
 		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
 		matchmaking_popup?.classList.add("hidden");

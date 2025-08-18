@@ -4,6 +4,7 @@ import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
 import { online1v1_button_ft } from "./game-online-pre_game.ts";
+import { removeAllEventListenersFromButton } from "./gameindex.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -242,7 +243,7 @@ export function online_1v1_play()
 		const p1_name_div = document.querySelector<HTMLDivElement>("#online_mm_p1_name");
 		const p2_name_div = document.querySelector<HTMLDivElement>("#online_mm_p2_name");
 		const mm_status_div = document.querySelector<HTMLDivElement>("#mm_status");
-		const exit_mm = document.querySelector<HTMLButtonElement>("#online1v1_exit_matchmaking");
+		let exit_mm = document.querySelector<HTMLButtonElement>("#online1v1_exit_matchmaking");
 
 		if(!exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
 
@@ -260,6 +261,7 @@ export function online_1v1_play()
 			</div>
 			` //pulsing dots aniamtion lmaoo
 
+			exit_mm = removeAllEventListenersFromButton(exit_mm);
 			exit_mm.addEventListener("click", () => {
 				matchmaking_popup.classList.add("hidden");
 				socket.close();
@@ -333,6 +335,13 @@ export function online_1v1_play()
 				if(!online_1v1_button) throw new Error("online1v1 button not found");
 				online_1v1_button.removeEventListener("click", online1v1_button_ft);
 				online_1v1_button.innerHTML = "match ongoing";
+
+				// // Auto-click start button after 5 seconds
+				// setTimeout(() => {
+				// 	const start_game_button = document.querySelector<HTMLButtonElement>("#online_game_start_game_button");
+				// 	if (start_game_button && start_game_button.style.display !== "none")
+				// 		start_the_fkin_game();
+				// }, 5000);
 			}
 		}, 1000);
 	}
