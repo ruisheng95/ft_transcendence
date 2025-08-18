@@ -15,12 +15,18 @@ export function local_play_menus_setup()
 	const local_1v1_button = document.querySelector<HTMLButtonElement>("#local_1v1_button");
 	const local_2v2_button = document.querySelector<HTMLButtonElement>("#local_2v2_button");
 	const local_tournament_button = document.querySelector<HTMLButtonElement>("#local_tournament_button");
+	const local_xox_button = document.querySelector<HTMLButtonElement>("#local_xox_button");
+
  	const registration_1v1 = document.querySelector<HTMLDivElement>("#local1v1_registration");
 	const registration_2v2 = document.querySelector<HTMLDivElement>("#local2v2_registration");
 	const registration_tournament = document.querySelector<HTMLDivElement>("#localTour_registration");
+	const registration_xox = document.querySelector<HTMLDivElement>("#localxox_registration");
+
 	const close_1v1_registration = document.querySelector<HTMLButtonElement>("#close_1v1_registration");
 	const close_2v2_registration = document.querySelector<HTMLButtonElement>("#close_2v2_registration");
 	const close_tournament_registration = document.querySelector<HTMLButtonElement>("#close_tournament_registration");
+	const close_xox_registration = document.querySelector<HTMLButtonElement>("#close_xox_registration");
+
 	const all_maps = document.querySelectorAll<HTMLButtonElement>(".mapselect-logic");
 	const map_input = document.querySelector<HTMLInputElement>("#input-map");
 
@@ -37,11 +43,16 @@ export function local_play_menus_setup()
 	const p3_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p3_name_input");
 	const p4_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p4_name_input");
 
+	const p1_name_xox = document.querySelector<HTMLInputElement>("#localxox_name1_input");
+	const p2_name_xox = document.querySelector<HTMLInputElement>("#localxox_name2_input");
+
 	if (!local_1v1_button || !local_2v2_button || !local_tournament_button || !registration_1v1 || 
 		!registration_2v2 || !registration_tournament || !close_1v1_registration || !close_2v2_registration || 
 		!close_tournament_registration || !all_maps || !map_input || !p1_name_input || !p2_name_input ||
 		!p1_name_input_tour || !p2_name_input_tour || !p3_name_input_tour || !p4_name_input_tour ||
-		!p1_name_input_2v2 || !p2_name_input_2v2 || !p3_name_input_2v2 || !p4_name_input_2v2)
+		!p1_name_input_2v2 || !p2_name_input_2v2 || !p3_name_input_2v2 || !p4_name_input_2v2 ||
+		!local_xox_button || !registration_xox || !close_xox_registration || !p1_name_xox || !p2_name_xox
+	)
 		throw new Error("some navigation stuff not found");
 	
 	all_maps.forEach(map => {
@@ -90,6 +101,15 @@ export function local_play_menus_setup()
 		add_history("localgame/tournament");
 	});
 
+	local_xox_button.addEventListener("click", () => {
+		p1_name_xox.value = "";
+		p2_name_xox.value = "";
+		registration_xox.classList.remove("hidden");
+		const el = document.querySelector<HTMLDivElement>('[data-game="localxox"]');
+		el?.click();
+		add_history("localgame/tic_tac-toe");
+	})
+
 	close_1v1_registration.addEventListener("click", () => {
 		registration_1v1.classList.add("hidden");
 		add_history("localgame");
@@ -102,6 +122,11 @@ export function local_play_menus_setup()
 
 	close_tournament_registration.addEventListener("click", () => {
 		registration_tournament.classList.add("hidden");
+		add_history("localgame");
+	});
+
+	close_xox_registration.addEventListener("click", () => {
+		registration_xox.classList.add("hidden");
 		add_history("localgame");
 	});
 
@@ -437,6 +462,68 @@ const local2v2_Registration = html`
 	</div>
 `;
 
+const localxox_Registration = html`
+	<div id="localxox_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
+		
+		<!--Title -->
+		<h1 class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
+
+		<!-- Game Information -->
+		<section class="flex items-center justify-center space-x-4">
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Tic-Tac-Toe</span>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
+		</section>
+		
+		<!-- Game Setting Header -->
+		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
+			<h2 class="text-2xl font-bold">Map Selection</h2>
+			<h2 class="text-2xl font-bold">Players</h2>
+		</header>
+
+		<!-- Game Setting Details -->
+		<main class="grid grid-cols-[3fr_2fr] gap-10 place-items-center mb-10">
+		
+			<!-- Map Selection -->
+			<section class="grid grid-cols-2 gap-6 px-12">
+				<div data-map="" data-game="localxox" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
+				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
+				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
+				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
+			</section>
+
+			<!-- Player List -->
+			<section class="px-12 space-y-6 text-black">
+				<input class="w-full bg-white text-lg focus:outline-none rounded-full px-10 py-4"
+					type="text" 
+					placeholder="Player Name"
+					id="localxox_name1_input" 
+					maxlength="24">
+				<input class="w-full bg-white text-lg focus:outline-none rounded-full px-10 py-4"
+					type="text"
+					id="localxox_name2_input"
+					placeholder="Player Name" 
+					maxlength="24">
+
+				<!-- Error Message -->
+				<div id="localxox_error_msg" class="h-8 err-msg text-center"></div>
+			</section>
+		</main>
+
+		<!-- Start Button -->
+		<div class="flex justify-center">
+			<button id="localxox_start" class="button-primary">
+				<i class="fas fa-play mr-4"></i>Start Match
+			</button>
+		</div>
+		
+		<!--Exit Button -->
+		<button id="close_xox_registration" class="absolute top-10 right-10 button-remove">
+			<i class="fas fa-times text-black text-xl"></i>
+		</button>
+	</div>
+`;
+
 export const local_play_menus_popup = html`
 
 	<input type="hidden" id="input-map" name="map">
@@ -444,6 +531,7 @@ export const local_play_menus_popup = html`
 	${local1v1_Registration}
 	${local2v2_Registration}
 	${localTour_Registration}
+	${localxox_Registration}
 
 	${local_1v1_game_popup}
 	${local_2v2_game_popup}
