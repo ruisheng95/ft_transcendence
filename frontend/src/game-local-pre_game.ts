@@ -3,6 +3,7 @@ import "./gamestyle.css";
 import { local_1v1_game_popup, local_1v1_game_setup } from "./game-local-1v1";
 import { local_2v2_game_popup, local_2v2_game_setup } from "./game-local-2v2";
 import { local_tour_game_popup, local_tour_game_setup } from "./game-local-tournament";
+import { xox_game_popup, xox_game_setup } from "./game-local-xox";
 import { add_history } from "./spa-navigation";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
@@ -133,6 +134,7 @@ export function local_play_menus_setup()
 	local_1v1_game_setup();
 	local_2v2_game_setup();
 	local_tour_game_setup();
+	xox_game_setup();
 }
 
 // export const local_play_menus_popup = `
@@ -536,4 +538,5 @@ export const local_play_menus_popup = html`
 	${local_1v1_game_popup}
 	${local_2v2_game_popup}
 	${local_tour_game_popup}
+	${xox_game_popup}
 `;
