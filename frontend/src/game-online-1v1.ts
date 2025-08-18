@@ -3,6 +3,7 @@ import { add_history, disable_back_navigation, enable_back_navigation } from "./
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
+import { online1v1_button_ft } from "./game-online-pre_game.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -86,8 +87,9 @@ export function online_1v1_play()
 	close_game_button.addEventListener("click", () => {
 		game_popup.classList.add("hidden");
 		playing = false;
-		socket.close();
-		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+		// socket.close();
+		// WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+		add_history("/pong");
 	});
 
 	function start_the_fkin_game()
@@ -149,12 +151,18 @@ export function online_1v1_play()
 		}
 		else if(msg_obj.type == "game_over")
 		{
+			socket.close();
+			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+				
+			//add back online1v1 button
+			const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
+			if(!online_1v1_button) throw new Error("online1v1 button not found");
+			online_1v1_button.addEventListener("click", online1v1_button_ft);
+			online_1v1_button.innerHTML = "Online";
+
 			if(playing == false)
-			{
-				socket.close();
-				WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 				return;
-			}
+			
 			if (start_game_button)
 				start_game_button.style.display = "block";
 			playing = false;
@@ -319,6 +327,12 @@ export function online_1v1_play()
 				p2_name_div.innerHTML = p2_name;
 				init_positions();
 				render_positions();
+
+				//blur out online1v1 button in case user exits
+				const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
+				if(!online_1v1_button) throw new Error("online1v1 button not found");
+				online_1v1_button.removeEventListener("click", online1v1_button_ft);
+				online_1v1_button.innerHTML = "match ongoing";
 			}
 		}, 1000);
 	}
@@ -367,11 +381,16 @@ export function online_1v1_play()
 
 		socket.close();
 		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+
 		
-		close_online_1v1_winner_popup_button.addEventListener("click", () => {
-			online1v1_winner_popup.classList.add("hidden");
-			add_history("");
-		})
+		close_online_1v1_winner_popup_button.removeEventListener("click", close_online1v1_winner_popup_ft);
+		close_online_1v1_winner_popup_button.addEventListener("click", close_online1v1_winner_popup_ft);
+
+		function close_online1v1_winner_popup_ft()
+		{
+			online1v1_winner_popup?.classList.add("hidden");
+			add_history("/pong");
+		}
 	}
 }
 

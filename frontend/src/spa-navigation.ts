@@ -11,6 +11,8 @@ import { open_pong_modes } from "./pong_modes";
 import { open_settings_page } from "./settings";
 import { open_friend_page } from "./friends";
 import { open_playerstats_page } from "./player_stats";
+import { online_1v1_play } from "./game-online-1v1";
+import { WS } from "./class/WS";
 
 export function add_history(path : string)
 {
@@ -59,6 +61,16 @@ window.addEventListener("popstate", (event) => {
 		return;
 	}
 
+	if(prev_url == "/pong/online1v1")
+	{
+		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
+		matchmaking_popup?.classList.add("hidden");
+
+		const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+		socket?.close();
+		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+	}
+
 	//console.log("user changed history");
 	console.log("Current URL:", location.pathname);
 
@@ -88,14 +100,19 @@ function rmv_all_pgs_except_index()
 	const localTour_matchmaking_popup = document.querySelector<HTMLDivElement>("#localTour_matchmaking_popup");
 
 	const online1v1_winner_popup = document.querySelector<HTMLDivElement>("#online_1v1_winner_popup");
+	const online_game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
+	const online1v1_matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
 
+
+	const exit_mm = document.querySelector<HTMLButtonElement>("#online1v1_exit_matchmaking");
 
 	if(!pong_modes_popup || !registration_1v1 || !local1v1_winner_popup || !friends_popup
 		|| !registration_2v2 || !local2v2_winner_popup
 		|| !registration_tournament || !localTour_matchmaking_popup
 		|| !vs_AI_winner_popup
 		|| !playerstats_popup || !settings_popup
-		|| !online1v1_winner_popup) throw new Error("remove all pages elements not found");
+		|| !online1v1_winner_popup || !online_game_popup || !online1v1_matchmaking_popup || !exit_mm)
+		throw new Error("remove all pages elements not found");
 
 	pong_modes_popup.classList.add("hidden");
 	playerstats_popup.classList.add("hidden");
@@ -113,6 +130,9 @@ function rmv_all_pgs_except_index()
 	exported_stop_game_ft();
 	vs_AI_winner_popup.classList.add("hidden");
 	friends_popup.classList.add("hidden");
+
+	online1v1_winner_popup.classList.add("hidden");
+	online1v1_matchmaking_popup.classList.add("hidden");
 }
 
 function display_other_pages(path : string)
@@ -148,6 +168,8 @@ function display_other_pages(path : string)
 			open_localTour(); break;
 		case "/pong":
 			open_pong_modes(); break;
+		case "/pong/online1v1":
+			online_1v1_play(); break;
 		case "/friends":
 			open_friend_page(); break;
 		case "login": 
