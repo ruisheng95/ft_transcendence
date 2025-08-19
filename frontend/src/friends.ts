@@ -7,6 +7,7 @@
 import { WS } from "./class/WS.ts";
 import { hide_all_main_pages } from "./pong_modes.ts";
 import { add_history } from "./spa-navigation.ts";
+import { translate_text } from "./language.ts";
 
 
 //friends page
@@ -27,7 +28,7 @@ export const friends_popup = `
 					<input id="addfriend_search_bar" class="bg-white text-black w-full text-lg text-black pl-14 pr-6 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-400" 
 						type="text" 
 						placeholder="Search friend's name"
-						maxlength="24">
+						maxlength=21>
 				</div>
 
 				<div id="addfriend_error_div"></div>
@@ -69,13 +70,21 @@ export function friends_page_setup()
 
 		if(input_str.length === 0)
 			return;
-		
-		if(!valid_chars.includes(input_str[input_str.length - 1]))
+
+		if(input_str.length > 20)
 		{
 			player_list_div.innerHTML = "";
 			player_list_div.classList.add("hidden");
 			error_div.classList.remove("hidden");
-			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">Alphabets, numbers or '_' only</h1>`;
+			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">${translate_text("search input too long")}</h1>`;
+			return;
+		}
+		else if(!valid_chars.includes(input_str[input_str.length - 1]))
+		{
+			player_list_div.innerHTML = "";
+			player_list_div.classList.add("hidden");
+			error_div.classList.remove("hidden");
+			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">${translate_text("Alphabets, numbers or '_' only")}</h1>`;
 			addfriend_search_bar.value = input_str.substring(0, input_str.length - 1);
 		}
 		else
@@ -106,15 +115,17 @@ export function open_friend_page()
 	const open_friends_page_button = document.querySelector<HTMLButtonElement>("#display_friends_page_button");
 	const addfriend_search_bar = document.querySelector<HTMLInputElement>("#addfriend_search_bar");
 	const player_list_div = document.querySelector<HTMLDivElement>("#addfriend_players_list");
+	const error_div = document.querySelector<HTMLDivElement>("#addfriend_error_div");
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
 
-	if(!friends_popup || !open_friends_page_button || !addfriend_search_bar || !player_list_div) throw new Error("open friend page elements not found");
+	if(!error_div || !friends_popup || !open_friends_page_button || !addfriend_search_bar || !player_list_div) throw new Error("open friend page elements not found");
 	hide_all_main_pages();
 	friends_popup.classList.remove("hidden");
 	open_friends_page_button.classList.add("bg-yellow-400");
 	open_friends_page_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
 	addfriend_search_bar.value = "";
 	player_list_div.innerHTML = "";
+	error_div.innerHTML = "";
 	if(socket.readyState == WebSocket.OPEN)
 		socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
 }

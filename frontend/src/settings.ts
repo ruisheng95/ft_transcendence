@@ -2,6 +2,7 @@ import { pf_config_popup, pf_config_setup } from "./config_profile";
 import { hide_all_main_pages } from "./pong_modes.ts";
 import { WS } from "./class/WS.ts";
 import { add_history } from "./spa-navigation.ts";
+import { handle_language_change, translate_text } from "./language.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -25,8 +26,9 @@ export function settings_setup ()
 	const error_display = document.querySelector<HTMLDivElement>("#show_error");
 	const header_pfp = document.querySelector<HTMLImageElement>("#header_img");
 	const header_name = document.querySelector<HTMLDivElement>("#header_name");
+	const language_radios = document.querySelectorAll<HTMLInputElement>('.radio-language');
 
-	if(!settings_popup || !error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_popup || !pfp_button || !input_pfp || !pfp_img_preview || !settings_button || !name_lock)
+	if(!language_radios || !settings_popup || !error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_popup || !pfp_button || !input_pfp || !pfp_img_preview || !settings_button || !name_lock)
 		throw new Error("Error pf_config stuff not found");
 
 	name_lock.addEventListener("click", () => {
@@ -54,13 +56,13 @@ export function settings_setup ()
 		if(!valid_chars.includes(input_str[input_str.length - 1]))
 		{
 			error_display.classList.remove("hidden");
-			error_display.innerText = "Alphabets, numbers or '_' only";
+			error_display.innerText = translate_text("Alphabets, numbers or '_' only");
 			name_input.value = input_str.substring(0, input_str.length - 1);
 		}
-		else if(input_str.length > 30)
+		else if(input_str.length > 20)
 		{
 			error_display.classList.remove("hidden");
-			error_display.innerText = "Search too long";
+			error_display.innerText = translate_text("input name too long");
 			name_input.value = input_str.substring(0, input_str.length - 1);
 		}
 		else
@@ -86,7 +88,7 @@ export function settings_setup ()
 					header_pfp.src = response.pfp;
 			}
 			else
-				error_display.innerText = response.error_msg;
+				error_display.innerText = translate_text(response.error_msg);
 		}
 	});
 
@@ -153,6 +155,14 @@ export function settings_setup ()
 		add_history("");
 	});
 	
+	language_radios.forEach(radio => {
+        radio.addEventListener('change', (event) => {
+            const target = event.target as HTMLInputElement;
+            if (target.checked)
+                handle_language_change(target.value);
+        });
+    });
+
 	pf_config_setup();
 }
 
@@ -184,7 +194,7 @@ export function open_settings_page()
 
 export const settings_popup = html`
 
-	<div id="settings_popup" class="hidden h-[90vh] inter-font text-white">
+	<div id="settings_popup" class="hidden h-[90vh] inter-font text-white bg-gray-950">
 		
 		<!-- this id=pf_config_button used by others, will break if remove -->
 		<button id="pf_config_button" class="border hidden">Link to pf_config (original)</button>
@@ -197,7 +207,7 @@ export const settings_popup = html`
 				<!-- Subtitle -->
 				<div class="pl-4 space-x-3 mb-2">
 					<i class="fas fa-user text-4xl"></i>
-					<span class="text-2xl font-bold">Profile</span>
+					<span id="settings_profile_text" class="text-2xl font-bold">Profile</span>
 				</div>
 				
 				<!-- Config Setting -->
@@ -222,7 +232,7 @@ export const settings_popup = html`
 							class="bg-gray-300 w-full px-6 py-3 rounded-full text-center font-semibold outline-none focus:ring-2 focus:ring-yellow-400"
 							value="John Lennon" 
 							type="text"
-							maxlength="30"
+							maxlength="21"
 							id="username_input"
 							disabled
 							>
@@ -242,7 +252,7 @@ export const settings_popup = html`
 				<!-- Subtitle -->
 				<div class="pl-4 space-x-3 mb-2">
 					<i class="fas fa-language text-4xl"></i>
-					<span class="text-2xl font-bold">Language</span>
+					<span id="settings_language_text" class="text-2xl font-bold">Language</span>
 				</div>
 				
 				<!-- Config Setting -->

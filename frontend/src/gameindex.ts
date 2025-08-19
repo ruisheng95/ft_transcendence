@@ -138,19 +138,19 @@ export function index_init()
 				
 				<!-- Game Section -->
 				<div class="border-l border-gray-700 py-1 px-3">
-					<div class="text-sm tracking-widest mb-1">Game</div>
+					<div id = "header_game" class="text-sm tracking-widest mb-1">Game</div>
 					<div class="flex items-center space-x-2">
 
 						<!-- Pong -->
 						<button id="pong_modes_button" class="relative group px-3 py-2 rounded-lg bg-yellow-400">
 							<i class="fas fa-table-tennis text-xl text-black"></i>
-							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Pong</span>
+							<span id="header_pong" class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Pong</span>
 						</button>
 
 						<!-- XOX -->
 						<button class="relative group px-3 py-2 rounded-lg">
 							<i class="fas fa-th text-xl"></i>
-							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg   whitespace-nowrap">Tic-Tac-Toe</span>
+							<span id="header_tic_tac_toe" class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg   whitespace-nowrap">Tic-Tac-Toe</span>
 						</button>
 
 					</div>
@@ -158,25 +158,25 @@ export function index_init()
 
 				<!-- Menu Selection -->
 				<div class="border-l border-gray-700 py-1 px-3">
-					<div class="text-sm tracking-widest mb-1">Menu</div>
+					<div id = "header_menu" class="text-sm tracking-widest mb-1">Menu</div>
 					<div class="flex items-center space-x-2">
 
 						<!-- Friends -->
 						<button id ="display_friends_page_button" class="relative group px-3 py-2 rounded-lg">
 							<i class="fas fa-users text-xl"></i>
-							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Friends</span>
+							<span id="header_friends" class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Friends</span>
 						</button>
 
 						<!-- Settings -->
 						<button id="settings_button" class="relative group px-3 py-2 rounded-lg">
 							<i class="fas fa-cog text-xl"></i>
-							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Settings</span>
+							<span id="header_settings" class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Settings</span>
 						</button>
 
 						<!-- Logout -->
 						<button id="logout_button" class="relative group px-3 py-2 rounded-lg">
 							<i class="fas fa-sign-out-alt text-xl"></i>
-							<span class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Logout</span>
+							<span id="header_logout" class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Logout</span>
 						</button>
 
 					</div>
