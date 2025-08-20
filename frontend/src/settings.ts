@@ -283,8 +283,8 @@ export const settings_popup = html`
 						<input class="radio-language"
 							type="radio"
 							name="language" 
-							value="mandarin" >
-						<span class="text-2xl">普通话</span>
+							value="chinese" >
+						<span class="text-2xl">华语</span>
 					</label>
 
 				</div>

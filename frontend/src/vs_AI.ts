@@ -3,6 +3,7 @@ import "./gamestyle.css";
 
 import { display_game } from "./game-local-display_game";
 import { add_history } from "./spa-navigation";
+import { translate_text } from "./language";
 
 
 //vs_AI_game
@@ -44,9 +45,9 @@ function handle_game_end_vs_AI(msg_obj : any)
 	if(!text_div || !vs_AI_winner_popup || !game_popup) throw new Error("vs AI game end stuff not found");
 
 	if(msg_obj.winner == "leftplayer")
-		text_div.innerHTML = "Congratulations 🎉<br> you won!";
+		text_div.innerHTML = translate_text("Congratulations 🎉<br> you won!");
 	else
-		text_div.innerHTML = "You lost :( better luck next time <br> (u literally lost to a bot 🥀💔)";
+		text_div.innerHTML = translate_text("You lost :( better luck next time <br> (u literally lost to a bot 🥀💔)");
 
 	vs_AI_winner_popup.classList.remove("hidden");
 	game_popup.classList.add("hidden");

@@ -69,7 +69,7 @@ export const pong_modes_popup = html`
 			<div class="bg-white/20 rounded-xl p-8 space-y-4">
 				<div class="h-60 flex flex-col items-center text-center space-y-4">
 					<img class="w-20 h-20 object-cover" src="/1vs1.png" alt="game-type">
-					<h2 class="text-3xl font-bold">1 vs 1</h2>
+					<h2 id="pong1v1_title" class="text-3xl font-bold">1 vs 1</h2>
 					<p id="pong1v1_desc" class="text-lg">Classic 1-on-1 clash outplay your rival in a  duel</p>
 				</div>
 				<button id="online_1v1_button" class="button-secondary tracking-widest w-full">Online</button>
@@ -80,7 +80,7 @@ export const pong_modes_popup = html`
 			<div class="bg-white/20 rounded-xl p-8 space-y-4">
 				<div class="h-60 flex flex-col items-center text-center space-y-4">
 					<img class="w-20 h-20 object-cover" src="/2vs2.png" alt="game-type">
-					<h2 class="text-3xl font-bold">2 vs 2</h2>
+					<h2 id="pong2v2_title" class="text-3xl font-bold">2 vs 2</h2>
 					<p id="pong2v2_desc" class="text-lg">Team up with a friend and crush the competition</p>
 				</div>
 				<button id="online_2v2_button" class="button-secondary tracking-widest w-full">Online</button>
@@ -91,7 +91,7 @@ export const pong_modes_popup = html`
 			<div class="bg-white/20 rounded-xl p-8 space-y-4">
 				<div class="h-60 flex flex-col items-center text-center space-y-4">
 					<img class="w-20 h-20 object-cover" src="/tournament.png" alt="game-type">
-					<h2 class="text-3xl font-bold">Tournament</h2>
+					<h2 id="pongTour_title" class="text-3xl font-bold">Tournament</h2>
 					<p id="pongTournament_desc" class="text-lg">Climb the bracket. Each player competes in 2 rounds to determine the winner</p>
 				</div>
 				<button id="online_tournament_button" class="button-secondary tracking-widest w-full">Online</button>
@@ -102,7 +102,7 @@ export const pong_modes_popup = html`
 			<div class="bg-white/20 rounded-xl p-8 space-y-4">
 				<div class="h-60 flex flex-col items-center text-center space-y-4">
 					<img class="w-20 h-20 object-cover" src="/bot.png" alt="game-type">
-					<h2 class="text-3xl font-bold">Practice</h2>
+					<h2 id="pong_vs_AI_title" class="text-3xl font-bold">Practice</h2>
 					<p id="vs_AI_desc" class="text-lg">Train up and sharpen your skills by battling the AI</p>
 				</div>
 				<button id="vs_AI_game_button" class="button-secondary tracking-widest w-full">vs AI</button>

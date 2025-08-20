@@ -3,6 +3,7 @@
 
 // import { add_prev_url_to_history } from "./spa-navigation";
 import { add_history } from "./spa-navigation";
+import { translate_text } from "./language";
 
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -55,8 +56,8 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 
 	game_obj.innerHTML = html`
 	<div id="game_buttons" class="flex gap-[400px] mb-[20px]">
-		<button id="close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
-		<button id="game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
+		<button id="close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Exit game")}</button>
+		<button id="game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Start game")}</button>
 	</div>
 
 	<div class="flex">

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { add_history, disable_back_navigation, enable_back_navigation} from "./spa-navigation";
+import { translate_text } from "./language";
 import "./gamestyle.css";
 // let first_call_flag = false;
 
@@ -121,8 +122,8 @@ export function online_2v2_play()
 
 	game_obj.innerHTML = `
 	<div id="game_buttons" class="flex gap-[400px] mb-[20px] mt-[20px]">
-		<button id="online2v2_close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
-		<button id="online2v2_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
+		<button id="online2v2_close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Exit game")}</button>
+		<button id="online2v2_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Start game")}</button>
 	</div>
 
 	<div class="flex items-center">

@@ -5,6 +5,7 @@ import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
 import { online1v1_button_ft } from "./game-online-pre_game.ts";
 import { removeAllEventListenersFromButton } from "./gameindex.ts";
+import { translate_text } from "./language.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -23,8 +24,8 @@ export function online_1v1_play()
 
 	game_obj.innerHTML = html`
 	<div id="online_game_buttons" class="flex gap-[400px] mb-[20px]">
-		<button id="online_close_game" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
-		<button id="online_game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
+		<button id="online_close_game" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Exit game")}</button>
+		<button id="online_game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Start game")}</button>
 	</div>
 	<div class="flex ">
 		<div class="flex flex-col space-y-2  mr-[20px]">
@@ -254,7 +255,7 @@ export function online_1v1_play()
 			
 			mm_status_div.innerHTML = `
 			<div class="flex justify-center">
-				<div>Searching for players</div>
+				<div>${translate_text("Searching for players")}</div>
 				<div class="animate-pulse [animation-delay:0ms]">.</div>
 				<div class="animate-pulse [animation-delay:300ms]">.</div>
 				<div class="animate-pulse [animation-delay:600ms]">.</div>
@@ -312,8 +313,8 @@ export function online_1v1_play()
 		const interval = setInterval(() => {
 			mm_status_div.innerHTML = `
 			<div class="flex flex-col items-center">
-				<div>Match found!</div>
-				<div>Match starting in ${countdown}</div>
+				<div>${translate_text("Match found!")}</div>
+				<div>${translate_text("Match starting in")} ${countdown}</div>
 			</div>
 			`;
 			
@@ -334,7 +335,7 @@ export function online_1v1_play()
 				const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
 				if(!online_1v1_button) throw new Error("online1v1 button not found");
 				online_1v1_button.removeEventListener("click", online1v1_button_ft);
-				online_1v1_button.innerHTML = "match ongoing";
+				online_1v1_button.innerHTML = `${translate_text("match ongoing")}`;
 
 				// // Auto-click start button after 5 seconds
 				// setTimeout(() => {
@@ -371,17 +372,17 @@ export function online_1v1_play()
 		online1v1_right_name.innerText = p2_name;
 
 		if(gameover_obj.winner == "leftplayer") {
-			online1v1_left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			online1v1_left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
 			online1v1_left_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
 
-			online1v1_right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			online1v1_right_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 			online1v1_right_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
 		}
 		else {
-			online1v1_right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			online1v1_right_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
 			online1v1_right_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
 
-			online1v1_left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			online1v1_left_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 			online1v1_left_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
 		}
 
@@ -407,19 +408,19 @@ const online1v1_matchmaking_popup = html`
 		<div id="online1v1_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-6 font-bold">Online Lobby</h1>
+		<h1 id="online1v1_title" class="text-4xl text-center mb-6 font-bold">Online Lobby</h1>
 
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4 mb-10">
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
+			<span id="online1v1_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
+			<span id="online1v1_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
+			<span id="online1v1_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
 		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
-			<h2 class="text-2xl font-bold pb-2">Map Selection</h2>
-			<h2 class="text-2xl font-bold pb-2">Players</h2>
+			<h2 id="online1v1_header_text1" class="text-2xl font-bold pb-2">Map Selection</h2>
+			<h2 id="online1v1_header_text2" class="text-2xl font-bold pb-2">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->
@@ -427,7 +428,7 @@ const online1v1_matchmaking_popup = html`
 		
 			<!-- Map Selection -->
 			<section class="grid grid-cols-2 gap-6 px-12">
-				<div data-map="" data-game="online1v1" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
+				<div id="online1v1_map_none" data-map="" data-game="online1v1" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
 				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
 				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
 				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
@@ -459,7 +460,7 @@ const online_1v1_winner_popup = html`
 		<div id="online_1v1_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
 			<!-- Tournament Title -->
-			<h1 class="text-5xl font-bold text-center">Match Result</h1>	
+			<h1 id="online1v1_match_result_text" class="text-5xl font-bold text-center">Match Result</h1>	
 			
 			<!-- Result Layout -->
 			<section class="grid grid-cols-2 w-full place-items-center">
