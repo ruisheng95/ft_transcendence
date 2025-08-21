@@ -134,21 +134,21 @@ function insert_playerstats_and_history_main()
 							<div class="flex space-x-1 relative">
 								<div class="relative group">
 									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user1_avatar ? entry.user1_avatar : "/src/defaultpfp.png"}" alt="player">
-									<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">${entry.user1_name}</span>
+									<span class="tooltip-2">${entry.user1_name}</span>
 								</div>
 								<div class="relative group">
 									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user2_avatar ? entry.user2_avatar : "/src/defaultpfp.png"}" alt="player">
-									<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">${entry.user2_name}</span>
+									<span class="tooltip-2">${entry.user2_name}</span>
 								</div>
 								${entry.user3_name ? `
 								<div class="relative group">
 									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user3_avatar ? entry.user3_avatar : "/src/defaultpfp.png"}" alt="player">
-									<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">${entry.user3_name}</span>
+									<span class="tooltip-2">${entry.user3_name}</span>
 								</div>` : ""}
 								${entry.user3_name ? `
 								<div class="relative group">
 									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user4_avatar ? entry.user4_avatar : "/src/defaultpfp.png"}" alt="player">
-									<span class="absolute opacity-0 -bottom-9 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">${entry.user4_name}</span>
+									<span class="tooltip-2">${entry.user4_name}</span>
 								</div>` : ""}
 							</div>
 							<span class="${user_result == "Win" ? "text-green-500" : "text-red-500"} font-semibold">${user_result}</span>
@@ -165,8 +165,8 @@ function insert_playerstats_and_history_main()
 }
 
 export const playerstats_popup = `
-	<div id="playerstats_popup" class="flex flex-col w-full h-full justify-center items-center hidden bg-gray-950">
-		<div id="playerstats_screen" class="relative bg-gray-950 w-full h-full flex flex-col text-white">
+	<div id="playerstats_popup" class="flex flex-col w-full h-full justify-center items-center hidden bg-transparent">
+		<div id="playerstats_screen" class="relative w-full h-full flex flex-col text-white">
 
 			<!-- content inserted here -->
 			<main class="py-8 px-12 flex w-full gap-8">

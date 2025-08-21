@@ -9,19 +9,23 @@ export function hide_all_main_pages()
 	const friends_popup = document.querySelector<HTMLDivElement>("#friends_popup");
 	const settings_popup = document.querySelector<HTMLDivElement>("#settings_popup");
 	const playerstats_popup = document.querySelector<HTMLDivElement>("#playerstats_popup");
+	const xox_popup  = document.querySelector<HTMLButtonElement>("#xox_dashboard_popup");
 
+	const xox_button = document.querySelector<HTMLButtonElement>("#xox_button");
 	const pong_button = document.querySelector<HTMLButtonElement>("#pong_modes_button");
 	const friends_button = document.querySelector<HTMLButtonElement>("#display_friends_page_button");
 	const settings_button = document.querySelector<HTMLButtonElement>("#settings_button");
 
 	if(!pong_modes_popup || !friends_popup || !settings_popup || 
-		!pong_button || !friends_button || !settings_button || !playerstats_popup) 
+		!pong_button || !friends_button || !settings_button || !playerstats_popup ||
+		!xox_popup || !xox_button) 
 		throw new Error("hide main pages elements not found");
 
 	pong_modes_popup.classList.add("hidden");
 	friends_popup.classList.add("hidden");
 	settings_popup.classList.add("hidden");
 	playerstats_popup.classList.add("hidden");
+	xox_popup.classList.add("hidden");
 
 	pong_button.classList.remove("bg-yellow-400");
 	pong_button.querySelector<HTMLDivElement>("i")?.classList.remove("text-black");
@@ -31,6 +35,9 @@ export function hide_all_main_pages()
 
 	settings_button.classList.remove("bg-yellow-400");
 	settings_button.querySelector<HTMLDivElement>("i")?.classList.remove("text-black");
+
+	xox_button.classList.remove("bg-yellow-400");
+	xox_button.querySelector<HTMLDivElement>("i")?.classList.remove("text-black");
 }
 
 export function pong_modes_setup()

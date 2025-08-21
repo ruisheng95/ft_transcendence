@@ -16,6 +16,7 @@ import {friends_popup, friends_page_setup } from "./friends.ts";
 
 // import { local_play_game_setup, local_play_game_popup } from "./game.ts";
 import { vs_AI_game_setup, vs_AI_game_popup } from "./vs_AI.ts";
+import { xox_setup, xox_popup } from "./xox_dashboard.ts";
 
 import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_game.ts"
 import { online_play_menus_setup} from "./game-online-pre_game.ts";
@@ -144,15 +145,15 @@ export function index_init()
 					<div class="flex items-center space-x-2">
 
 						<!-- Pong -->
-						<button id="pong_modes_button" class="relative group px-3 py-2 rounded-lg bg-yellow-400">
+						<button id="pong_modes_button" class="relative group px-3 py-2 rounded-lg bg-yellow-400 flex items-center">
 							<i class="fas fa-table-tennis text-xl text-black"></i>
-							<span id="header_pong" class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Pong</span>
+							<span class="tooltip-1">Pong</span>
 						</button>
 
 						<!-- XOX -->
-						<button class="relative group px-3 py-2 rounded-lg">
+						<button id="xox_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-th text-xl"></i>
-							<span id="header_tic_tac_toe" class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg   whitespace-nowrap">Tic-Tac-Toe</span>
+							<span class="tooltip-1">Tic-Tac-Toe</span>
 						</button>
 
 					</div>
@@ -164,21 +165,21 @@ export function index_init()
 					<div class="flex items-center space-x-2">
 
 						<!-- Friends -->
-						<button id ="display_friends_page_button" class="relative group px-3 py-2 rounded-lg">
+						<button id ="display_friends_page_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-users text-xl"></i>
-							<span id="header_friends" class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Friends</span>
+							<span class="tooltip-1">Friends</span>
 						</button>
 
 						<!-- Settings -->
-						<button id="settings_button" class="relative group px-3 py-2 rounded-lg">
+						<button id="settings_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-cog text-xl"></i>
-							<span id="header_settings" class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Settings</span>
+							<span class="tooltip-1">Settings</span>
 						</button>
 
 						<!-- Logout -->
-						<button id="logout_button" class="relative group px-3 py-2 rounded-lg">
+						<button id="logout_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-sign-out-alt text-xl"></i>
-							<span id="header_logout" class="absolute opacity-0 -bottom-11 left-1/2 -translate-x-1/2 text-sm py-1 px-3 bg-white/20 group-hover:opacity-100 transition-opacity rounded-lg  ">Logout</span>
+							<span class="tooltip-1">Logout</span>
 						</button>
 
 					</div>
@@ -191,13 +192,14 @@ export function index_init()
 
 
 	game.innerHTML = DOMPurify.sanitize(`
-		<div id = "screen" class = "min-h-screen bg-black">
+		<div id = "screen" class = "h-screen bg-gray-950 overflow-hidden">
 			${header_sec}
 			${pong_modes_popup}
 			${friends_popup}
 
 			${playerstats_popup}
 			${settings_popup}
+			${xox_popup}
 
 			${local_play_menus_popup}
 			${vs_AI_game_popup}
@@ -218,6 +220,7 @@ export function index_init()
 	vs_AI_game_setup();
 
 	friends_page_setup();
+	xox_setup();
 
 	document
 		.querySelector<HTMLButtonElement>("#logout_button")
