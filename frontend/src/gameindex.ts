@@ -147,13 +147,13 @@ export function index_init()
 						<!-- Pong -->
 						<button id="pong_modes_button" class="relative group px-3 py-2 rounded-lg bg-yellow-400 flex items-center">
 							<i class="fas fa-table-tennis text-xl text-black"></i>
-							<span class="tooltip-1">Pong</span>
+							<span id="header_pong" class="tooltip-1">Pong</span>
 						</button>
 
 						<!-- XOX -->
 						<button id="xox_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-th text-xl"></i>
-							<span class="tooltip-1">Tic-Tac-Toe</span>
+							<span id="header_tic_tac_toe" class="tooltip-1">Tic-Tac-Toe</span>
 						</button>
 
 					</div>
@@ -167,19 +167,19 @@ export function index_init()
 						<!-- Friends -->
 						<button id ="display_friends_page_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-users text-xl"></i>
-							<span class="tooltip-1">Friends</span>
+							<span id="header_friends" class="tooltip-1">Friends</span>
 						</button>
 
 						<!-- Settings -->
 						<button id="settings_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-cog text-xl"></i>
-							<span class="tooltip-1">Settings</span>
+							<span id="header_settings" class="tooltip-1">Settings</span>
 						</button>
 
 						<!-- Logout -->
 						<button id="logout_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-sign-out-alt text-xl"></i>
-							<span class="tooltip-1">Logout</span>
+							<span id="header_logout" class="tooltip-1">Logout</span>
 						</button>
 
 					</div>
