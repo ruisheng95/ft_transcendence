@@ -190,6 +190,14 @@ export function open_settings_page()
 	pfp_img_preview.src = header_pfp.src;
 	name_input.disabled = false;
 	name_lock.click();
+
+	//set the correct language radio button
+    const currentLanguage = localStorage.getItem("current_language") || "english";
+    const languageRadios = document.querySelectorAll<HTMLInputElement>('.radio-language');
+    
+    languageRadios.forEach(radio => {
+        radio.checked = (radio.value === currentLanguage);
+    });
 }
 
 export const settings_popup = html`
@@ -263,8 +271,7 @@ export const settings_popup = html`
 						<input class="radio-language"
 							type="radio"
 							name="language" 
-							value="english" 
-							checked >
+							value="english"  >
 						<span class="text-2xl">English</span>
 					</label>
 

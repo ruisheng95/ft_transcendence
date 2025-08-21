@@ -87,7 +87,7 @@ const root = async function (fastify) {
             dx *= 1.1;
 
             //control max speed
-            const MAXSPEED = 12;
+            const MAXSPEED = 10;
             dx = dx < MAXSPEED ? dx : MAXSPEED;
             console.log("speed: ", dx);
 

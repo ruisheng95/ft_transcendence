@@ -11,7 +11,6 @@ export function pf_config_setup()
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
 	const pf_config_button = document.querySelector<HTMLButtonElement>("#pf_config_button");
 	const pf_config_popup = document.querySelector<HTMLButtonElement>("#pf_config_popup");
-	const close_pf_config = document.querySelector<HTMLButtonElement>("#close_pf_config");
 	const input_pfp = document.querySelector<HTMLInputElement>("#input_pfp");
 	const pfp_img_preview = document.querySelector<HTMLImageElement>("#pfp_img");
 	const pfp_button = document.querySelector<HTMLImageElement>("#pfp_preview");
@@ -25,7 +24,7 @@ export function pf_config_setup()
 	const settings_popup = document.querySelector<HTMLButtonElement>("#settings_popup");
 
 	if(!settings_popup || !error_display || !header_pfp || !header_name || !name_input
-		|| !save_pf_config || !pf_config_button || !pf_config_popup || !close_pf_config
+		|| !save_pf_config || !pf_config_button || !pf_config_popup 
 		|| !pfp_button || !input_pfp || !pfp_img_preview)
 		throw new Error("Error pf_config stuff not found");
 
@@ -35,10 +34,6 @@ export function pf_config_setup()
 		pf_config_popup.classList.remove("hidden");
 		settings_popup.classList.add("hidden");
 		add_history("profile_config");
-	});
-	close_pf_config.addEventListener("click", () => {
-		pf_config_popup.classList.add("hidden");
-		add_history("");
 	});
 
 	pfp_button.addEventListener("click", () => { input_pfp.click();});
@@ -71,7 +66,6 @@ export function pf_config_setup()
 	if(localStorage.getItem("new_player_flag") === "true")
 	{
 		pf_config_button.click();
-		close_pf_config.classList.add("hidden");
 		localStorage.setItem("new_player_flag", "false");
 	}
 
@@ -84,7 +78,6 @@ export function pf_config_setup()
 			if (response.status === "success")
 			{
 				pf_config_popup.classList.add("hidden");
-				close_pf_config.classList.remove("hidden"); // cuz i hid the button if new player, so after they succesfully login can add back dy
 				if (response.name)
 				{
 					header_name.innerHTML = `<h1 class="text-white text-[18px] pl-[1vw]">${response.name}</h1>`;
@@ -190,9 +183,6 @@ export const pf_config_popup = html`
 			<div id="error_display" class="h-8 err-msg"></div>
 			
 			<!-- Button -->
-			<button type="button" id="close_pf_config" class="absolute top-6 right-6 button-remove">
-				<i class="fas fa-times text-black text-xl"></i>
-			</button>
 			<button type="button" id="save_pf_config" class="button-primary">Register</button>
 		</section>
 	</div>

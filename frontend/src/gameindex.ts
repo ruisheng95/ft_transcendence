@@ -30,6 +30,7 @@ import { WS } from "./class/WS.ts";
 import { pong_modes_popup, pong_modes_setup } from "./pong_modes.ts";
 
 import DOMPurify from 'dompurify';
+import { handle_language_change } from "./language.ts";
 
 export function index_init()
 {
@@ -85,6 +86,7 @@ export function index_init()
 
 	localStorage.setItem("current_username", player.username);
 	main_ft();
+	handle_language_change(`${localStorage.getItem("current_language")}`);
 
 	add_history("/pong"); //temporarily add /gameindex.html/ to history cuz wanna have the popstate effect
 	// socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list

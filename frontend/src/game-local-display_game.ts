@@ -254,7 +254,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 			if (playing == false)
 				return;
 			
-			if(Math.random() < 0.95) //simulate human distractions lol and slow reaction
+			if(Math.random() < 0.92) //simulate human distractions lol and slow reaction
 				return;
 
 			const paddle_center = rightplayerY + block_height / 2;

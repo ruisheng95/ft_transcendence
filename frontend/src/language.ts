@@ -123,6 +123,16 @@ const bm_texts = {
 	online1v1_match_result_text: "Keputusan Perlawanan",
 	close_online1v1_winner_popup: "Keluar",
 
+	//about texts
+	open_about_button: "Perihal",
+	about_title: "Perihal",
+	about_body_p1: "Sebahagian daripada kurikulum sekolah 42, projek ini memberi tumpuan kepada reka bentuk, pembangunan dan pelancaran aplikasi web full-stack.",
+	about_body_p2: "Aplikasi ini menampilkan versi moden permainan Pong klasik tahun 1970-an. Pemain boleh bersaing dalam perlawanan masa nyata dengan rakan atau mengasah kemahiran dalam mod latihan menentang AI. Kemajuan boleh dipantau melalui analitik terperinci dan sejarah permainan.",
+	about_body_p3: "Rasa bosan atau mahu kelainan? Cuba permainan sekunder kami:<br>Tic-Tac-Toe",
+	about_frontend_text: "Bahagian Hadapan",
+	about_backend_text: "Bahagian Belakang",
+	about_team_members_text: "Ahli Pasukan",
+
 	// Error messages
 	"Alphabets, numbers or '_' only": "Huruf, nombor atau '_' sahaja",
 	"search input too short": "Carian terlalu pendek",
@@ -283,11 +293,21 @@ const en_texts = {
 	online1v1_header_text2: "Players",
 	online1v1_map_none: "None",
 	online1v1_match_result_text: "Match Result",
-	close_online1v1_winner_popup: "Exit"
+	close_online1v1_winner_popup: "Exit",
+
+	//about texts
+	open_about_button: "About",
+	about_title: "About",
+	about_body_p1: "Part of the 42 school curriculum, this project focuses on the design, development, and deployment of a full-stack web application.",
+	about_body_p2: "The application features a modern take on the classic 1970s Pong game. Players can compete in real-time matches with friends or sharpen their skills in practice mode against AI. Progress can be tracked through detailed analytics and game history.",
+	about_body_p3: "Feeling bored or want a change of pace? Try out our secondary game:<br>Tic-Tac-Toe",
+	about_frontend_text: "Frontend",
+	about_backend_text: "Backend",
+	about_team_members_text: "Team Members",
 }
 
 const cn_texts = {
-		//header
+	//header
 	header_game: "游戏",
 	header_menu: "菜单",
 	header_pong: "乓",
@@ -398,7 +418,6 @@ const cn_texts = {
 	//vsAI
 	close_vs_AI_winner_popup: "退出",
 
-
 	// Online 1v1 Game
 	online1v1_title: "在线大厅",
 	online1v1_gameinfo_text1: "在线",
@@ -409,6 +428,16 @@ const cn_texts = {
 	online1v1_map_none: "无",
 	online1v1_match_result_text: "比赛结果",
 	close_online1v1_winner_popup: "退出",
+
+	//about texts
+	open_about_button: "关于",
+	about_title: "关于",
+	about_body_p1: "作为42学校课程的一部分，该项目专注于全栈Web应用的设计、开发和部署。",
+	about_body_p2: "该应用程序展示了对1970年代经典乓游戏的现代演绎。玩家可以与朋友实时对战，或者在训练模式下与AI对战来提升技能。进度可以通过详细的分析和游戏历史来追踪。",
+	about_body_p3: "觉得无聊或想换换口味？试试我们的另一个小游戏：<br>井字棋",
+	about_frontend_text: "前端",
+	about_backend_text: "后端",
+	about_team_members_text: "团队成员",
 
 	// Error messages
 	"Alphabets, numbers or '_' only": "仅限字母、数字或'_'",
@@ -450,15 +479,14 @@ const cn_texts = {
 	"match ongoing": "比赛进行中"
 }
 
-let current_language = "english";
-localStorage.setItem("current_language", "english");
+let current_language = "";
 
 function change_language_to_bm()
 {
 	for(const key in bm_texts)
 	{
 		const element = document.getElementById(key);
-		if(!element) throw new Error("change lang elements not found");
+		if(!element) continue;
 
 		if(element.tagName === 'INPUT')
 			(element as HTMLInputElement).placeholder = (bm_texts as any)[key];
@@ -472,7 +500,7 @@ function change_language_to_en()
 	for(const key in bm_texts)
 	{
 		const element = document.getElementById(key);
-		if(!element) throw new Error("change lang elements not found");
+		if(!element) continue;
 
 		if(element.tagName === 'INPUT')
 			(element as HTMLInputElement).placeholder = (en_texts as any)[key];
@@ -486,7 +514,7 @@ function change_language_to_cn()
 	for(const key in bm_texts)
 	{
 		const element = document.getElementById(key);
-		if(!element) throw new Error("change lang elements not found");
+		if(!element) continue;
 
 		if(element.tagName === 'INPUT')
 			(element as HTMLInputElement).placeholder = (cn_texts as any)[key];
@@ -497,8 +525,10 @@ function change_language_to_cn()
 
 export function handle_language_change(language: string)
 {
+	console.log("curr_lang printed:", localStorage.getItem("current_language"));
 	current_language = language;
 	localStorage.setItem("current_language", current_language);
+	console.log("curr_lang after change:", localStorage.getItem("current_language"));
 
 	if(language === "malay")
 		change_language_to_bm();
@@ -521,4 +551,16 @@ export function translate_text(text: string)
 			return (cn_texts as any)[text];
 	}
 	return text;
+}
+
+export function init_language()
+{
+	const saved_lang = localStorage.getItem("current_language");
+	console.log("curr_lang printed122:", localStorage.getItem("current_language"));
+	if(saved_lang === null)
+		current_language = "english";
+	else
+		current_language = saved_lang;
+
+	handle_language_change(current_language);
 }
