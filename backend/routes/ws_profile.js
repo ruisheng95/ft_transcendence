@@ -24,8 +24,10 @@ const root = async function (fastify) {
           request.log.info(message_obj, "Received:");
         }
 
-        if (message_obj.type === "get_player_profile") send_player_profile();
-        else if (message_obj.type === "get_player_friends") send_fren_list();
+        if (message_obj.type === "get_player_profile")
+          send_player_profile();
+        else if (message_obj.type === "get_player_friends")
+          send_fren_list();
         else if (message_obj.type === "modify_profile")
           modify_profile(message_obj);
         else if (message_obj.type === "get_server_players")
@@ -34,54 +36,136 @@ const root = async function (fastify) {
           add_friend(message_obj.name);
         else if (message_obj.type === "remove_friend_name")
           remove_friend(message_obj.name);
-        else if (message_obj.type === "logout") logout();
-		else if (message_obj.type === "get_playerstats") send_playerstats();
+        else if (message_obj.type === "logout") 
+          logout();
+		    else if (message_obj.type === "get_playerstats")
+          send_playerstats();
+        else if (message_obj.type === "get_xoxstats")
+          send_xoxstats();
+        else if (message_obj.type === "add_xox_match")
+          add_xox_match(message_obj);
+      }
+
+      function add_xox_match(message_obj)
+      {
+          const email = fastify.get_email_by_session(request);
+
+          try {
+            const stmt = fastify.betterSqlite3.prepare(`
+            INSERT INTO XOX (email, left_name, left_result, right_name, right_result)
+            VALUES (?, ?, ?, ?, ?)
+          `);
+
+          stmt.run(
+              email,
+              message_obj.left_name,
+              message_obj.left_result,
+              message_obj.right_name,
+              message_obj.right_result,
+            );
+
+            const ret_obj = {
+                type: "add_xox_match_status",
+                status: "success",
+            };
+
+            connection.send(JSON.stringify(ret_obj));
+
+          } catch (err) {
+
+            console.error("DB Error:", err.message);
+            const ret_obj = {
+                type: "add_xox_match_status",
+                status: "success",
+            };
+
+            connection.send(JSON.stringify(ret_obj));
+          }
+          
+      }
+
+      function send_xoxstats()
+      {
+        const email = fastify.get_email_by_session(request);
+        const HISTORY = fastify.betterSqlite3
+          .prepare("SELECT date, left_name, left_result, right_name, right_result FROM XOX WHERE email = ?")
+          .all(email);
+        
+        let left_win = 0;
+        let right_win = 0;
+        let tie = 0;
+        let total = 0;
+
+  
+        for (const entry of HISTORY) {
+            if (entry.left_result === 2)
+                left_win++;
+            else if (entry.right_result === 2)
+                right_win++
+            else
+                tie++;
+            total++;                    
+        }
+    
+        const left_rate = Math.trunc((left_win / total) * 100) || 0;
+        const right_rate = Math.trunc((right_win / total) * 100) || 0;
+
+        const ret_obj = {
+              type: "xoxstats_info",
+              tie, total,
+              left_win, left_rate,
+              right_win, right_rate,
+              history: HISTORY
+            };
+        
+        //console.log(ret_obj);
+        connection.send(JSON.stringify(ret_obj));
       }
 
 	  function send_playerstats()
 	  {
-		const email = fastify.get_email_by_session(request);
+        const email = fastify.get_email_by_session(request);
 
-		//get stats
-        const { RATING, WINNING_STREAK, TOTAL_WIN, TOTAL_LOSE } = fastify.betterSqlite3
-          .prepare("SELECT RATING, WINNING_STREAK, TOTAL_WIN, TOTAL_LOSE FROM USER WHERE EMAIL = ?")
+        //get stats
+            const { RATING, WINNING_STREAK, TOTAL_WIN, TOTAL_LOSE } = fastify.betterSqlite3
+              .prepare("SELECT RATING, WINNING_STREAK, TOTAL_WIN, TOTAL_LOSE FROM USER WHERE EMAIL = ?")
+              .get(email);
+
+        //get history
+        let HISTORY = fastify.betterSqlite3
+              .prepare(`SELECT date, match_type,
+          user1_email, user1_result, user2_email, user2_result,
+          user3_email, user3_result, user4_email, user4_result
+          FROM PONG_MATCH WHERE user1_email = ? OR user2_email = ? OR
+          user3_email = ? OR user4_email = ?`)
+              .all(email, email, email, email);
+
+        function get_username_from_email(email)
+        {
+          const { USERNAME } = fastify.betterSqlite3
+          .prepare("SELECT USERNAME FROM USER WHERE EMAIL = ?")
           .get(email);
 
-		//get history
-		let HISTORY = fastify.betterSqlite3
-          .prepare(`SELECT date, match_type,
-			user1_email, user1_result, user2_email, user2_result,
-			user3_email, user3_result, user4_email, user4_result
-			FROM PONG_MATCH WHERE user1_email = ? OR user2_email = ? OR
-			user3_email = ? OR user4_email = ?`)
-          .all(email, email, email, email);
+          return USERNAME;
+        }
 
-		function get_username_from_email(email)
-		{
-			const { USERNAME } = fastify.betterSqlite3
-			.prepare("SELECT USERNAME FROM USER WHERE EMAIL = ?")
-			.get(email);
+        for (const entry of HISTORY) //add them names
+        {
+          if(entry.user1_email) entry.user1_name = get_username_from_email(entry.user1_email);
+          if(entry.user2_email) entry.user2_name = get_username_from_email(entry.user2_email);
+          if(entry.user3_email) entry.user3_name = get_username_from_email(entry.user3_email);
+          if(entry.user4_email) entry.user4_name = get_username_from_email(entry.user4_email);
+        } 
 
-			return USERNAME;
-		}
-
-		for (const entry of HISTORY) //add them names
-		{
-			if(entry.user1_email) entry.user1_name = get_username_from_email(entry.user1_email);
-			if(entry.user2_email) entry.user2_name = get_username_from_email(entry.user2_email);
-			if(entry.user3_email) entry.user3_name = get_username_from_email(entry.user3_email);
-			if(entry.user4_email) entry.user4_name = get_username_from_email(entry.user4_email);
-		} 
-
-		//return obj
-        const ret_obj = {
-          type: "playerstats_info",
-          rating: RATING,
-          winning_streak: WINNING_STREAK,
-		  total_win: TOTAL_WIN,
-		  total_lose: TOTAL_LOSE,
-		  history: HISTORY
-        };
+        //return obj
+            const ret_obj = {
+              type: "playerstats_info",
+              rating: RATING,
+              winning_streak: WINNING_STREAK,
+          total_win: TOTAL_WIN,
+          total_lose: TOTAL_LOSE,
+          history: HISTORY
+            };
 
         connection.send(JSON.stringify(ret_obj));
 	  }
@@ -341,7 +425,6 @@ const root = async function (fastify) {
 
         return "";
       }
-
 
       function add_friend(add_friend_name) {
         // console.log("added friend name: ", add_friend_name);

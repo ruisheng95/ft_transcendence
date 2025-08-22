@@ -1,5 +1,7 @@
 import "./gamestyle.css";
 import { add_history } from "./spa-navigation";
+import { WS } from "./class/WS.ts";
+import {fetch_data} from "./xox_dashboard.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -200,6 +202,8 @@ function xoxWinner_popup(status: boolean) {
 	const instruction     = document.querySelector<HTMLDivElement>('#xox_instruction');
 	const close_button    = document.querySelector<HTMLButtonElement>('#xox_close_button');
 
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
+
 	if (!left_name_top || !left_name_mid || !left_result || !right_name_top || !right_name_mid || !right_result ||
 		!instruction || !close_button)
 		throw new Error("Error local_1v1_game buttons not found");
@@ -207,15 +211,22 @@ function xoxWinner_popup(status: boolean) {
 	right_name_mid.innerHTML = right_name_top.innerText;
 	left_name_mid.innerHTML = left_name_top.innerText;
 
+	const sendObj = {
+		left_name: left_name_top.innerText,
+		left_result: 0,
+		right_name: right_name_top.innerText,
+		right_result: 0
+	} 
+
 	if (status)
 	{
 		if (whosTurn) {
-			left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
-			right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			left_result.innerHTML = `<h2 class="match-win">Winner</h2>`; sendObj.left_result = 2;
+			right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`; sendObj.right_result = 1;
 		}
 		else {
-			right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
-			left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			right_result.innerHTML = `<h2 class="match-win">Winner</h2>`; sendObj.left_result = 1;
+			left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`; sendObj.right_result = 2;
 		}
 	}
 	else {
@@ -226,6 +237,11 @@ function xoxWinner_popup(status: boolean) {
 	close_button.classList.remove('hidden');
 	instruction.classList.add('hidden')
 	disableCell(true);
+
+	if(socket.readyState === WebSocket.OPEN)
+		socket.send(JSON.stringify( {type: "add_xox_match", ...sendObj }));
+
+	fetch_data();
 }
 
 function xoxCheckWinner(player: 'X' | 'O') {
