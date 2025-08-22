@@ -491,7 +491,7 @@ function change_language_to_bm()
 		if(element.tagName === 'INPUT')
 			(element as HTMLInputElement).placeholder = (bm_texts as any)[key];
 		else
-			element.textContent = (bm_texts as any)[key]; 
+			element.innerHTML = (bm_texts as any)[key]; 
 	}
 }
 
@@ -505,7 +505,7 @@ function change_language_to_en()
 		if(element.tagName === 'INPUT')
 			(element as HTMLInputElement).placeholder = (en_texts as any)[key];
 		else
-			element.textContent = (en_texts as any)[key]; 
+			element.innerHTML = (en_texts as any)[key]; 
 	}
 }
 
@@ -519,7 +519,7 @@ function change_language_to_cn()
 		if(element.tagName === 'INPUT')
 			(element as HTMLInputElement).placeholder = (cn_texts as any)[key];
 		else
-			element.textContent = (cn_texts as any)[key]; 
+			element.innerHTML = (cn_texts as any)[key]; 
 	}
 }
 
