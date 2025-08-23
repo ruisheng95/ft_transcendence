@@ -525,10 +525,10 @@ function change_language_to_cn()
 
 export function handle_language_change(language: string)
 {
-	console.log("curr_lang printed:", localStorage.getItem("current_language"));
+	// console.log("curr_lang printed:", localStorage.getItem("current_language"));
 	current_language = language;
 	localStorage.setItem("current_language", current_language);
-	console.log("curr_lang after change:", localStorage.getItem("current_language"));
+	// console.log("curr_lang after change:", localStorage.getItem("current_language"));
 
 	if(language === "malay")
 		change_language_to_bm();
@@ -556,7 +556,7 @@ export function translate_text(text: string)
 export function init_language()
 {
 	const saved_lang = localStorage.getItem("current_language");
-	console.log("curr_lang printed122:", localStorage.getItem("current_language"));
+	// console.log("curr_lang printed122:", localStorage.getItem("current_language"));
 	if(saved_lang === null)
 		current_language = "english";
 	else

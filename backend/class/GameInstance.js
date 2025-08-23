@@ -1,5 +1,6 @@
 import { MsgType } from "./MessageType.js";
 import { GameInstance2v2 } from "./GameInstance2v2.js";
+import { GameInstanceXOX } from "./GameInstanceXOX.js";
 
 export const defaultGameSetting = {
   boardWidth: 1000,
@@ -331,13 +332,15 @@ class Player {
   gameInstance;
   request;
   username;
+  gameType; //added this for xox game
 
-  constructor(email, connection, gameNoOfPlayers, request, username) {
+  constructor(email, connection, gameNoOfPlayers, request, username, gameType) {
     this.email = email;
     this.connection = connection;
     this.gameNoOfPlayers = gameNoOfPlayers;
     this.request = request;
     this.username = username;
+	this.gameType = gameType;
   }
 }
 
@@ -349,37 +352,37 @@ export class OnlineMatchmaking {
     this.#fastify = fastify;
   }
 
-  registerPlayer(email, connection, gameNoOfPlayers, request, username) {
-    // console.log(`[DEBUG] registerPlayer called: ${email}, gameNoOfPlayers: ${gameNoOfPlayers}`);
-    // console.log(`[DEBUG] Current player array length: ${this.#playerArray.length}`);
+  // Just add gameType parameter - minimal change!
+  registerPlayer(email, connection, gameNoOfPlayers, request, username, gameType = 'pong') {
     
     this.#playerArray.push(
-      new Player(email, connection, gameNoOfPlayers, request, username)
+      new Player(email, connection, gameNoOfPlayers, request, username, gameType)
     );
-    request.log.info("OnlineMatchmaking registered: " + email);
+    request.log.info("OnlineMatchmaking registered: " + email + " for " + gameType);
     
     const nonPlayingPlayers = this.#playerArray.filter(
       (player) => !player.gameInstance
     );
     
-    // console.log(`[DEBUG] Non-playing players: ${nonPlayingPlayers.length}`);
-    
-    // Find all players waiting for the same game mode
     const playersWaitingForSameMode = nonPlayingPlayers.filter(
-      (player) => player.gameNoOfPlayers === gameNoOfPlayers
+      (player) => player.gameNoOfPlayers === gameNoOfPlayers && player.gameType === gameType
     );
-    
-    // console.log(`[DEBUG] Players waiting for same mode (${gameNoOfPlayers}): ${playersWaitingForSameMode.length}`);
-    // console.log(`[DEBUG] Player emails in same mode: ${playersWaitingForSameMode.map(p => p.email).join(', ')}`);
     
     const pendingPlayerLobby = playersWaitingForSameMode;
     const gameLobbySize = gameNoOfPlayers;
+    
     if (pendingPlayerLobby.length === gameLobbySize) {   
       let gameInstance;
-      if (gameLobbySize === 2) {
-        gameInstance = new GameInstance(this.#fastify, pendingPlayerLobby.map((player) => player.email));
-      } else if (gameLobbySize === 4) {
-        gameInstance = new GameInstance2v2(this.#fastify, pendingPlayerLobby.map((player) => player.email));
+      
+      if (gameType === 'pong') {
+        if (gameLobbySize === 2) {
+          gameInstance = new GameInstance(this.#fastify, pendingPlayerLobby.map((player) => player.email));
+        } else if (gameLobbySize === 4) {
+          gameInstance = new GameInstance2v2(this.#fastify, pendingPlayerLobby.map((player) => player.email));
+        }
+      } 
+	  else if (gameType === 'xox') {
+        gameInstance = new GameInstanceXOX(this.#fastify, pendingPlayerLobby.map((player) => player.email));
       }
       
       pendingPlayerLobby.forEach((player, index) => {
@@ -387,7 +390,6 @@ export class OnlineMatchmaking {
         const playerId = gameInstance.registerPlayer(player.connection);
         request.log.info("GameInstance registered player: " + playerId);
         
-        // Send player assignment first
         player.connection.send(
           JSON.stringify({
             type: "player_assigned",
@@ -395,15 +397,11 @@ export class OnlineMatchmaking {
           })
         );
         
-        // Then send lobby full status
         player.connection.send(
           JSON.stringify({
-            // type: MsgType.GAME_INIT,
-            // ...defaultGameSetting,
-            // playerId,
-
             type: MsgType.MATCHMAKING_STATUS,
             status: "Lobby full",
+            gameType: gameType, // Added this so frontend knows what game
             players: JSON.stringify(
               pendingPlayerLobby.map((player) => player.username)
             ),
@@ -411,30 +409,16 @@ export class OnlineMatchmaking {
         );
       });
     } else {
-
-      // push pending status to ALL players in the lobby
-//       const statusMessage = JSON.stringify({
-//         type: MsgType.MATCHMAKING_STATUS,
-//         status: "Waiting for players",
-//         players: JSON.stringify(pendingPlayerLobby.map((player) => player.username)),
-//       });
-      
-//       // Send update to all players in the current lobby
-//       pendingPlayerLobby.forEach((player) => {
-//         player.connection.send(statusMessage);
-//       });
-
-      // push pending status
       connection.send(
         JSON.stringify({
           type: MsgType.MATCHMAKING_STATUS,
           status: "Waiting for players",
+          gameType: gameType, // Added this
           players: JSON.stringify(
             pendingPlayerLobby.map((player) => player.username)
           ),
         })
       );
-
     }
   }
 
@@ -451,3 +435,114 @@ export class OnlineMatchmaking {
     }
   }
 }
+
+// export class OnlineMatchmaking {
+//   #playerArray = [];
+//   #fastify = null;
+
+//   constructor(fastify) {
+//     this.#fastify = fastify;
+//   }
+
+//   registerPlayer(email, connection, gameNoOfPlayers, request, username) {
+//     // console.log(`[DEBUG] registerPlayer called: ${email}, gameNoOfPlayers: ${gameNoOfPlayers}`);
+//     // console.log(`[DEBUG] Current player array length: ${this.#playerArray.length}`);
+    
+//     this.#playerArray.push(
+//       new Player(email, connection, gameNoOfPlayers, request, username)
+//     );
+//     request.log.info("OnlineMatchmaking registered: " + email);
+    
+//     const nonPlayingPlayers = this.#playerArray.filter(
+//       (player) => !player.gameInstance
+//     );
+    
+//     // console.log(`[DEBUG] Non-playing players: ${nonPlayingPlayers.length}`);
+    
+//     // Find all players waiting for the same game mode
+//     const playersWaitingForSameMode = nonPlayingPlayers.filter(
+//       (player) => player.gameNoOfPlayers === gameNoOfPlayers
+//     );
+    
+//     // console.log(`[DEBUG] Players waiting for same mode (${gameNoOfPlayers}): ${playersWaitingForSameMode.length}`);
+//     // console.log(`[DEBUG] Player emails in same mode: ${playersWaitingForSameMode.map(p => p.email).join(', ')}`);
+    
+//     const pendingPlayerLobby = playersWaitingForSameMode;
+//     const gameLobbySize = gameNoOfPlayers;
+//     if (pendingPlayerLobby.length === gameLobbySize) {   
+//       let gameInstance;
+//       if (gameLobbySize === 2) {
+//         gameInstance = new GameInstance(this.#fastify, pendingPlayerLobby.map((player) => player.email));
+//       } else if (gameLobbySize === 4) {
+//         gameInstance = new GameInstance2v2(this.#fastify, pendingPlayerLobby.map((player) => player.email));
+//       }
+      
+//       pendingPlayerLobby.forEach((player, index) => {
+//         player.gameInstance = gameInstance;
+//         const playerId = gameInstance.registerPlayer(player.connection);
+//         request.log.info("GameInstance registered player: " + playerId);
+        
+//         // Send player assignment first
+//         player.connection.send(
+//           JSON.stringify({
+//             type: "player_assigned",
+//             player_index: index
+//           })
+//         );
+        
+//         // Then send lobby full status
+//         player.connection.send(
+//           JSON.stringify({
+//             // type: MsgType.GAME_INIT,
+//             // ...defaultGameSetting,
+//             // playerId,
+
+//             type: MsgType.MATCHMAKING_STATUS,
+//             status: "Lobby full",
+//             players: JSON.stringify(
+//               pendingPlayerLobby.map((player) => player.username)
+//             ),
+//           })
+//         );
+//       });
+//     } else {
+
+//       // push pending status to ALL players in the lobby
+// //       const statusMessage = JSON.stringify({
+// //         type: MsgType.MATCHMAKING_STATUS,
+// //         status: "Waiting for players",
+// //         players: JSON.stringify(pendingPlayerLobby.map((player) => player.username)),
+// //       });
+      
+// //       // Send update to all players in the current lobby
+// //       pendingPlayerLobby.forEach((player) => {
+// //         player.connection.send(statusMessage);
+// //       });
+
+//       // push pending status
+//       connection.send(
+//         JSON.stringify({
+//           type: MsgType.MATCHMAKING_STATUS,
+//           status: "Waiting for players",
+//           players: JSON.stringify(
+//             pendingPlayerLobby.map((player) => player.username)
+//           ),
+//         })
+//       );
+
+//     }
+//   }
+
+//   getPlayerByConnection(connection) {
+//     return this.#playerArray.find((player) => player.connection === connection);
+//   }
+
+//   removePlayerByConnection(connection) {
+//     const index = this.#playerArray.findIndex(
+//       (player) => player.connection === connection
+//     );
+//     if (index > -1) {
+//       this.#playerArray.splice(index, 1);
+//     }
+//   }
+// }

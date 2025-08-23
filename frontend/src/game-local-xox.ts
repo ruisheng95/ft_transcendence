@@ -1,12 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./gamestyle.css";
-import { add_history } from "./spa-navigation";
 import { WS } from "./class/WS";
+import { removeAllEventListenersFromButton } from "./gameindex";
+import { add_history } from "./spa-navigation";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
 
 let gameState : any; 
+
+//notes:
+// general flow: start button clicked -> send {type: "start_game"} to backend -> backend send confirmation {type: "game_start" + gameState} to frontend
+// click cell -> send {type: "make_move"} to backend -> backend send move result {type: "move_result" + gameState + last_move(row + col + symbol) + gameResult (if win or lose or tie)}
+// if game end, render on frontend, backend will check for win lose now
+//
 
 export function xox_game_setup()
 {
@@ -16,7 +23,6 @@ export function xox_game_setup()
 	const p2_name = document.querySelector<HTMLInputElement>("#localxox_name2_input");
 
 	const game_popup = document.querySelector<HTMLDivElement>("#xox_game_popup");
-	const cells = document.querySelectorAll<HTMLButtonElement>('[data-row][data-col]');
 
 	const left_name_top = document.querySelector<HTMLDivElement>('#xoxleft_name_top');
 	const left_name_mid = document.querySelector<HTMLDivElement>('#xoxleft_name_mid');
@@ -27,13 +33,12 @@ export function xox_game_setup()
 	const right_result = document.querySelector<HTMLDivElement>('#xoxright_result');
 
 	const instruction = document.querySelector<HTMLDivElement>('#xox_instruction');
-	const close_button = document.querySelector<HTMLButtonElement>('#xox_close_button');
 	const map_input = document.querySelector<HTMLInputElement>("#input-map");
 
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_xox`);
 
-	if (!register_page || !start_button || !p1_name || !p2_name || !close_button || !game_popup || !map_input ||
-		!cells || !left_name_top || !left_name_mid || !left_result || !right_name_top || !right_name_mid || !right_result ||
+	if (!register_page || !start_button || !p1_name || !p2_name || !game_popup || !map_input ||
+		!left_name_top || !left_name_mid || !left_result || !right_name_top || !right_name_mid || !right_result ||
 		!instruction)
 		throw new Error("Error: Required DOM elements not found");
 
@@ -55,39 +60,11 @@ export function xox_game_setup()
 			}));
 		}
 	});
-
-	cells.forEach(cell => {
-		cell.addEventListener("click", () => {
-
-			if (cell.disabled) return;
-			
-			if (cell.dataset.row === undefined || cell.dataset.col === undefined)
-			{
-				console.error("Cell missing row or col data attributes");
-				return;
-			}
-
-			const row = parseInt(cell.dataset.row, 10);
-			const col = parseInt(cell.dataset.col, 10);
-
-			// Send move to backend
-			socket.send(JSON.stringify({
-				type: "make_move",
-				row: row,
-				col: col
-			}));
-		});
-	});
-
-	close_button.addEventListener("click", () => {
-		game_popup.classList.add("hidden");
-		add_history("");
-	});
 		
 	socket.addEventListener("message", (message : any) => {
 		const msg_obj = JSON.parse(message.data);
 		console.log(msg_obj);
-		if(msg_obj.type === "game_started")
+		if(msg_obj.type === "game_start")
 			handleGameStarted(msg_obj.gameState);
 		else if(msg_obj.type === "move_result")
 			handleMoveResult(msg_obj);
@@ -95,8 +72,53 @@ export function xox_game_setup()
 			console.log("Game error: ", msg_obj.message);
 	});
 
+		function setup_xox_event_listeners()
+	{
+		const cells = document.querySelectorAll<HTMLButtonElement>('[data-row][data-col]');
+		let close_button = document.querySelector<HTMLButtonElement>('#xox_close_button');
+		
+		cells.forEach(cell => {
+			cell = removeAllEventListenersFromButton(cell);
+			
+			// Add fresh listener
+			cell.addEventListener("click", () => {
+				if (cell.disabled) return;
+				
+				if (cell.dataset.row === undefined || cell.dataset.col === undefined)
+				{
+					console.error("Cell missing row or col data attributes");
+					return;
+				}
+
+				const row = parseInt(cell.dataset.row, 10);
+				const col = parseInt(cell.dataset.col, 10);
+
+				// Send move to backend
+				socket.send(JSON.stringify({
+					type: "make_move",
+					row: row,
+					col: col
+				}));
+			});
+		});
+
+		if (close_button)
+		{
+			close_button = removeAllEventListenersFromButton(close_button);
+			close_button.addEventListener("click", () => {
+				const game_popup = document.querySelector<HTMLDivElement>("#xox_game_popup");
+				if (game_popup)
+					game_popup.classList.add("hidden");
+				add_history("/tic_tac_toe");
+			});
+		}
+	}
+
 	function handleGameStarted(state: any)
 	{
+		const close_button = document.querySelector<HTMLButtonElement>('#xox_close_button');
+		const cells = document.querySelectorAll<HTMLButtonElement>('[data-row][data-col]');
+
 		gameState = state;
 
 		if (!left_name_top || !right_name_top || !left_name_mid || !right_name_mid || 
@@ -127,9 +149,11 @@ export function xox_game_setup()
 		//apply bg
 		game_popup.style.backgroundImage = map_input.value;
 
+		//setup even listeners
+		setup_xox_event_listeners();
+
 		xoxUpdateTurn(state);
 	}
-
 
 	function handleMoveResult(message: any)
 	{
@@ -137,6 +161,7 @@ export function xox_game_setup()
 		const lastMove = message.lastMove;
 		const gameResult = message.gameResult;
 
+		//put symbol on cell
 		const movedCell = document.querySelector<HTMLButtonElement>(`[data-row="${lastMove.row}"][data-col="${lastMove.col}"]`);
 		if (movedCell)
 		{
@@ -223,7 +248,7 @@ function xoxWinner_popup(symbol: string)
 	const close_button    = document.querySelector<HTMLButtonElement>('#xox_close_button');
 
 	if (!right_name_mid || !left_name_mid || !left_result || !right_result || !close_button || !instruction) 
-		throw new Error("showWinner: required elements not found");
+		throw new Error("xoxWinner_popup: required elements not found");
 
 	right_name_mid.innerHTML = gameState.player2Name;
 	left_name_mid.innerHTML = gameState.player1Name;
@@ -249,6 +274,7 @@ function xoxWinner_popup(symbol: string)
 	disableCells(true);
 }
 
+//to change the bar at the top
 function xoxUpdateTurn(state: any)
 {
 	const left_name_top  = document.querySelector<HTMLDivElement>('#xoxleft_name_top');

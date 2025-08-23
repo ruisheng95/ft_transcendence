@@ -29,7 +29,7 @@ const root = async function (fastify) {
 		function recv_msg(message)
 		{
 			const message_obj = JSON.parse(message.toString());
-			console.log("Received:", message_obj);
+			//console.log("Received:", message_obj);
 			if(message_obj.type === "start_game")
 				handleStartGame(message_obj);
 			else if(message_obj.type === "make_move")
@@ -53,7 +53,7 @@ const root = async function (fastify) {
 			];
 
 			connection.send(JSON.stringify({
-				type: "game_started",
+				type: "game_start",
 				gameState: {
 					grid: grid,
 					whosTurn: whosTurn,
@@ -136,7 +136,7 @@ const root = async function (fastify) {
 					col: col,
 					symbol: current_symbol
 				},
-				gameResult: gameResult
+				gameResult: gameResult //gameResult is null unless there game ends
 			}));
 		}
 

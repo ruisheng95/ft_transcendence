@@ -23,6 +23,7 @@ import { online_play_menus_setup} from "./game-online-pre_game.ts";
 
 import { game_popup } from "./game-local-display_game.ts";
 import { online_game_popup } from "./game-online-1v1.ts";
+import { onlinexox_popups } from "./game-online-xox.ts";
 
 
 import { add_history } from "./spa-navigation.ts";
@@ -206,7 +207,7 @@ export function index_init()
 				
 			${game_popup}
 			${online_game_popup}
-
+			${onlinexox_popups}
 			</div>
 		`);
 

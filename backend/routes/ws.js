@@ -160,7 +160,8 @@ const root = async function (fastify) {
         connection,
         2,
         request,
-		get_username_from_email(fastify.get_email_by_session(request))
+		get_username_from_email(fastify.get_email_by_session(request)),
+		'pong'
       );
 
       connection.on("message", (message) => {
@@ -212,7 +213,8 @@ const root = async function (fastify) {
         connection,
         4, // 4 players for 2v2
         request,
-		get_username_from_email(fastify.get_email_by_session(request))
+		get_username_from_email(fastify.get_email_by_session(request)),
+		'pong'
       );
 
       connection.on("message", (message) => {
@@ -253,6 +255,57 @@ const root = async function (fastify) {
 	  }
     }
   );
+
+  // Online xox route
+	fastify.get(
+	"/ws-online-xox",
+	{ websocket: true, onRequest: fastify.verify_session },
+	(connection, request) => {
+		onlineMatchmaking.registerPlayer(
+		fastify.get_email_by_session(request),
+		connection,
+		2, // 2 players for XOX
+		request,
+		get_username_from_email(fastify.get_email_by_session(request)),
+		'xox'
+		);
+
+		connection.on("message", (message) => {
+			const message_obj = JSON.parse(message.toString());
+			const player = onlineMatchmaking.getPlayerByConnection(connection);
+			//console.log("FRONTEND SEND A MESSAGEEEEE: ", message_obj);
+			if (message_obj.type == MsgType.GAME_START)
+				player.gameInstance?.startGame();
+			else if (message_obj.type === "make_move")
+			{
+				player.gameInstance.make_move_checker(
+				message_obj.type,
+				message_obj.cell,
+				connection
+				);
+			}
+		});
+
+		connection.on("close", () => {
+		const player = onlineMatchmaking.getPlayerByConnection(connection);
+		if (player.gameInstance) {
+			player.gameInstance.stopGame();
+			player.gameInstance = null;
+		}
+		onlineMatchmaking.removePlayerByConnection(connection);
+		request.log.info("Socket disconnect: " + player.email);
+		});
+
+		function get_username_from_email(email)
+		{
+			const { USERNAME } = fastify.betterSqlite3
+				.prepare("SELECT USERNAME FROM USER WHERE EMAIL = ?")
+				.get(email);
+
+			return USERNAME;
+		}
+	}
+	);
 };
 
 export default root;

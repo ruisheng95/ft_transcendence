@@ -1,4 +1,5 @@
 
+import { xox_online_play } from "./game-online-xox.ts";
 import { hide_all_main_pages } from "./pong_modes.ts";
 //import { WS } from "./class/WS.ts";
 import { add_history } from "./spa-navigation.ts";
@@ -11,8 +12,9 @@ export function xox_setup ()
 {
 	const xox_button = document.querySelector<HTMLButtonElement>("#xox_button");
 	const xox_popup  = document.querySelector<HTMLButtonElement>("#xox_dashboard_popup");
+	const xox_online_button = document.querySelector<HTMLButtonElement>("#online_xox_button");
 
-	if(!xox_button || !xox_popup)
+	if(!xox_button || !xox_popup || !xox_online_button)
 		throw new Error("Error pf_config stuff not found");
 
 	xox_button.addEventListener("click", () => {
@@ -21,6 +23,10 @@ export function xox_setup ()
 		xox_button.classList.add("bg-yellow-400");
 		xox_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
 		add_history("tic_tac_toe");
+	});
+
+	xox_online_button.addEventListener("click", () => {
+		xox_online_play();
 	});
 }
 
@@ -80,6 +86,10 @@ const statsSection = html`
 
 		<button id="local_xox_button" class="mx-12 h-1/6 text-3xl tracking-widest font-bold pixel-font flex items-center rounded-2xl justify-center border-2 border-yellow-400 hover:bg-yellow-400/20 transition duration-200 ">
 			Play
+		</button>
+
+		<button id="online_xox_button" class="mx-12 h-1/6 text-3xl tracking-widest font-bold pixel-font flex items-center rounded-2xl justify-center border-2 border-yellow-400 hover:bg-yellow-400/20 transition duration-200 ">
+			online play
 		</button>
 
 	</div>
