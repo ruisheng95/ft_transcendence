@@ -38,6 +38,8 @@ export function xox_online_play()
 			handleMoveResult(msg_obj);
 		else if(msg_obj.type === "player_assigned")
 			player_index = msg_obj.player_index;
+		else if(msg_obj.type === "idle_timeout")
+			handleIdleTimout(msg_obj);
 		else if(msg_obj.type === "error") //for now this isnt used but i have send a json if u click when its not ur turn
 			console.log("Game error: ", msg_obj.message);
 	});
@@ -56,7 +58,6 @@ export function xox_online_play()
 		if(msg_obj.status === "Waiting for players")
 		{
 			exit_mm.classList.remove("hidden");
-			
 			mm_status_div.innerHTML = `
 			<div class="flex justify-center">
 				<div>${translate_text("Searching for players")}</div>
@@ -66,6 +67,7 @@ export function xox_online_play()
 			</div>
 			` //pulsing dots aniamtion lmaoo
 
+			exit_mm.classList.remove("hidden");
 			exit_mm = removeAllEventListenersFromButton(exit_mm);
 			exit_mm.addEventListener("click", () => {
 				matchmaking_popup.classList.add("hidden");
@@ -79,6 +81,7 @@ export function xox_online_play()
 		}
 		else if(msg_obj.status === "Lobby full")
 		{
+			exit_mm.classList.add("hidden");
 			disable_back_navigation();
 			start_match_countdown(mm_status_div);
 			p1_name = players[0];
@@ -248,13 +251,23 @@ export function xox_online_play()
 						target.classList.add("font-bold", "bg-white/20");
 					}
 				});
-				xoxWinner_popup(gameResult.winnerSymbol, gameState);
+				xoxWinner_popup(gameResult.winnerSymbol);
 			}
 			else if (gameResult.type === 'tie')
-				xoxWinner_popup("", gameState);
+				xoxWinner_popup("");
 		}
 		else
 			xoxUpdateTurn(gameState);
+	}
+
+	function handleIdleTimout(msg_obj : any)
+	{
+		const xox_game_message_div = document.querySelector<HTMLDivElement>("#xox_game_message");
+
+		if(!xox_game_message_div) throw new Error("handleIdleTimeout elements not found");
+
+		xoxWinner_popup(msg_obj.idlePlayer === 'X' ? 'O' : 'X'); //send the symbol opposite to the person who timeout as the winner
+		xox_game_message_div.innerHTML = `Game ended because player has idled for too long`;
 	}
 
 	function xoxUpdateTurn(gameState: any)
@@ -283,7 +296,7 @@ export function xox_online_play()
 		cells.forEach(cell => { cell.disabled = status; });
 	}
 
-	function xoxWinner_popup(symbol: string, gameState: any)
+	function xoxWinner_popup(symbol: string)
 	{
 		const left_name_mid = document.querySelector<HTMLDivElement>('#xoxleft_name_mid');
 		const left_result = document.querySelector<HTMLDivElement>('#xoxleft_result');
@@ -295,12 +308,8 @@ export function xox_online_play()
 		if (!left_name_mid || !left_result || !right_name_mid || !right_result || 
 			!instruction || !close_button) return;
 
-		// Show player names
-		if (gameState)
-		{
-			left_name_mid.innerHTML = p1_name || "Player 1";
-			right_name_mid.innerHTML = p2_name || "Player 2";
-		}
+		left_name_mid.innerHTML = p1_name || "Player 1";
+		right_name_mid.innerHTML = p2_name || "Player 2";
 
 		// Show results
 		if (symbol === "X")
@@ -374,7 +383,7 @@ const onlinexox_matchmaking_popup = `
 		
 		<!--Exit Button -->
 		<button id="onlinexox_exit_matchmaking" class="absolute top-10 right-10 button-remove">
-			<i class="fas fa-times text-black text-xl"></i>
+			<i id="onlinexox_exit_mm_icon" class="fas fa-times text-black text-xl"></i>
 		</button>
 	</div>
 `;

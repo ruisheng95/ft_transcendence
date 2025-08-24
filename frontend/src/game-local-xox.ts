@@ -347,6 +347,8 @@ export const xox_game_popup = html`
 			<div id="xox_close_button" class="h-20 flex items-center hidden">
 				<button class="button-primary">Exit</button>
 			</div>
+
+			<div id="xox_game_message"></div>
 		</div>
 	</div>
 `;

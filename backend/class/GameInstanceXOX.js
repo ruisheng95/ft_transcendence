@@ -30,6 +30,10 @@ export class GameInstanceXOX
 		[[0,2],[1,1],[2,0]]
 	];
 
+	//idle timer
+	#idleTimer = null; //timer to check time between make move
+	#TURN_TIMEOUT_MS = 10000; // currently idle after 10s (but can change later)
+
 	constructor(fastify, players_emails)
 	{
 		this.#fastify = fastify;
@@ -159,6 +163,8 @@ export class GameInstanceXOX
 
 		console.log("First person: ", this.#whosTurn);
 
+		this.#resetIdleTimer();
+
 		// console.log(`XOX Game started. First turn: player ${this.#whosTurn ? 1 : 0}`);
 
 		// Send game_start message to frontend
@@ -192,6 +198,8 @@ export class GameInstanceXOX
 						return;
 					}
 
+					this.#resetIdleTimer();
+
 					// Handle the move (key should contain row and col)
 					console.log(cell);
 					this.#makeMove(cell.row, cell.col, index);
@@ -199,6 +207,34 @@ export class GameInstanceXOX
 	   		});
 		}
 	}
+
+	#resetIdleTimer() {
+
+		//idea is to start a timer and use the timeIntervalId, whenever wanna reset just clear the id and add a new one
+		// resets everytime a player makes a move, when a player timeout check whos turn and send the symbol of the timeout person to frontend
+		if (this.#idleTimer)
+			clearTimeout(this.#idleTimer);
+		
+		this.#idleTimer = setTimeout(() => {
+			//use whos turn to determine who idled
+			const idlePlayerSymbol = this.#whosTurn ? 'X' : 'O';
+			
+			//console.log(`Player with symbol ${idlePlayerSymbol} timed out`);
+			
+			this.#sendJson({
+				type: "idle_timeout",
+				idlePlayer: idlePlayerSymbol,
+			});
+			
+			//update playerstats
+			const winnerEmail = this.#emailsArray[idlePlayerSymbol == 'X' ? 1 : 0];
+			const loserEmail = this.#emailsArray[idlePlayerSymbol == 'X' ? 0 : 1];
+			this.#update_playerstats_aftergame(winnerEmail, loserEmail);
+			
+			this.stopGame();
+		}, this.#TURN_TIMEOUT_MS);
+	}
+
 
 	stopGame() {
 		this.#connectionArray.forEach((connection) => connection.close());
