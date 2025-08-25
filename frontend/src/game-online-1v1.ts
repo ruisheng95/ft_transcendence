@@ -86,9 +86,18 @@ export function online_1v1_play()
 	close_game_button.addEventListener("click", () => {
 		game_popup.classList.add("hidden");
 		playing = false;
-		terminate_history();
-		socket.close();
-		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+		// check if in tournament
+		const tournament_context = localStorage.getItem("tournament_context");
+		if (tournament_context) {
+			// return to tournament page
+			socket.close();
+			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+			add_history("/game-online");
+		} else {
+			terminate_history();
+			socket.close();
+			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+		}
 	});
 
 	function start_the_fkin_game()
