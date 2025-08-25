@@ -335,7 +335,7 @@ export class GameInstance {
       .prepare(
         "INSERT INTO PONG_MATCH (date, match_type, user1_email, user1_result, user2_email, user2_result) VALUES (?, ?, ?, ?, ?, ?)"
       )
-      .run(curr_date, "pong 1v1", winner_email, 1, loser_email, 0);
+      .run(curr_date, "Pong 1v1", winner_email, 1, loser_email, 0);
 
     //personal notes:
     // fields: TOTAL_WIN TOTAL_LOSE WINNING_STREAK RATING
