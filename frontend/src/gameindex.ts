@@ -25,7 +25,6 @@ import { game_popup } from "./game-local-display_game.ts";
 import { online_game_popup } from "./game-online-1v1.ts";
 import { onlinexox_popups } from "./game-online-xox.ts";
 
-
 import { add_history } from "./spa-navigation.ts";
 
 import { WS } from "./class/WS.ts";

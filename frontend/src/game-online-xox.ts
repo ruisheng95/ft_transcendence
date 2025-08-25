@@ -398,7 +398,7 @@ const onlinexox_matchmaking_popup = `
 		<div id="xox_mm_status" class="text-4xl mt-10"></div>
 		
 		<!--Exit Button -->
-		<button id="onlinexox_exit_matchmaking" class="absolute top-10 right-10 button-remove">
+		<button id="onlinexox_exit_matchmaking" class="absolute top-10 right-10 w-6 h-6 bg-yellow-400 rounded flex items-center justify-center hover:bg-yellow-300">
 			<i id="onlinexox_exit_mm_icon" class="fas fa-times text-black text-xl"></i>
 		</button>
 	</div>
