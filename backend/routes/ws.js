@@ -155,12 +155,20 @@ const root = async function (fastify) {
     "/ws-online",
     { websocket: true, onRequest: fastify.verify_session },
     (connection, request) => {
+      const tournamentId = request.query.tournament;
+      const matchId = request.query.match;
+
       onlineMatchmaking.registerPlayer(
         fastify.get_email_by_session(request),
         connection,
         2,
         request,
-		get_username_from_email(fastify.get_email_by_session(request))
+        get_username_from_email(fastify.get_email_by_session(request)),
+        {
+          isTournamentGame: !!tournamentId, // convert existing value to boolean (true)
+          tournamentId: tournamentId,
+          matchId: matchId
+        }
       );
 
       connection.on("message", (message) => {
