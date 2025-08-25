@@ -1,5 +1,5 @@
 import "./gamestyle.css";
-
+import { online_tour_manager } from "./game-online-tournament2.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -17,7 +17,7 @@ export function online_tour_game_setup()
 	online_tour_start_button.addEventListener("click", () => {
 		console.log("Starting online tournament...");
 		onlineTour_regist_page.classList.add("hidden");
-		//online_tour_manager();
+		online_tour_manager();
 	});
 
 	online_tour_close_button.addEventListener("click", () => {
