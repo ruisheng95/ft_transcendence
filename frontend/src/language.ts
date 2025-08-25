@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 const bm_texts = {
+
 	//header
 	header_game: "Permainan",
 	header_menu: "Menu",
@@ -112,6 +113,19 @@ const bm_texts = {
 	//vsAI
 	close_vs_AI_winner_popup: "Keluar",
 
+	//local xox
+	localxox_registration_title: "Pendaftaran Perlawanan",
+	localxox_gameinfo_text1: "Main Tempatan", 
+	localxox_gameinfo_text2: "Tic-Tac-Toe",
+	localxox_gameinfo_text3: "2 Pemain",
+	localxox_header_text1: "Pilihan Peta",
+	localxox_header_text2: "Pemain",
+	localxox_map_none: "Tiada",
+	localxox_name1_input: "Nama Pemain",
+	localxox_name2_input: "Nama Pemain",
+	localxox_startmatch_text: "Mula Perlawanan",
+	xox_instructions: "Gunakan butang tetikus kiri",
+
 	// Online 1v1 Game
 	online1v1_title: "Lobi Atas Talian",
 	online1v1_gameinfo_text1: "Online",
@@ -123,6 +137,15 @@ const bm_texts = {
 	online1v1_match_result_text: "Keputusan Perlawanan",
 	close_online1v1_winner_popup: "Keluar",
 
+	//online xox
+	onlinexox_title: "Lobi Dalam Talian",
+	onlinexox_gameinfo_text1: "Dalam Talian",
+	onlinexox_gameinfo_text2: "Tic-Tac-Toe",
+	onlinexox_gameinfo_text3: "2 Pemain",
+	onlinexox_header_text1: "Pemilihan Peta",
+	onlinexox_header_text2: "Pemain",
+	onlinexox_map_none: "Tiada",
+
 	//about texts
 	open_about_button: "Perihal",
 	about_title: "Perihal",
@@ -132,6 +155,17 @@ const bm_texts = {
 	about_frontend_text: "Bahagian Hadapan",
 	about_backend_text: "Bahagian Belakang",
 	about_team_members_text: "Ahli Pasukan",
+
+	//xox texts
+	xox_match_history_text: "Sejarah Perlawanan",
+	xox_date_text: "Tarikh",
+	xox_leftplayer_text: "Pemain Kiri",
+	xox_rightplayer_text: "Pemain Kanan",
+	xox_result_text: "Keputusan",
+	xox_stats_text: "Statistik",
+	xox_play_text: "MAIN",
+	online_xox_button: "Atas Talian",
+	local_xox_button: "Main Tempatan",
 
 	// Error messages
 	"Alphabets, numbers or '_' only": "Huruf, nombor atau '_' sahaja",
@@ -171,6 +205,18 @@ const bm_texts = {
 	"Match found!": "Perlawanan Ditemui!",
 	"Match starting in": "Permainan bermula dalam",
 	"match ongoing": "perlawanan sedang berlangsung",
+
+	//xox strings
+	"Matches": "Perlawanan",
+	"Ties": "Seri",
+	"Wins": "Menang",
+	"Loses": "Kalah",
+	"Win Rate": "Kadar Kemenangan",
+	"Win": "Menang",
+	"Lose": "Kalah",
+	"Tie": "Seri",
+	"Game ended because player has disconnected": "Permainan berakhir kerana pemain telah terputus sambungan",
+	"Game ended because player has idled for too long": "Permainan berakhir kerana pemain tidak aktif terlalu lama",
 }
 
 const en_texts = {
@@ -281,6 +327,19 @@ const en_texts = {
 	local2v2_match_result_text: "Match Result",
 	close_local2v2_winner_popup: "Exit",
 
+	//local xox
+	localxox_registration_title: "Match Registration",
+	localxox_gameinfo_text1: "Local Play",
+	localxox_gameinfo_text2: "Tic-Tac-Toe",
+	localxox_gameinfo_text3: "2 Players",
+	localxox_header_text1: "Map Selection",
+	localxox_header_text2: "Players",
+	localxox_map_none: "None",
+	localxox_name1_input: "Player Name",
+	localxox_name2_input: "Player Name",
+	localxox_startmatch_text: "Start Match",
+	xox_instructions: "Use left mouse button",
+
 	//vsAI
 	close_vs_AI_winner_popup: "Exit",
 
@@ -295,6 +354,15 @@ const en_texts = {
 	online1v1_match_result_text: "Match Result",
 	close_online1v1_winner_popup: "Exit",
 
+	//online xox
+	onlinexox_title: "Online Lobby",
+	onlinexox_gameinfo_text1: "Online",
+	onlinexox_gameinfo_text2: "Tic-Tac-Toe",
+	onlinexox_gameinfo_text3: "2 Players",
+	onlinexox_header_text1: "Map Selection",
+	onlinexox_header_text2: "Players",
+	onlinexox_map_none: "None",
+
 	//about texts
 	open_about_button: "About",
 	about_title: "About",
@@ -304,6 +372,17 @@ const en_texts = {
 	about_frontend_text: "Frontend",
 	about_backend_text: "Backend",
 	about_team_members_text: "Team Members",
+
+	//xox texts
+	xox_match_history_text: "Match History",
+	xox_date_text: "Date",
+	xox_leftplayer_text: "Left Player",
+	xox_rightplayer_text: "Right Player",
+	xox_result_text: "Result",
+	xox_stats_text: "Statistics",
+	xox_play_text: "PLAY",
+	online_xox_button: "Online",
+	local_xox_button: "Local Play",
 }
 
 const cn_texts = {
@@ -418,6 +497,19 @@ const cn_texts = {
 	//vsAI
 	close_vs_AI_winner_popup: "退出",
 
+	//local xox
+	localxox_registration_title: "比赛登记",
+	localxox_gameinfo_text1: "本地游戏",
+	localxox_gameinfo_text2: "井字棋",
+	localxox_gameinfo_text3: "2位玩家",
+	localxox_header_text1: "地图选择",
+	localxox_header_text2: "玩家",
+	localxox_map_none: "无",
+	localxox_name1_input: "玩家名称",
+	localxox_name2_input: "玩家名称",
+	localxox_startmatch_text: "开始比赛",
+	xox_instructions: "使用鼠标左键",
+
 	// Online 1v1 Game
 	online1v1_title: "在线大厅",
 	online1v1_gameinfo_text1: "在线",
@@ -429,6 +521,15 @@ const cn_texts = {
 	online1v1_match_result_text: "比赛结果",
 	close_online1v1_winner_popup: "退出",
 
+	//online xox
+	onlinexox_title: "在线大厅",
+	onlinexox_gameinfo_text1: "在线",
+	onlinexox_gameinfo_text2: "井字棋",
+	onlinexox_gameinfo_text3: "2位玩家",
+	onlinexox_header_text1: "地图选择",
+	onlinexox_header_text2: "玩家",
+	onlinexox_map_none: "无",
+
 	//about texts
 	open_about_button: "关于",
 	about_title: "关于",
@@ -438,6 +539,17 @@ const cn_texts = {
 	about_frontend_text: "前端",
 	about_backend_text: "后端",
 	about_team_members_text: "团队成员",
+
+	//xox texts
+	xox_match_history_text: "比赛历史",
+	xox_date_text: "日期",
+	xox_leftplayer_text: "左方玩家",
+	xox_rightplayer_text: "右方玩家",
+	xox_result_text: "结果",
+	xox_stats_text: "统计",
+	xox_play_text: "开始",
+	online_xox_button: "在线",
+	local_xox_button: "本地游戏",
 
 	// Error messages
 	"Alphabets, numbers or '_' only": "仅限字母、数字或'_'",
@@ -476,7 +588,19 @@ const cn_texts = {
 	"Searching for players": "寻找玩家中",
 	"Match found!": "找到比赛！",
 	"Match starting in": "比赛将在",
-	"match ongoing": "比赛进行中"
+	"match ongoing": "比赛进行中",
+
+	//xox strings
+	"Matches": "比赛数",
+	"Ties": "平局",
+	"Wins": "胜利",
+	"Loses": "失败",
+	"Win Rate": "胜率",
+	"Win": "胜利",
+	"Lose": "失败",
+	"Tie": "平局",
+	"Game ended because player has disconnected": "游戏结束，因为玩家已断开连接",
+	"Game ended because player has idled for too long": "游戏结束，因为玩家闲置时间过长",
 }
 
 let current_language = "";
@@ -497,7 +621,7 @@ function change_language_to_bm()
 
 function change_language_to_en()
 {
-	for(const key in bm_texts)
+	for(const key in en_texts)
 	{
 		const element = document.getElementById(key);
 		if(!element) continue;
@@ -511,10 +635,11 @@ function change_language_to_en()
 
 function change_language_to_cn()
 {
-	for(const key in bm_texts)
+	for(const key in cn_texts)
 	{
 		const element = document.getElementById(key);
-		if(!element) continue;
+		if(!element)
+			continue;
 
 		if(element.tagName === 'INPUT')
 			(element as HTMLInputElement).placeholder = (cn_texts as any)[key];

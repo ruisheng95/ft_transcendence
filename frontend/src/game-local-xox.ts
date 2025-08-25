@@ -339,7 +339,7 @@ export const xox_game_popup = html`
 
 			<!-- Instruction -->
 			<div id="xox_instruction" class="text-center h-20">
-				<p class="text-xl mb-2">Use left mouse button</p>
+				<p id="xox_instructions" class="text-xl mb-2">Use left mouse button</p>
 				<i class="fa-solid fa-computer-mouse text-3xl"></i>
 			</div>
 			

@@ -3,6 +3,7 @@ import { xox_online_play } from "./game-online-xox.ts";
 import { hide_all_main_pages } from "./pong_modes.ts";
 import { WS } from "./class/WS.ts";
 import { add_history } from "./spa-navigation.ts";
+import { translate_text } from "./language.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -34,9 +35,9 @@ export function xox_setup ()
 function resultStatus(status: number)
 {
 	switch (status){
-		case 1: return `<span class="text-red-500">Lose</span>`;
-		case 2: return `<span class="text-green-500">Win</span>`
-		default: return `<span class="text-blue-300">Tie</span>`;
+		case 1: return `<span class="text-red-500">${translate_text("Lose")}</span>`;
+		case 2: return `<span class="text-green-500">${translate_text("Win")}</span>`
+		default: return `<span class="text-blue-300">${translate_text("Tie")}</span>`;
 	}
 }
 
@@ -62,7 +63,7 @@ export function fetch_data()
 				<div class="bg-white/20 rounded-lg px-4 py-2">
 					<div class="flex items-center font-semibold mb-2">
 						<i class="fas fa-gamepad text-yellow-400 text-2xl mr-3"></i>
-						Matches
+						<div id="xox_matches_text"> ${translate_text("Matches")} </div>
 					</div>
 					<div class="text-5xl font-bold text-end">${data.total}</div>
 				</div>
@@ -71,7 +72,7 @@ export function fetch_data()
 				<div class="bg-white/20 rounded-lg px-4 py-2">
 					<div class="flex items-center font-semibold mb-2">
 						<i class="fa-solid fa-circle-exclamation text-yellow-400 text-2xl mr-3"></i>
-						Ties
+						<div id="xox_ties_text"> ${translate_text("Ties")} </div>
 					</div>
 					<div class="text-5xl font-bold text-end">${data.tie}</div>
 				</div>
@@ -80,7 +81,7 @@ export function fetch_data()
 				<div class="bg-white/20 rounded-lg px-4 py-2">
 					<div class="flex items-center font-semibold mb-2">
 						<i class="fas fa-face-laugh-squint text-yellow-400 text-2xl mr-3"></i>
-						Wins
+						<div id="xox_wins_text"> ${translate_text("Wins")} </div>
 					</div>
 					<div class="text-5xl font-bold text-end">${data.win}</div>
 				</div>
@@ -89,7 +90,7 @@ export function fetch_data()
 				<div class="bg-white/20 rounded-lg px-4 py-2">
 					<div class="flex items-center font-semibold mb-2">
 						<i class="fas fa-face-sad-cry text-yellow-400 text-2xl mr-3"></i>
-						Loses
+						<div id="xox_loses_text">${translate_text("Loses")}</div>
 					</div>
 					<div class="text-5xl font-bold text-end">${data.lose}</div>
 				</div>
@@ -98,7 +99,7 @@ export function fetch_data()
 				<div class="bg-white/20 rounded-xl px-4 py-2 col-span-2">
 					<div class="flex items-center font-semibold mb-4">
 						<i class="fas fa-balance-scale text-yellow-400 text-2xl mr-3"></i>
-						Win Rate
+						<div id="xox_winrate_text">${translate_text("Win Rate")}</div>
 					</div>
 					<div class="mb-4 w-full bg-red-500 rounded-full h-4">
 						<div class="bg-green-500 h-4 rounded-full" style="width: ${data.win_rate}%"></div>
@@ -111,7 +112,7 @@ export function fetch_data()
 			{
 				history_div.innerHTML = html`
 					<div class="flex flex-col w-full h-full justify-center items-center text-gray-400">
-						<span class="text-xl">No match history yet</span>
+						<span class="text-xl">${translate_text("No match history yet")}</span>
 					</div>
 				`;
 			}
@@ -147,15 +148,15 @@ export const xox_popup = html`
 			<div class="w-7/12">
 				<h2 class="text-xl font-bold mb-6 flex items-center">
 					<i class="fa fa-history mr-3"></i>
-					Match History
+					<div id="xox_match_history_text"> Match History </div>
 				</h2>
 
 				<!-- Table Header -->
 				<div class="grid grid-cols-[2fr_4fr_4fr_1fr] gap-4 pr-9 px-4 mb-1 font-semibold">
-					<span>Date</span>
-					<span>Left Player</span>
-					<span>Right Player</span>
-					<span>Result</span>
+					<span id="xox_date_text">Date</span>
+					<span id="xox_leftplayer_text">Left Player</span>
+					<span id="xox_rightplayer_text">Right Player</span>
+					<span id="xox_result_text">Result</span>
 				</div>
 				
 				<!-- Table Entry -->
@@ -167,14 +168,14 @@ export const xox_popup = html`
 					
 				<h2 class="text-xl font-bold flex items-center mb-6">
 					<i class="fa-solid fa-chart-pie mr-3"></i>
-					Statistics
+					<div id="xox_stats_text"> Statistics </div>
 				</h2>
 
 				<section id="xox_stats" class="grid grid-cols-2 gap-4 px-12 mb-6"></section>
 
 				<!-- 1 vs 1 -->
 				<div class="flex flex-col items-center col-span-2 space-y-2">
-					<p class="text-center text-2xl pixel-font">PLAY</p>
+					<p id="xox_play_text" class="text-center text-2xl pixel-font">PLAY</p>
 					<button id="online_xox_button" class="py-4 cursor-pointer rounded-xl font-semibold text-xl text center border-2 border-yellow-400 hover:bg-yellow-400/20 transition duration-200 w-3/4 tracking-widest">Online</button>
 					<button id="local_xox_button" class="py-4 cursor-pointer rounded-xl font-semibold text-xl text center border-2 border-yellow-400 hover:bg-yellow-400/20 transition duration-200 w-3/4 tracking-widest">Local play</button>
 				</div>

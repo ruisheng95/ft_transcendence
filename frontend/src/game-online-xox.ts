@@ -273,7 +273,7 @@ export function xox_online_play()
 		if(!xox_game_message_div) throw new Error("handleIdleTimeout elements not found");
 
 		xoxWinner_popup(msg_obj.idlePlayer === 'X' ? 'O' : 'X'); //send the symbol opposite to the person who timeout as the winner
-		xox_game_message_div.innerHTML = `Game ended because player has idled for too long`;
+		xox_game_message_div.innerHTML = `${translate_text("Game ended because player has idled for too long")}`;
 	}
 
 	function handlePlayerDisconnected(msg_obj : any)
@@ -283,7 +283,7 @@ export function xox_online_play()
 		if(!xox_game_message_div) throw new Error("handleIdleTimeout elements not found");
 
 		xoxWinner_popup(msg_obj.playerIndex === 0 ? 'O' : 'X'); //send the symbol opposite to the person who dced as the winner
-		xox_game_message_div.innerHTML = `Game ended because player has disconnected`;
+		xox_game_message_div.innerHTML = `${translate_text("Game ended because player has disconnected")}`;
 	}
 
 	function xoxUpdateTurn(gameState: any)
@@ -363,7 +363,7 @@ const onlinexox_matchmaking_popup = `
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4 mb-10">
 			<span id="onlinexox_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
-			<span id="onlinexox_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">XOX</span>
+			<span id="onlinexox_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">Tic-Tac-Toe</span>
 			<span id="onlinexox_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		

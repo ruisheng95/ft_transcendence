@@ -507,19 +507,19 @@ const localxox_Registration = html`
 	<div id="localxox_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
+		<h1 id="localxox_registration_title" class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
 
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4">
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Tic-Tac-Toe</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
+			<span id="localxox_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
+			<span id="localxox_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">Tic-Tac-Toe</span>
+			<span id="localxox_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
 		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
-			<h2 class="text-2xl font-bold">Map Selection</h2>
-			<h2 class="text-2xl font-bold">Players</h2>
+			<h2 id="localxox_header_text1" class="text-2xl font-bold">Map Selection</h2>
+			<h2 id="localxox_header_text2" class="text-2xl font-bold">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->
@@ -527,7 +527,7 @@ const localxox_Registration = html`
 		
 			<!-- Map Selection -->
 			<section class="grid grid-cols-2 gap-6 px-12">
-				<div data-map="" data-game="localxox" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
+				<div id="localxox_map_none" data-map="" data-game="localxox" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
 				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
 				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
 				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
@@ -554,7 +554,8 @@ const localxox_Registration = html`
 		<!-- Start Button -->
 		<div class="flex justify-center">
 			<button id="localxox_start" class="button-primary">
-				<i class="fas fa-play mr-4"></i>Start Match
+				<i class="fas fa-play mr-4"></i>
+				<span id="localxox_startmatch_text">Start Match</span>
 			</button>
 		</div>
 		
