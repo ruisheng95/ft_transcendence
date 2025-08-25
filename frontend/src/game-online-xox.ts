@@ -40,6 +40,8 @@ export function xox_online_play()
 			player_index = msg_obj.player_index;
 		else if(msg_obj.type === "idle_timeout")
 			handleIdleTimout(msg_obj);
+		else if(msg_obj.type === "player_dced")
+			handlePlayerDisconnected(msg_obj);
 		else if(msg_obj.type === "error") //for now this isnt used but i have send a json if u click when its not ur turn
 			console.log("Game error: ", msg_obj.message);
 	});
@@ -268,6 +270,16 @@ export function xox_online_play()
 
 		xoxWinner_popup(msg_obj.idlePlayer === 'X' ? 'O' : 'X'); //send the symbol opposite to the person who timeout as the winner
 		xox_game_message_div.innerHTML = `Game ended because player has idled for too long`;
+	}
+
+	function handlePlayerDisconnected(msg_obj : any)
+	{
+		const xox_game_message_div = document.querySelector<HTMLDivElement>("#xox_game_message");
+
+		if(!xox_game_message_div) throw new Error("handleIdleTimeout elements not found");
+
+		xoxWinner_popup(msg_obj.playerIndex === 0 ? 'O' : 'X'); //send the symbol opposite to the person who dced as the winner
+		xox_game_message_div.innerHTML = `Game ended because player has disconnected`;
 	}
 
 	function xoxUpdateTurn(gameState: any)
