@@ -1,7 +1,7 @@
 
 import { xox_online_play } from "./game-online-xox.ts";
 import { hide_all_main_pages } from "./pong_modes.ts";
-//import { WS } from "./class/WS.ts";
+import { WS } from "./class/WS.ts";
 import { add_history } from "./spa-navigation.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
@@ -22,6 +22,7 @@ export function xox_setup ()
 		xox_popup.classList.remove("hidden");
 		xox_button.classList.add("bg-yellow-400");
 		xox_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
+		fetch_data();
 		add_history("tic_tac_toe");
 	});
 
@@ -30,70 +31,111 @@ export function xox_setup ()
 	});
 }
 
-const statsSection = html`
-	<!-- Stats -->
-	<div class="w-5/12 h-11/12 flex flex-col justify-between">
+function resultStatus(status: number)
+{
+	switch (status){
+		case 1: return `<span class="text-red-500">Lose</span>`;
+		case 2: return `<span class="text-green-500">Win</span>`
+		default: return `<span class="text-blue-300">Tie</span>`;
+	}
+}
+
+export function fetch_data()
+{
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
+
+	if(socket.readyState === WebSocket.OPEN)
+		socket.send(JSON.stringify( {type: "get_xoxstats" }));
+
+	socket.addEventListener("message", (event) => {
+		const data = JSON.parse(event.data);
+		const history_div = document.querySelector<HTMLDivElement>("#xox_history");
+		const stat_div = document.querySelector<HTMLDivElement>("#xox_stats");
 			
-		<h2 class="text-xl font-bold flex items-center">
-			<i class="fa-solid fa-chart-pie mr-3"></i>
-			Statistics
-		</h2>
+		if (!history_div || !stat_div)
+			throw new Error("Insert playerstats elements not found");
 
-		<section class="grid grid-cols-2 gap-4 px-12">
-			
-			<!-- Total Matches -->
-			<div class="col-span-2 flex justify-center">
-				<div class="w-1/2 bg-white/20 rounded-lg px-4 py-2">
-				<div class="flex items-center font-semibold mb-2">
-					<i class="fas fa-gamepad text-yellow-400 text-2xl mr-3"></i>
-					Total Matches
+		if (data.type === "xoxstats_info")
+		{
+			stat_div.innerHTML = html`
+				<!-- Total Matches -->
+				<div class="bg-white/20 rounded-lg px-4 py-2">
+					<div class="flex items-center font-semibold mb-2">
+						<i class="fas fa-gamepad text-yellow-400 text-2xl mr-3"></i>
+						Matches
+					</div>
+					<div class="text-5xl font-bold text-end">${data.total}</div>
 				</div>
-				<div class="text-5xl font-bold text-end">14</div>
-			</div>
 
-			</div>
-
-			<!-- Total Wins -->
-			<div class="bg-white/20 rounded-lg px-4 py-2">
-				<div class="flex items-center font-semibold mb-2">
-					<i class="fas fa-face-laugh-squint text-yellow-400 text-2xl mr-3"></i>
-					Total Wins
+				<!-- Total Ties -->
+				<div class="bg-white/20 rounded-lg px-4 py-2">
+					<div class="flex items-center font-semibold mb-2">
+						<i class="fa-solid fa-circle-exclamation text-yellow-400 text-2xl mr-3"></i>
+						Ties
+					</div>
+					<div class="text-5xl font-bold text-end">${data.tie}</div>
 				</div>
-				<div class="text-5xl font-bold text-end">10</div>
-			</div>
 
-			<!-- Total Loses -->
-			<div class="bg-white/20 rounded-lg px-4 py-2">
-				<div class="flex items-center font-semibold mb-2">
-					<i class="fas fa-face-sad-cry text-yellow-400 text-2xl mr-3"></i>
-					Total Loses
+				<!-- Total Wins -->
+				<div class="bg-white/20 rounded-lg px-4 py-2">
+					<div class="flex items-center font-semibold mb-2">
+						<i class="fas fa-face-laugh-squint text-yellow-400 text-2xl mr-3"></i>
+						Wins
+					</div>
+					<div class="text-5xl font-bold text-end">${data.win}</div>
 				</div>
-				<div class="text-5xl font-bold text-end">4</div>
-			</div>
 
-			<!-- Win Rate -->
-			<div class="bg-white/20 rounded-xl px-4 py-2 col-span-2">
-				<div class="flex items-center font-semibold mb-4">
-					<i class="fas fa-balance-scale text-yellow-400 text-2xl mr-3"></i>
-					Win Rate
+				<!-- Total Loses -->
+				<div class="bg-white/20 rounded-lg px-4 py-2">
+					<div class="flex items-center font-semibold mb-2">
+						<i class="fas fa-face-sad-cry text-yellow-400 text-2xl mr-3"></i>
+						Loses
+					</div>
+					<div class="text-5xl font-bold text-end">${data.lose}</div>
 				</div>
-				<div class="mb-4 w-full bg-red-500 rounded-full h-4">
-					<div class="bg-green-500 h-4 rounded-l-full" style="width: 73%"></div>
+
+				<!-- Win Rate -->
+				<div class="bg-white/20 rounded-xl px-4 py-2 col-span-2">
+					<div class="flex items-center font-semibold mb-4">
+						<i class="fas fa-balance-scale text-yellow-400 text-2xl mr-3"></i>
+						Win Rate
+					</div>
+					<div class="mb-4 w-full bg-red-500 rounded-full h-4">
+						<div class="bg-green-500 h-4 rounded-full" style="width: ${data.win_rate}%"></div>
+					</div>
+					<div class="text-2xl font-semibold text-end">${data.win_rate}%</div>
 				</div>
-				<div class="text-2xl font-semibold text-end">73%</div>
-			</div>
-		</section>
+			`
 
-		<button id="local_xox_button" class="mx-12 h-1/6 text-3xl tracking-widest font-bold pixel-font flex items-center rounded-2xl justify-center border-2 border-yellow-400 hover:bg-yellow-400/20 transition duration-200 ">
-			Play
-		</button>
+			if (data.history.length === 0)
+			{
+				history_div.innerHTML = html`
+					<div class="flex flex-col w-full h-full justify-center items-center text-gray-400">
+						<span class="text-xl">No match history yet</span>
+					</div>
+				`;
+			}
+			else
+			{
+				let historyList = '';
+				for(let i = data.history.length - 1; i >= 0; i--)
+				{
+					historyList += html`
+						<div class="bg-white/20 rounded-lg px-4 py-2 grid grid-cols-[2fr_4fr_4fr_1fr] gap-4 items-center">
+							<span>${data.history[i].date}</span>
+							<span>${data.history[i].left}</span>
+							<span>${data.history[i].right}</span>
+							${resultStatus(data.history[i].result)}
+						</div>
+					`;
+				}
+				history_div.innerHTML = historyList;
+			}
 
-		<button id="online_xox_button" class="mx-12 h-1/6 text-3xl tracking-widest font-bold pixel-font flex items-center rounded-2xl justify-center border-2 border-yellow-400 hover:bg-yellow-400/20 transition duration-200 ">
-			online play
-		</button>
+		}
+	});
+}
 
-	</div>
-`
 
 export const xox_popup = html`
 
@@ -109,21 +151,35 @@ export const xox_popup = html`
 				</h2>
 
 				<!-- Table Header -->
-				<div class="grid grid-cols-[2fr_2fr_3fr_1fr] gap-4 pr-9 px-4 mb-1 font-semibold">
+				<div class="grid grid-cols-[2fr_4fr_4fr_1fr] gap-4 pr-9 px-4 mb-1 font-semibold">
 					<span>Date</span>
-					<span>Match Type</span>
-					<span>Players</span>
+					<span>Left Player</span>
+					<span>Right Player</span>
 					<span>Result</span>
 				</div>
 				
 				<!-- Table Entry -->
-				<div class="h-[73vh] overflow-y-scroll pr-2 space-y-3">
-					<div class="flex flex-col w-full h-full justify-center items-center text-gray-400">
-						<span class="text-xl">No match history yet</span>
-					</div>
-				</div>
+				<div id="xox_history" class="h-[73vh] overflow-y-scroll pr-2 space-y-3"></div>
 			</div>
-			${statsSection}
+			
+			<!-- Stats Section -->
+			<div class="w-5/12 flex flex-col">
+					
+				<h2 class="text-xl font-bold flex items-center mb-6">
+					<i class="fa-solid fa-chart-pie mr-3"></i>
+					Statistics
+				</h2>
+
+				<section id="xox_stats" class="grid grid-cols-2 gap-4 px-12 mb-12"></section>
+
+				<!-- 1 vs 1 -->
+				<div class="flex flex-col items-center col-span-2 space-y-4">
+					<p class="text-center text-2xl pixel-font">PLAY</p>
+					<button id="online_xox_button" class="py-4 cursor-pointer rounded-xl font-semibold text-xl text center border-2 border-yellow-400 hover:bg-yellow-400/20 transition duration-200 w-3/4 tracking-widest">Online</button>
+					<button id="local_xox_button" class="py-4 cursor-pointer rounded-xl font-semibold text-xl text center border-2 border-yellow-400 hover:bg-yellow-400/20 transition duration-200 w-3/4 tracking-widest">Local play</button>
+				</div>
+
+			</div>
 
 		</main>
 	</div>

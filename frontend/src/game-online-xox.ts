@@ -5,6 +5,7 @@ import { translate_text } from "./language";
 import { removeAllEventListenersFromButton } from "./gameindex";
 import { add_history } from "./spa-navigation";
 import { disable_back_navigation } from "./spa-navigation";
+import { fetch_data } from "./xox_dashboard"; 
 
 let p1_name = "";
 let p2_name = "";
@@ -93,6 +94,8 @@ export function xox_online_play()
 		p2_name_div.innerHTML = p2_name;
 
 		matchmaking_popup.classList.remove("hidden");
+		const el = document.querySelector<HTMLDivElement>('[data-game="onlinexox"]');
+		el?.click();
 	}
 
 	function start_match_countdown(mm_status_div: HTMLDivElement)
@@ -178,6 +181,7 @@ export function xox_online_play()
 				const game_popup = document.querySelector<HTMLDivElement>("#xox_game_popup");
 				if (game_popup)
 					game_popup.classList.add("hidden");
+				fetch_data();
 				add_history("/tic_tac_toe");
 			});
 		}
@@ -196,9 +200,10 @@ export function xox_online_play()
 		const instruction = document.querySelector<HTMLDivElement>('#xox_instruction');
 		const close_button = document.querySelector<HTMLButtonElement>('#xox_close_button');
 		const cells = document.querySelectorAll<HTMLButtonElement>('[data-row][data-col]');
+		const xox_game_message_div = document.querySelector<HTMLDivElement>("#xox_game_message");
 
 		if (!left_name_top || !right_name_top || !left_name_mid || !right_name_mid || 
-			!left_result || !right_result || !instruction || !close_button)
+			!left_result || !right_result || !instruction || !close_button || !xox_game_message_div)
 			throw new Error("handleGameStarted: required elements not found");
 
 		left_name_top.innerText = p1_name || "Player 1";
@@ -215,6 +220,7 @@ export function xox_online_play()
 		left_result.innerHTML = "";
 		right_name_mid.innerText = "";
 		right_result.innerHTML = "";
+		xox_game_message_div.innerHTML = "";
 
 		close_button.classList.add("hidden");
 		instruction.classList.remove("hidden");

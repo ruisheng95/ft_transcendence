@@ -72,7 +72,7 @@ export function xox_game_setup()
 			console.log("Game error: ", msg_obj.message);
 	});
 
-		function setup_xox_event_listeners()
+	function setup_xox_event_listeners()
 	{
 		const cells = document.querySelectorAll<HTMLButtonElement>('[data-row][data-col]');
 		let close_button = document.querySelector<HTMLButtonElement>('#xox_close_button');
