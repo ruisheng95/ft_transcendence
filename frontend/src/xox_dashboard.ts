@@ -170,10 +170,10 @@ export const xox_popup = html`
 					Statistics
 				</h2>
 
-				<section id="xox_stats" class="grid grid-cols-2 gap-4 px-12 mb-12"></section>
+				<section id="xox_stats" class="grid grid-cols-2 gap-4 px-12 mb-6"></section>
 
 				<!-- 1 vs 1 -->
-				<div class="flex flex-col items-center col-span-2 space-y-4">
+				<div class="flex flex-col items-center col-span-2 space-y-2">
 					<p class="text-center text-2xl pixel-font">PLAY</p>
 					<button id="online_xox_button" class="py-4 cursor-pointer rounded-xl font-semibold text-xl text center border-2 border-yellow-400 hover:bg-yellow-400/20 transition duration-200 w-3/4 tracking-widest">Online</button>
 					<button id="local_xox_button" class="py-4 cursor-pointer rounded-xl font-semibold text-xl text center border-2 border-yellow-400 hover:bg-yellow-400/20 transition duration-200 w-3/4 tracking-widest">Local play</button>

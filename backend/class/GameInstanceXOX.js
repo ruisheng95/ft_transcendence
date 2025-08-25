@@ -254,7 +254,7 @@ export class GameInstanceXOX
 		
 		//update playerstats where the loser is the dced player
 		if (this.#gameStatus === 'playing')
-			this.#update_playerstats_aftergame(otherEmail, disconnectedEmail);
+			this.#update_playerstats_aftergame(otherEmail, 2, disconnectedEmail, 1);
 
 		this.#sendJson({type: "player_dced", playerIndex: playerIndex});
 		this.stopGame();

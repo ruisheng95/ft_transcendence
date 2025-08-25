@@ -193,7 +193,7 @@ export function index_init()
 
 
 	game.innerHTML = DOMPurify.sanitize(`
-		<div id = "screen" class = "h-screen bg-gray-950 overflow-hidden">
+		<div id = "screen" class = "h-screen bg-gray-950 overflow-auto">
 			${header_sec}
 			${pong_modes_popup}
 			${friends_popup}

@@ -60,7 +60,6 @@ export function xox_online_play()
 		const players = JSON.parse(msg_obj.players);
 		if(msg_obj.status === "Waiting for players")
 		{
-			exit_mm.classList.remove("hidden");
 			mm_status_div.innerHTML = `
 			<div class="flex justify-center">
 				<div>${translate_text("Searching for players")}</div>
@@ -89,7 +88,6 @@ export function xox_online_play()
 			start_match_countdown(mm_status_div);
 			p1_name = players[0];
 			p2_name = players[1];
-			exit_mm.classList.add("hidden");
 		}
 
 		p1_name_div.innerHTML = p1_name;

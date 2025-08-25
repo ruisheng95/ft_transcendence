@@ -42,39 +42,39 @@ const root = async function (fastify) {
           send_xoxstats();
       }
 
-      function add_xox_match(message_obj)
-      {
-          const email = fastify.get_email_by_session(request);
+    //   function add_xox_match(message_obj)
+    //   {
+    //       const email = fastify.get_email_by_session(request);
 
-          try {
-            const stmt = fastify.betterSqlite3.prepare(`
-            INSERT INTO XOX (left_email, left_result, right_email, right_result)
-            VALUES (?, ?, ?, ?, ?)
-          `);
+    //       try {
+    //         const stmt = fastify.betterSqlite3.prepare(`
+    //         INSERT INTO XOX (left_email, left_result, right_email, right_result)
+    //         VALUES (?, ?, ?, ?, ?)
+    //       `);
 
-          stmt.run(
+    //       stmt.run(
               
-            );
+    //         );
 
-            const ret_obj = {
-                type: "add_xox_match_status",
-                status: "success",
-            };
+    //         const ret_obj = {
+    //             type: "add_xox_match_status",
+    //             status: "success",
+    //         };
 
-            connection.send(JSON.stringify(ret_obj));
+    //         connection.send(JSON.stringify(ret_obj));
 
-          } catch (err) {
+    //       } catch (err) {
 
-            console.error("DB Error:", err.message);
-            const ret_obj = {
-                type: "add_xox_match_status",
-                status: "success",
-            };
+    //         console.error("DB Error:", err.message);
+    //         const ret_obj = {
+    //             type: "add_xox_match_status",
+    //             status: "success",
+    //         };
 
-            connection.send(JSON.stringify(ret_obj));
-          }
+    //         connection.send(JSON.stringify(ret_obj));
+    //       }
           
-      }
+    //   }
 
       function send_xoxstats()
       {
