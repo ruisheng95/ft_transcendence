@@ -243,6 +243,23 @@ export class GameInstanceXOX
 		this.#gameStatus = 'finished';
 	}
 
+	handlePlayerDisconnected(disconnectedConnection) {
+		const playerIndex = this.#connectionArray.indexOf(disconnectedConnection);
+		if (playerIndex === -1) return;
+		
+		const disconnectedEmail = this.#emailsArray[playerIndex];
+		const otherEmail = this.#emailsArray[playerIndex === 0 ? 1 : 0];
+		
+		console.log(`Player ${disconnectedEmail} disconnected`);
+		
+		//update playerstats where the loser is the dced player
+		if (this.#gameStatus === 'playing')
+			this.#update_playerstats_aftergame(otherEmail, disconnectedEmail);
+
+		this.#sendJson({type: "player_dced", playerIndex: playerIndex});
+		this.stopGame();
+	}
+
 	isGamePlayer(connection) {
 		const found = this.#connectionArray.some((conn) => conn === connection);
 		return found;
