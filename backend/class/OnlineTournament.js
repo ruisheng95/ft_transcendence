@@ -114,7 +114,7 @@ export class OnlineTournament {
 
     #startTournament() {
         this.#tournamentCounter++;
-        const tournamentId = `tournament_$(this.#tournamentCounter}`;
+        const tournamentId = `tournament_${this.#tournamentCounter}`;
 
         // get the first 4 waiting players
         const tournamentPlayers = this.#waitingPlayers.splice(0,4);
