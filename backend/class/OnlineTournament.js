@@ -44,7 +44,7 @@ export class OnlineTournament {
 
     handleStartMatch(playerInfo) {
         // .get - return the values (object) stored in associated tournament_id
-        const current_tournament = this.#tournaments.get(playerInfo.tournamentId);
+        const current_tournament = this.#tournaments.get(playerInfo.tournament_id);
         if (!current_tournament || !current_tournament.current_match)
             return;
 
