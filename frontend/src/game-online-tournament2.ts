@@ -357,9 +357,19 @@ export function online_tour_manager()
 		const ranking_3rd = document.querySelector<HTMLDivElement>("#onlineTour_ranking_3rd");
 		const ranking_4th = document.querySelector<HTMLDivElement>("#onlineTour_ranking_4th");
 
+		const p1_bracket = document.querySelector<HTMLDivElement>("#onlineTour_p1_bracket");
+		const p2_bracket = document.querySelector<HTMLDivElement>("#onlineTour_p2_bracket");
+		const p3_bracket = document.querySelector<HTMLDivElement>("#onlineTour_p3_bracket");
+		const p4_bracket = document.querySelector<HTMLDivElement>("#onlineTour_p4_bracket");
+
 		if (!winner1_bracket || !winner2_bracket || !finalwinner_name_display || !currentbattle_div
-			|| !finalwinner_div || !open_game_button || !close_finalwinner_button || !onlineTour_matchmaking_popup || !loser1_bracket || !loser2_bracket || !loser_final || !ranking_1st || !ranking_2nd || !ranking_3rd || !ranking_4th || !status_section)
+			|| !finalwinner_div || !open_game_button || !close_finalwinner_button || !onlineTour_matchmaking_popup || !loser1_bracket || !loser2_bracket || !loser_final || !ranking_1st || !ranking_2nd || !ranking_3rd || !ranking_4th || !status_section || !p1_bracket || !p2_bracket || !p3_bracket || !p4_bracket)
 			return;
+
+		p1_bracket.innerHTML = "?";
+		p2_bracket.innerHTML = "?";
+		p3_bracket.innerHTML = "?";
+		p4_bracket.innerHTML = "?";
 
 		winner1_bracket.innerHTML = "?";
 		winner2_bracket.innerHTML = "?";
@@ -368,6 +378,18 @@ export function online_tour_manager()
 		loser1_bracket.innerHTML = "?";
 		loser2_bracket.innerHTML = "?";
 		loser_final.innerHTML = "?";
+
+		Tournament_state.players = ["", "", "", ""];
+		Tournament_state.player_emails = ["", "", "", ""];
+		Tournament_state.match_winners = ["", ""];
+		Tournament_state.match_losers = ["", ""];
+		Tournament_state.current_round = 0;
+		Tournament_state.matches_done = 0;
+		Tournament_state.final_ranking = ["", "", "", ""];
+		Tournament_state.current_players = ["", ""];
+		Tournament_state.my_player_index = -1;
+		Tournament_state.tournament_id = "";
+		Tournament_state.current_match_id = "";
 
 		status_section.classList.remove("hidden");
 		currentbattle_div.classList.add("hidden");
