@@ -103,11 +103,11 @@ export class OnlineTournament {
 
     handleGameResult(tournament_id, match_id, winner_email, loser_email) {
         const current_tournament = this.#tournaments.get(tournament_id);
-        if (!current_tournament || !current_tournament.current_match || !current_tournament.current_match.id !== match_id)
+        if (!current_tournament || !current_tournament.current_match || current_tournament.current_match.id !== match_id)
             return;
 
-        const winner = current_tournament.player.find(player => player.email === winner_email);
-        const loser = current_tournament.player.find(player => player.email === loser_email);
+        const winner = current_tournament.players.find(player => player.email === winner_email);
+        const loser = current_tournament.players.find(player => player.email === loser_email);
 
         if (!winner || !loser) {
             console.log(`Tournament: Could not find players for result: ${winner_email} vs ${loser_email}`);
@@ -128,7 +128,7 @@ export class OnlineTournament {
 
         // handle disconnect during active tournament
         if (playerInfo.tournament_id) {
-            const tournament = this.#tournaments.get(playerInfo.tounament_id);
+            const tournament = this.#tournaments.get(playerInfo.tournament_id);
             if (tournament) {
                 // implement later
             }
@@ -292,7 +292,7 @@ export class OnlineTournament {
             loser: loser.username
         }
 
-        tournament.player.forEach(player => {
+        tournament.players.forEach(player => {
             if (player.connection.readyState === 1)
                 player.connection.send(JSON.stringify(resultMsg));
         });
