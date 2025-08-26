@@ -11,6 +11,9 @@ export function online_1v1_play()
 {
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 
+	const tournament_context = localStorage.getItem("tournament_context");
+	const gameMode = tournament_context ? "Tournament" : "1 vs 1";
+
 	const game_obj = document.querySelector<HTMLDivElement>("#online_game_board_area");
 	
 	if(!game_obj) throw new Error("Game obj not found");
@@ -248,6 +251,11 @@ export function online_1v1_play()
 
 		if(!exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
 
+		const gameModeSpan = matchmaking_popup.querySelector('section span:nth-child(2)');
+		if (gameModeSpan) {
+			gameModeSpan.textContent = gameMode;
+		}
+
 		const players = JSON.parse(msg_obj.players);
 		if(msg_obj.status === "Waiting for players")
 		{
@@ -443,7 +451,7 @@ export function online_1v1_play()
 	}
 }
 
-const online1v1_matchmaking_popup = html`
+const online1v1_matchmaking_popup = (gameMode: string) => html`
 		<div id="online1v1_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
@@ -452,7 +460,7 @@ const online1v1_matchmaking_popup = html`
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4 mb-10">
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">${gameMode}</span>
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
@@ -532,9 +540,9 @@ const online_1v1_winner_popup = html`
 	</div>
 `
 
-export const online_game_popup = html`
+export const online_game_popup = (gameMode = "1 vs 1") => html`
 
-	${online1v1_matchmaking_popup}
+	${online1v1_matchmaking_popup(gameMode)}
 	<div id="online_game_popup" class="hidden bg-gray-950 bg-cover bg-center fixed inset-0">
 		<div class="bg-black/70 h-full flex flex-col justify-center items-center">
 			<div class="flex flex-col items-center bg-transparent text-white">
