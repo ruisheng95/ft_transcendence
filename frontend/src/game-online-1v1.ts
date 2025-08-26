@@ -92,7 +92,7 @@ export function online_1v1_play()
 			// return to tournament page
 			socket.close();
 			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-			add_history("/game-online");
+			add_history("/onlinegame");
 		} else {
 			terminate_history();
 			socket.close();
@@ -375,12 +375,70 @@ export function online_1v1_play()
 		online1v1_winner_popup.classList.remove("hidden");
 		game_popup.classList.add("hidden");
 
+		// check if in tournament
+		const tournament_context = localStorage.getItem("tournament_context");
+		
+		if (tournament_context) {
+			const context = JSON.parse(tournament_context);
+			const tournament_socket = WS.getInstance(context.socket_url);
+			
+			let winner_email;
+			let loser_email;
+			
+			if (gameover_obj.winner_email && gameover_obj.loser_email) {
+				winner_email = gameover_obj.winner_email;
+				loser_email = gameover_obj.loser_email;
+			} else {
+				// just in case lol
+				console.log("Backend didn't provide emails");
+				const winner_name = gameover_obj.winner === "leftplayer" ? p1_name : p2_name;
+				
+				if (context.current_players.player1.name === winner_name) {
+					winner_email = context.current_players.player1.email;
+					loser_email = context.current_players.player2.email;
+				} else {
+					winner_email = context.current_players.player2.email;
+					loser_email = context.current_players.player1.email;
+				}
+			}
+			
+			if (tournament_socket.readyState === WebSocket.OPEN) {
+				tournament_socket.send(JSON.stringify({
+					type: "game_result",
+					tournament_id: context.tournament_id,
+					match_id: context.current_match_id,
+					winner_email: winner_email,
+					loser_email: loser_email
+				}));
+			} else {
+				// wait for socket to open then send the message
+				tournament_socket.addEventListener('open', () => {
+					tournament_socket.send(JSON.stringify({
+						type: "game_result",
+						tournament_id: context.tournament_id,
+						match_id: context.current_match_id,
+						winner_email: winner_email,
+						loser_email: loser_email
+					}));
+				}, { once: true }); // once: true - ensure the listener is removed after execution
+			}
+		}
+
 		socket.close();
 		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 		
 		close_online_1v1_winner_popup_button.addEventListener("click", () => {
 			online1v1_winner_popup.classList.add("hidden");
-			add_history("");
+			
+			// check if in tournament
+			const tournament_context = localStorage.getItem("tournament_context");
+			if (tournament_context) {
+				// return to tournament bracket
+				add_history("/onlinegame");
+			} else {
+				// return to index
+				add_history("");
+			}
 		})
 	}
 }
