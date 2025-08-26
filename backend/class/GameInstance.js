@@ -34,6 +34,9 @@ export class GameInstance {
   #leftplayerY = 0;
   #game_interval_id = 0;
   #game_hit_lock = false;
+  #isTournamentGame = false;
+  #tournamentId = null;
+  #matchId = null;
   #keyDownArray = [
     { ArrowUp: false, ArrowDown: false, w: false, s: false },
     { ArrowUp: false, ArrowDown: false, w: false, s: false },
@@ -45,9 +48,12 @@ export class GameInstance {
     leftplayer_down: false,
   };
 
-  constructor(fastify, players_emails) {
+  constructor(fastify, players_emails, options = {}) {
     this.#fastify = fastify;
     this.#emailsArray = players_emails;
+    this.#isTournamentGame = options.isTournamentGame || false;
+    this.#tournamentId = options.tournamentId || null;
+    this.#matchId = options.matchId || null;
   }
 
   #sendJson(json) {
@@ -151,10 +157,22 @@ export class GameInstance {
       const winner_p =
         this.#ballX <= this.#ball_len / 2 ? "rightplayer" : "leftplayer";
       clearInterval(this.#game_interval_id);
-      this.#sendJson({ type: MsgType.GAME_OVER, winner: winner_p });
 
-      //update db
-      if (this.#ballX <= this.#ball_len / 2)
+      const winner_email = winner_p === "leftplayer" ? this.#emailsArray[0] : this.#emailsArray[1];
+      const loser_email = winner_p === "leftplayer" ? this.#emailsArray[1] : this.#emailsArray[0];
+
+      this.#sendJson({
+        type: MsgType.GAME_OVER,
+        winner: winner_p,
+        winner_email: winner_email,
+        loser_email: loser_email,
+        tournament_id: this.#tournamentId,
+        match_id: this.#matchId
+      });
+
+      //update db only for non-tournament games
+      if (!this.#isTournamentGame) {
+        if (this.#ballX <= this.#ball_len / 2)
         this.#update_playerstats_aftergame(
           this.#emailsArray[1],
           this.#emailsArray[0]
@@ -164,6 +182,7 @@ export class GameInstance {
           this.#emailsArray[0],
           this.#emailsArray[1]
         );
+      }
     } else {
       if (
         !this.#game_hit_lock &&
@@ -316,7 +335,7 @@ export class GameInstance {
       .prepare(
         "INSERT INTO PONG_MATCH (date, match_type, user1_email, user1_result, user2_email, user2_result) VALUES (?, ?, ?, ?, ?, ?)"
       )
-      .run(curr_date, "pong 1v1", winner_email, 1, loser_email, 0);
+      .run(curr_date, "Pong 1v1", winner_email, 1, loser_email, 0);
 
     //personal notes:
     // fields: TOTAL_WIN TOTAL_LOSE WINNING_STREAK RATING
@@ -331,13 +350,15 @@ class Player {
   gameInstance;
   request;
   username;
+  tournamentContext;
 
-  constructor(email, connection, gameNoOfPlayers, request, username) {
+  constructor(email, connection, gameNoOfPlayers, request, username, tournamentContext = {}) {
     this.email = email;
     this.connection = connection;
     this.gameNoOfPlayers = gameNoOfPlayers;
     this.request = request;
     this.username = username;
+    this.tournamentContext = tournamentContext;
   }
 }
 
@@ -349,12 +370,12 @@ export class OnlineMatchmaking {
     this.#fastify = fastify;
   }
 
-  registerPlayer(email, connection, gameNoOfPlayers, request, username) {
+  registerPlayer(email, connection, gameNoOfPlayers, request, username, tournamentContext = {}) {
     // console.log(`[DEBUG] registerPlayer called: ${email}, gameNoOfPlayers: ${gameNoOfPlayers}`);
     // console.log(`[DEBUG] Current player array length: ${this.#playerArray.length}`);
     
     this.#playerArray.push(
-      new Player(email, connection, gameNoOfPlayers, request, username)
+      new Player(email, connection, gameNoOfPlayers, request, username, tournamentContext)
     );
     request.log.info("OnlineMatchmaking registered: " + email);
     
@@ -376,8 +397,11 @@ export class OnlineMatchmaking {
     const gameLobbySize = gameNoOfPlayers;
     if (pendingPlayerLobby.length === gameLobbySize) {   
       let gameInstance;
+      const tournamentGame = pendingPlayerLobby.find(p => p.tournamentContext?.isTournamentGame);
+      const gameOptions = tournamentGame ? tournamentGame.tournamentContext : {};
+
       if (gameLobbySize === 2) {
-        gameInstance = new GameInstance(this.#fastify, pendingPlayerLobby.map((player) => player.email));
+        gameInstance = new GameInstance(this.#fastify, pendingPlayerLobby.map((player) => player.email), gameOptions);
       } else if (gameLobbySize === 4) {
         gameInstance = new GameInstance2v2(this.#fastify, pendingPlayerLobby.map((player) => player.email));
       }

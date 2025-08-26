@@ -18,7 +18,8 @@ import {friends_popup, friends_page_setup } from "./friends.ts";
 import { vs_AI_game_setup, vs_AI_game_popup } from "./vs_AI.ts";
 
 import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_game.ts"
-import { online_play_menus_setup} from "./game-online-pre_game.ts";
+import { online_play_menus_setup, online_play_menus_popup} from "./game-online-pre_game.ts";
+import { online_tour_game_popup } from "./game-online-tournament.ts";
 
 import { game_popup } from "./game-local-display_game.ts";
 import { online_game_popup } from "./game-online-1v1.ts";
@@ -199,9 +200,11 @@ export function index_init()
 
 			${local_play_menus_popup}
 			${vs_AI_game_popup}
+			${online_play_menus_popup}
+			${online_tour_game_popup}
 				
 			${game_popup}
-			${online_game_popup}
+			${online_game_popup()}
 
 			</div>
 		`);
