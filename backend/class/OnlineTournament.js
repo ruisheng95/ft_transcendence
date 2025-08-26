@@ -63,6 +63,44 @@ export class OnlineTournament {
         }));
     }
 
+    rejoinTournament(tournament_id, playerInfo) {
+        const current_tournament = this.#tournaments.get(tournament_id);
+        if (!current_tournament)
+            return false;
+
+        const existingPlayer = current_tournament.players.find(p => p.session === playerInfo.session);
+        if (!existingPlayer)
+            return false;
+
+        existingPlayer.connection = playerInfo.connection;
+        playerInfo.tournament_id = tournament_id;
+
+        // send current player assignment
+        playerInfo.connection.send(JSON.stringify({
+            type: "player_assigned",
+            player_index: current_tournament.players.findIndex(p => p.session === playerInfo.session),
+            tournament_id: tournament_id
+        }));
+
+        // send tournament state
+        playerInfo.connection.send(JSON.stringify({
+            type: "tournament_ready",
+            players: current_tournament.players.map(p => p.username),
+            player_emails: current_tournament.players.map(p => p.session)
+        }));
+
+        if (current_tournament.current_match) {
+            playerInfo.connection.send(JSON.stringify({
+                type: "match_ready",
+                match_id: current_tournament.current_match.id,
+                players: current_tournament.current_match.players.map(p => p.username),
+                round: current_tournament.current_match.round
+            }));
+        }
+
+        return true;
+    }
+
     handleGameResult(tournament_id, match_id, winner_email, loser_email) {
         const current_tournament = this.#tournaments.get(tournament_id);
         if (!current_tournament || !current_tournament.current_match || !current_tournament.current_match.id !== match_id)

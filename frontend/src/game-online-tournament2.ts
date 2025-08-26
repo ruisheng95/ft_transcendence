@@ -130,7 +130,8 @@ export function online_tour_manager()
 			start_online_game();
 		}
 		else if(msg_obj.type === "rejoin_failed") {
-			// later
+			localStorage.removeItem("tournament_context");
+			isReturningFromGame = false;
 		}
 	}
 
