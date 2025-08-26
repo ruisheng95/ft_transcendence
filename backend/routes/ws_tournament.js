@@ -35,7 +35,7 @@ const root = async function (fastify) {
                 // .get - returns object
                 // user.Property - gets actual value
                 if (user)
-                    playerInfo.username = user.username;
+                    playerInfo.username = user.USERNAME;
                 else {
                     console.log(`Tournament: No username found for email: ${email}. Rejecting player.`);
                     connection.close();
