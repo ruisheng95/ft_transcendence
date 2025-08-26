@@ -18,6 +18,7 @@ export const defaultGameSetting = {
 export class GameInstance {
   #emailsArray = []; //ck added
   #fastify = null; //ck added
+  #clean_disconnect_flag = false; //ck added
   #connectionArray = [];
   #boardHeight = 0;
   #boardWidth = 0;
@@ -149,6 +150,7 @@ export class GameInstance {
       this.#ballX + this.#ball_len >= this.#boardWidth
     ) {
       //game hit border, end game
+	  this.#clean_disconnect_flag = true;
       const winner_p =
         this.#ballX <= this.#ball_len / 2 ? "rightplayer" : "leftplayer";
       clearInterval(this.#game_interval_id);
@@ -234,6 +236,7 @@ export class GameInstance {
       console.warn("Failed to start game", this.#connectionArray.length);
       return;
     }
+
     this.#boardHeight = data.boardHeight;
     this.#boardWidth = data.boardWidth;
     this.#board_border_width = data.board_border_width;
@@ -281,6 +284,26 @@ export class GameInstance {
         }
       }
     });
+  }
+
+  handlePlayerDisconnected(disconnectedConnection) {
+
+	if(this.#clean_disconnect_flag === true)
+		return;
+
+	const playerIndex = this.#connectionArray.indexOf(disconnectedConnection);
+		if (playerIndex === -1) return;
+		
+		const disconnectedEmail = this.#emailsArray[playerIndex];
+		const otherEmail = this.#emailsArray[playerIndex === 0 ? 1 : 0];
+		
+		console.log(`Player ${disconnectedEmail} disconnected`);
+		
+		//update playerstats where the loser is the dced player
+		this.#update_playerstats_aftergame(otherEmail, disconnectedEmail);
+
+		this.#sendJson({type: "player_dced", winner: playerIndex === 0 ? "rightplayer" : "leftplayer"});
+		this.stopGame();
   }
 
   stopGame() {

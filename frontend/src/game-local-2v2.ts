@@ -334,7 +334,7 @@ function local_2v2_game_init()
 				return;
 			playing = false;
 			if (start_game_button)
-				start_game_button.style.display = "block";
+				start_game_button.classList.remove("hidden");
 			local2v2_display_winner(msg_obj);
 		}
 	}

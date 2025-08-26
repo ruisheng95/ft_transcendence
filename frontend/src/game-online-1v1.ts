@@ -3,7 +3,6 @@ import { add_history, disable_back_navigation, enable_back_navigation } from "./
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
-import { online1v1_button_ft } from "./game-online-pre_game.ts";
 import { removeAllEventListenersFromButton } from "./gameindex.ts";
 import { translate_text } from "./language.ts";
 
@@ -24,7 +23,6 @@ export function online_1v1_play()
 
 	game_obj.innerHTML = html`
 	<div id="online_game_buttons" class="flex gap-[400px] mb-[20px]">
-		<button id="online_close_game" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Exit game")}</button>
 		<button id="online_game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Start game")}</button>
 	</div>
 	<div class="flex ">
@@ -60,11 +58,10 @@ export function online_1v1_play()
 	const rightplayer = document.querySelector<HTMLDivElement>("#online_game_rightplayer");
 	const leftplayer = document.querySelector<HTMLDivElement>("#online_game_leftplayer");
 	const ball = document.querySelector<HTMLDivElement>("#online_game_ball");
-	const close_game_button = document.querySelector<HTMLButtonElement>("#online_close_game");
 	const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 
 	//bruh stupid ts
-	if(!board || !rightplayer || !leftplayer || !ball || !start_game_button || !close_game_button || !game_popup)
+	if(!board || !rightplayer || !leftplayer || !ball || !start_game_button || !game_popup)
 		throw new Error("Required game elements not found 3");
 
 	//vars
@@ -85,14 +82,6 @@ export function online_1v1_play()
 	document.addEventListener('keydown', handleKeyDown);
 	document.addEventListener('keyup', handleKeyUp);
 	start_game_button.addEventListener("click", start_the_fkin_game)
-
-	close_game_button.addEventListener("click", () => {
-		game_popup.classList.add("hidden");
-		playing = false;
-		// socket.close();
-		// WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-		add_history("/pong");
-	});
 
 	function start_the_fkin_game()
 	{
@@ -128,6 +117,10 @@ export function online_1v1_play()
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
+		const optional_msg_div = document.querySelector<HTMLDivElement>("#online1v1_optional_msg");
+
+		if(!optional_msg_div) throw new Error("process msg socket elements not found");
+
 		console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
 			
@@ -140,7 +133,7 @@ export function online_1v1_play()
 
 			//remove the start button
 			if (start_game_button)
-				start_game_button.style.display = "none";
+				start_game_button.classList.add("hidden");
 			// Send in this format:
 			// [ballX, ballY, leftPlayerY, rightPlayerY, speed_x, speed_y]
 			ballX = msg_obj.d[0];
@@ -152,22 +145,25 @@ export function online_1v1_play()
 			render_positions();
 		}
 		else if(msg_obj.type == "game_over")
-		{
-			socket.close();
-			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-				
-			//add back online1v1 button
-			const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
-			if(!online_1v1_button) throw new Error("online1v1 button not found");
-			online_1v1_button.addEventListener("click", online1v1_button_ft);
-			online_1v1_button.innerHTML = "Online";
+		{		
+			// //add back online1v1 button
+			// const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
+			// if(!online_1v1_button) throw new Error("online1v1 button not found");
+			// online_1v1_button.addEventListener("click", online1v1_button_ft);
+			// online_1v1_button.innerHTML = "Online";
 
-			if(playing == false)
-				return;
-			
-			if (start_game_button)
-				start_game_button.style.display = "block";
-			playing = false;
+			optional_msg_div.innerHTML = "";
+			handle_game_end(msg_obj);
+		}
+		else if(msg_obj.type === "player_dced")
+		{		
+			// //add back online1v1 button
+			// const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
+			// if(!online_1v1_button) throw new Error("online1v1 button not found");
+			// online_1v1_button.addEventListener("click", online1v1_button_ft);
+			// online_1v1_button.innerHTML = "Online";
+
+			optional_msg_div.innerHTML = "Match terminated because a player has disconnected";
 			handle_game_end(msg_obj);
 		}
 	}
@@ -331,11 +327,11 @@ export function online_1v1_play()
 				init_positions();
 				render_positions();
 
-				//blur out online1v1 button in case user exits
-				const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
-				if(!online_1v1_button) throw new Error("online1v1 button not found");
-				online_1v1_button.removeEventListener("click", online1v1_button_ft);
-				online_1v1_button.innerHTML = `${translate_text("match ongoing")}`;
+				// //blur out online1v1 button in case user exits
+				// const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
+				// if(!online_1v1_button) throw new Error("online1v1 button not found");
+				// online_1v1_button.removeEventListener("click", online1v1_button_ft);
+				// online_1v1_button.innerHTML = `${translate_text("match ongoing")}`;
 
 				// // Auto-click start button after 5 seconds
 				// setTimeout(() => {
@@ -366,6 +362,10 @@ export function online_1v1_play()
 		)
 			throw new Error("Online1v1 winner display elements not found");
 
+		
+		if(playing == false)
+				return;
+
 		enable_back_navigation();
 
 		online1v1_left_name.innerText = p1_name;
@@ -389,9 +389,13 @@ export function online_1v1_play()
 		online1v1_winner_popup.classList.remove("hidden");
 		game_popup.classList.add("hidden");
 
+		//socket cleanup
 		socket.close();
 		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-
+		
+		if (start_game_button)
+			start_game_button.classList.remove("hidden");
+		playing = false;
 		
 		close_online_1v1_winner_popup_button.removeEventListener("click", close_online1v1_winner_popup_ft);
 		close_online_1v1_winner_popup_button.addEventListener("click", close_online1v1_winner_popup_ft);
@@ -486,6 +490,7 @@ const online_1v1_winner_popup = html`
 					</div>
 				</div>
 			</section>
+			<div id="online1v1_optional_msg"></div>
 
 			<!-- Exit Game Button -->
 			<button id="close_online1v1_winner_popup" class="button-primary">Exit</button>

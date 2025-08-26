@@ -166,6 +166,7 @@ const root = async function (fastify) {
 
       connection.on("message", (message) => {
         const message_obj = JSON.parse(message.toString());
+		// console.log("MESSAGE_OBJ: ", message_obj);
         const player = onlineMatchmaking.getPlayerByConnection(connection);
         if (message_obj.type == MsgType.GAME_START) {
           player.gameInstance?.startGame(defaultGameSetting);
@@ -185,7 +186,7 @@ const root = async function (fastify) {
         const player = onlineMatchmaking.getPlayerByConnection(connection);
         if (player.gameInstance) {
           // Stop game if any one player disconnected
-          player.gameInstance.stopGame();
+          player.gameInstance.handlePlayerDisconnected(connection);
           player.gameInstance = null;
         }
         onlineMatchmaking.removePlayerByConnection(connection);
