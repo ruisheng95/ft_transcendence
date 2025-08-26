@@ -180,7 +180,7 @@ export class OnlineTournament {
                     completed: false
                 },
                 round4 : {
-                    players: [tournamentPlayers[0], tournamentPlayers[1]],
+                    players: [],
                     winner: null,
                     loser: null,
                     completed: false
