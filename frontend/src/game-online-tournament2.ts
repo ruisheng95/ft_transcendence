@@ -216,6 +216,17 @@ export function online_tour_manager()
 		const startBattleButton = document.querySelector<HTMLButtonElement>("#onlineTour_open_game");
 		if (!startBattleButton)
 			return;
+
+		// TESTING: clean up any existing test buttons first
+		const parentNode = startBattleButton.parentNode;
+		if (parentNode) {
+			const existingTestButtons = parentNode.querySelectorAll('button[class*="ml-"]');
+			existingTestButtons.forEach(button => {
+				if (button.textContent?.includes('Test:')) {
+					button.remove();
+				}
+			});
+		}
 		
 		if (shouldShow) {
 			startBattleButton.classList.remove("hidden");
@@ -227,6 +238,31 @@ export function online_tour_manager()
 			newButton.addEventListener("click", () => {
 				request_game_start();
 			});
+
+			// TESTING: add test buttons
+			const testWinButton = document.createElement('button');
+			testWinButton.textContent = 'Test: I Win!';
+			testWinButton.className = 'button-primary ml-4';
+			testWinButton.addEventListener('click', () => {
+				console.log('Test: User clicked I Win button');
+				if (socket.readyState === WebSocket.OPEN) {
+					socket.send(JSON.stringify({ type: "test_game_result" }));
+				}
+			});
+			
+			const testLoseButton = document.createElement('button');
+			testLoseButton.textContent = 'Test: I Lose!';
+			testLoseButton.className = 'button-secondary ml-2';
+			testLoseButton.addEventListener('click', () => {
+				console.log('Test: User clicked I Lose button');
+				if (socket.readyState === WebSocket.OPEN) {
+					socket.send(JSON.stringify({ type: "test_game_result_lose" }));
+				}
+			});
+			
+			newButton.parentNode?.appendChild(testWinButton);
+			newButton.parentNode?.appendChild(testLoseButton);
+
 		} else {
 			startBattleButton.classList.add("hidden");
 		}
@@ -434,6 +470,14 @@ export function online_tour_manager()
 
 		// hide start battle button
 		current_open_game_button.classList.add("hidden");
+
+		// TESTING: clean up test buttons
+		const existingTestButtons = current_open_game_button.parentNode?.querySelectorAll('button[class*="ml-"]');
+		existingTestButtons?.forEach(button => {
+			if (button.textContent?.includes('Test:')) {
+				button.remove();
+			}
+		});
 		
         // hide leave tournament button
 		if (exit_tournament_button) {

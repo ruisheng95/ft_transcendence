@@ -135,6 +135,11 @@ export class OnlineTournament {
         }
     }
 
+    // TESTING
+    getTournament(tournament_id) {
+        return this.#tournaments.get(tournament_id);
+    }
+
     #sendTournamentStatus() {
         const statusMsg = {
             type: "tournament_status",
