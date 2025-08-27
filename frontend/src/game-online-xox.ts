@@ -112,8 +112,8 @@ export function xox_online_play()
 		//show initial countdown cuz setinterval starts one sec late
 		mm_status_div.innerHTML = `
 			<div class="flex flex-col items-center">
-				<div>Match found!</div>
-				<div>Match starting in ${countdown}</div>
+				<div>${translate_text("Match found!")}</div>
+				<div>${translate_text("Match starting in")} ${countdown}<</div>
 			</div>
 			`;
 		countdown--;

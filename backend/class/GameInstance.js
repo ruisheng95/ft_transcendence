@@ -376,7 +376,7 @@ class Player {
   username;
   tournamentContext;
 
-  constructor(email, connection, gameNoOfPlayers, request, username, gameType, tournamentContext = {}) {
+  constructor(email, connection, gameNoOfPlayers, request, username, tournamentContext = {}, gameType) {
     this.email = email;
     this.connection = connection;
     this.gameNoOfPlayers = gameNoOfPlayers;
@@ -395,12 +395,12 @@ export class OnlineMatchmaking {
     this.#fastify = fastify;
   }
 
-  registerPlayer(email, connection, gameNoOfPlayers, request, username, tournamentContext = {}, gameType = 'pong') {
+  registerPlayer(email, connection, gameNoOfPlayers, request, username, tournamentContext = {}, gameType) {
     // console.log(`[DEBUG] registerPlayer called: ${email}, gameNoOfPlayers: ${gameNoOfPlayers}`);
     // console.log(`[DEBUG] Current player array length: ${this.#playerArray.length}`);
     
     this.#playerArray.push(
-      new Player(email, connection, gameNoOfPlayers, request, username, tournamentContext)
+      new Player(email, connection, gameNoOfPlayers, request, username, tournamentContext, gameType)
     );
     request.log.info("OnlineMatchmaking registered: " + email + " for " + gameType);
     
@@ -420,7 +420,6 @@ export class OnlineMatchmaking {
       
 	const tournamentGame = pendingPlayerLobby.find(p => p.tournamentContext?.isTournamentGame);
       const gameOptions = tournamentGame ? tournamentGame.tournamentContext : {};
-
       if (gameType === 'pong') {
         if (gameLobbySize === 2) {
           gameInstance = new GameInstance(this.#fastify, pendingPlayerLobby.map((player) => player.email), gameOptions);

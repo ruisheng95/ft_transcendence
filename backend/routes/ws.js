@@ -275,13 +275,16 @@ const root = async function (fastify) {
 		2, // 2 players for XOX
 		request,
 		get_username_from_email(fastify.get_email_by_session(request)),
+		{
+			//empty object CUZ WHY NOT (nah srsly need this if not matchmaking cannot register the xox)
+        },
 		'xox'
 		);
 
 		connection.on("message", (message) => {
 			const message_obj = JSON.parse(message.toString());
 			const player = onlineMatchmaking.getPlayerByConnection(connection);
-			//console.log("FRONTEND SEND A MESSAGEEEEE: ", message_obj);
+			// console.log("FRONTEND SEND A MESSAGEEEEE: ", message_obj);
 			if (message_obj.type == MsgType.GAME_START)
 				player.gameInstance?.startGame();
 			else if (message_obj.type === "make_move")

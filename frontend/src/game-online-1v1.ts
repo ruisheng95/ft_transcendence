@@ -221,6 +221,7 @@ export function online_1v1_play()
 		{
 			disable_back_navigation();
 			start_matchmaking_countdown(mm_status_div, msg_obj);
+			console.log(players);
 			p1_name = players[0];
 			p2_name = players[1];
 			exit_mm.classList.add("hidden");
