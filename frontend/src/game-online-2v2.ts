@@ -122,7 +122,6 @@ export function online_2v2_play()
 
 	game_obj.innerHTML = `
 	<div id="game_buttons" class="flex gap-[400px] mb-[20px] mt-[20px]">
-		<button id="online2v2_close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Exit game")}</button>
 		<button id="online2v2_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Start game")}</button>
 	</div>
 
@@ -172,17 +171,14 @@ export function online_2v2_play()
 	const rightplayer1 = document.querySelector<HTMLDivElement>("#online2v2_rightplayer1");
 	const rightplayer2 = document.querySelector<HTMLDivElement>("#online2v2_rightplayer2");
 	const ball = document.querySelector<HTMLDivElement>("#online2v2_game_ball");
-	const close_game_button = document.querySelector<HTMLButtonElement>("#online2v2_close_game");
 	const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 
 	//bruh stupid ts
-	if(!board || !leftplayer1 || !leftplayer2 || !rightplayer1 || !rightplayer2 || !ball || !start_game_button || !game_popup || !close_game_button)
+	if(!board || !leftplayer1 || !leftplayer2 || !rightplayer1 || !rightplayer2 || !ball || !start_game_button || !game_popup)
 		throw new Error("Required game elements not found 4");
 
 	//vars
-	let ball_len = 0, ballX = 0, ballY = 0, dy = 0, dx = 0,
-    boardHeight = 0, boardWidth = 0, board_border_width = 0,
-    block_height = 0, block_width = 0, player_speed = 0,
+	let ball_len = 0, ballX = 0, ballY = 0, boardHeight = 0, block_height = 0,
     leftplayer1Y = 0, leftplayer2Y = 0, rightplayer1Y = 0, rightplayer2Y = 0, player_indent = 0;
 
 	//playing status
@@ -203,43 +199,12 @@ export function online_2v2_play()
 	document.addEventListener('keyup', handleKeyUp);
 	start_game_button.addEventListener("click", start_the_fkin_game)
 
-	close_game_button.addEventListener("click", () => {
-		game_popup.classList.add("hidden");
-		playing = false;
-		cleanup_2v2_ui();
-		socket.close();
-	});
-
 	setup_2v2_ui();
 
 	function start_the_fkin_game()
 	{
-		const config_obj = {
-
-			//type
-			type: "game_start",
-
-			//board stuff
-			boardHeight: boardHeight,
-			boardWidth: boardWidth,
-			board_border_width: board_border_width,
-
-			//player stuff
-			block_height: block_height,
-			block_width: block_width,
-			player_speed: player_speed,
-			player_indent: player_indent,
-
-			// Ball stuff
-			ball_len: ball_len,
-			ballX: ballX,
-			ballY: ballY,
-			dy: dy,
-			dx: dx,
-		};
-		
 		if (socket.readyState === WebSocket.OPEN)
-			socket.send(JSON.stringify(config_obj));
+			socket.send(JSON.stringify({type: "game_start"}));
 	}
 
 	function process_msg_from_socket(message: MessageEvent)
@@ -268,8 +233,6 @@ export function online_2v2_play()
 			leftplayer2Y = msg_obj.leftplayer2Y;
 			rightplayer1Y = msg_obj.rightplayer1Y;
 			rightplayer2Y = msg_obj.rightplayer2Y;
-			dx = msg_obj.speed_x;
-			dy = msg_obj.speed_y;
 			render_positions();
 		}
 		else if(msg_obj.type == "game_over")
@@ -290,18 +253,10 @@ export function online_2v2_play()
 			ball_len = ball.clientWidth;
 			ballX = board.clientWidth / 2 - ball_len / 2;
 			ballY = board.clientHeight / 2 - ball_len / 2;
-			dy = 2;
-			dx = 2;
-
 			boardHeight = board.clientHeight;
-			boardWidth = board.clientWidth;
-			board_border_width = parseInt(getComputedStyle(board).borderLeftWidth);
 
 			block_height = leftplayer1.clientHeight;
-			block_width = leftplayer1.clientWidth;
-			player_speed = 5;
 			player_indent = 20;
-			
 			const quarterHeight = boardHeight / 4;
 			leftplayer1Y = quarterHeight - block_height / 2;
 			leftplayer2Y = 3 * quarterHeight - block_height / 2;
@@ -397,7 +352,6 @@ export function online_2v2_play()
 				matchmaking_popup.classList.add("hidden");
 				socket.close();
 				cleanup_2v2_ui();
-				add_history("");
 			});
 
 			let team1_html = "";

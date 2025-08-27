@@ -25,8 +25,8 @@ export function online_play_menus_setup()
 
 export function online1v1_button_ft()
 {
-	online_1v1_play();
 	add_history("/pong/online1v1");
+	online_1v1_play();
 }
 
 export const online_play_menus_popup = `

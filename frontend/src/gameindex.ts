@@ -25,10 +25,8 @@ import { game_popup } from "./game-local-display_game.ts";
 import { online_game_popup } from "./game-online-1v1.ts";
 import { onlinexox_popups } from "./game-online-xox.ts";
 
-import { add_history } from "./spa-navigation.ts";
-
 import { WS } from "./class/WS.ts";
-import { pong_modes_popup, pong_modes_setup } from "./pong_modes.ts";
+import { click_pong_modes_button, pong_modes_popup, pong_modes_setup } from "./pong_modes.ts";
 
 import DOMPurify from 'dompurify';
 import { handle_language_change } from "./language.ts";
@@ -89,7 +87,7 @@ export function index_init()
 	main_ft();
 	handle_language_change(`${localStorage.getItem("current_language")}`);
 
-	add_history("/pong"); //temporarily add /gameindex.html/ to history cuz wanna have the popstate effect
+	click_pong_modes_button();
 	// socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
 	}
 

@@ -1,6 +1,7 @@
 import { add_history } from "./spa-navigation";
 import { WS } from "./class/WS";
 import { translate_text } from "./language";
+import { click_pong_modes_button } from "./pong_modes";
 //player stats
 export function playerstats_setup ()
 {
@@ -21,7 +22,7 @@ export function playerstats_setup ()
 	close_playerstats.addEventListener("click", () => {
 		playerstats_popup.classList.add("hidden");
 		pong_modes_popup.classList.remove("hidden");
-		add_history("/pong")
+		click_pong_modes_button();
 	});
 }
 

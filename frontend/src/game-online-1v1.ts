@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { add_history, disable_back_navigation, enable_back_navigation } from "./spa-navigation";
+import { disable_back_navigation, enable_back_navigation } from "./spa-navigation";
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
 import { removeAllEventListenersFromButton } from "./gameindex.ts";
 import { translate_text } from "./language.ts";
+import { click_pong_modes_button } from "./pong_modes.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -202,7 +203,7 @@ export function online_1v1_play()
 				matchmaking_popup.classList.add("hidden");
 				socket.close();
 				WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-				add_history("/pong");
+				click_pong_modes_button();
 			});
 
 			p1_name = players[0];
@@ -239,8 +240,8 @@ export function online_1v1_play()
 		//show initial countdown cuz setinterval starts one sec late
 		mm_status_div.innerHTML = `
 			<div class="flex flex-col items-center">
-				<div>Match found!</div>
-				<div>Match starting in ${countdown}</div>
+				<div>${translate_text("Match found!")}</div>
+				<div>${translate_text("Match starting in")} ${countdown}</div>
 			</div>
 			`;
 		countdown--;
@@ -384,7 +385,7 @@ export function online_1v1_play()
 		function close_online1v1_winner_popup_ft()
 		{
 			online1v1_winner_popup?.classList.add("hidden");
-			add_history("/pong");
+			click_pong_modes_button();
 		}
 	}
 }

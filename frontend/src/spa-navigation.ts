@@ -65,25 +65,12 @@ window.addEventListener("popstate", (event) => {
 		return;
 	}
 
-	console.log(prev_url);
-	if(prev_url == "/pong/online1v1" || prev_url == "/pong")
-	{
-		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
-		matchmaking_popup?.classList.add("hidden");
+	//cleanup ws-online socket
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+	socket?.close();
+	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 
-		const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-		socket?.close();
-		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-	}
-
-	//console.log("user changed history");
-	console.log("Current URL:", location.pathname);
-
-	//very sus part
-	if(location.pathname == "/index/")
-		rmv_all_pgs_except_index();
-	else
-		display_other_pages(event.state.page); //parse in event state page not locationpathname cuz that one will have /index in front
+	display_other_pages(event.state.page);
 });
 
 function rmv_all_pgs_except_index()

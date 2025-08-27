@@ -2,8 +2,8 @@
 //AI flag is optional arg wif default value set as false
 
 // import { add_prev_url_to_history } from "./spa-navigation";
-import { add_history } from "./spa-navigation";
 import { translate_text } from "./language";
+import { click_pong_modes_button } from "./pong_modes";
 
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -111,7 +111,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		start_game_button.classList.remove("hidden");
 		playing = false;
 		// add_prev_url_to_history();
-		add_history("/pong");
+		click_pong_modes_button();
 		});
 
 	// AI STUFF

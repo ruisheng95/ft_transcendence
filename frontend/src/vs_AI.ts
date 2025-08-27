@@ -4,6 +4,7 @@ import "./gamestyle.css";
 import { display_game } from "./game-local-display_game";
 import { add_history } from "./spa-navigation";
 import { translate_text } from "./language";
+import { click_pong_modes_button } from "./pong_modes";
 
 
 //vs_AI_game
@@ -31,7 +32,7 @@ export function vs_AI_game_setup ()
 
 	close_vs_AI_winner_popup.addEventListener("click", () => {
 		vs_AI_winner_popup.classList.add("hidden");
-		add_history("/pong");
+		click_pong_modes_button();
 	});
 }
 

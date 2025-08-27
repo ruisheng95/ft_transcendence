@@ -53,6 +53,12 @@ export function pong_modes_setup()
 	})
 }
 
+export function click_pong_modes_button()
+{
+	const pong_modes_button = document.querySelector<HTMLButtonElement>("#pong_modes_button");
+	pong_modes_button?.click();
+}
+
 export function open_pong_modes()
 {
 	const pong_modes_button = document.querySelector<HTMLButtonElement>("#pong_modes_button");

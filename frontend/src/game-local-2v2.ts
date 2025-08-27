@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./gamestyle.css";
 // import { add_prev_url_to_history } from "./spa-navigation";
-import { add_history } from "./spa-navigation";
 import { translate_text } from "./language";
+import { click_pong_modes_button } from "./pong_modes";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -74,7 +74,7 @@ export function local_2v2_game_setup()
 
 	close_local2v2_winner_popup.addEventListener("click", () => {
 		local2v2_winner_popup.classList.add("hidden");
-		add_history("/pong");
+		click_pong_modes_button();
 	});
 }
 
@@ -276,7 +276,7 @@ function local_2v2_game_init()
 		playing = false;
 		local_2v2_game_popup.classList.add("hidden");
 		// add_prev_url_to_history();
-		add_history("/pong");
+		click_pong_modes_button();
 	});
 
 	//functions

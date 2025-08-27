@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./gamestyle.css";
 import { display_game } from "./game-local-display_game";
-import { add_history } from "./spa-navigation";
 import { translate_text } from "./language";
+import { click_pong_modes_button } from "./pong_modes";
 
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
@@ -59,7 +59,7 @@ export function local_1v1_game_setup()
 
 	close_local1v1_winner_popup.addEventListener("click", () => {
 		local1v1_winner_popup.classList.add("hidden");
-		add_history("/pong");
+		click_pong_modes_button();
 	});
 }
 
