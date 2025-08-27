@@ -137,6 +137,19 @@ const bm_texts = {
 	online1v1_match_result_text: "Keputusan Perlawanan",
 	close_online1v1_winner_popup: "Keluar",
 
+	// online 2v2 game
+	online2v2_title: "Lobi Atas Talian",
+	online2v2_gameinfo_text1: "Online",
+	online2v2_gameinfo_text2: "2 lawan 2",
+	online2v2_gameinfo_text3: "4 Pemain",
+	online2v2_header_text1: "Pilihan Peta",
+	online2v2_header_text2: "Pemain",
+	online2v2_map_none: "Tiada",
+	online2v2_team1_text: "Kumpulan 1",
+	online2v2_team2_text: "Kumpulan 2",
+	online2v2_winner_popup_title: "Keputusan Perlawanan",
+	close_online2v2_winner_popup: "Keluar",
+
 	//online xox
 	onlinexox_title: "Lobi Dalam Talian",
 	onlinexox_gameinfo_text1: "Dalam Talian",
@@ -205,6 +218,19 @@ const bm_texts = {
 	"Match found!": "Perlawanan Ditemui!",
 	"Match starting in": "Permainan bermula dalam",
 	"match ongoing": "perlawanan sedang berlangsung",
+	"Match terminated because a player has disconnected": "Perlawanan ditamatkan kerana pemain telah terputus sambungan",
+
+	//online2v2 strings
+	"Waiting...": "Menunggu...",
+	"Match Result": "Keputusan Perlawanan",
+	"Online Lobby": "Lobi Atas Talian",
+	"Online": "Online",
+	"2 vs 2": "2 lawan 2",
+	"4 Players": "4 Pemain",
+	"Map Selection": "Pilihan Peta",
+	"Players": "Pemain",
+	"None": "Tiada",
+	"Exit": "Keluar",
 
 	//xox strings
 	"Matches": "Perlawanan",
@@ -353,6 +379,19 @@ const en_texts = {
 	online1v1_map_none: "None",
 	online1v1_match_result_text: "Match Result",
 	close_online1v1_winner_popup: "Exit",
+
+	// online 2v2
+	online2v2_title: "Online Lobby",
+	online2v2_gameinfo_text1: "Online",
+	online2v2_gameinfo_text2: "2 vs 2",
+	online2v2_gameinfo_text3: "4 Players",
+	online2v2_header_text1: "Map Selection",
+	online2v2_header_text2: "Players",
+	online2v2_map_none: "None",
+	online2v2_team1_text: "Team 1",
+	online2v2_team2_text: "Team 2",
+	online2v2_winner_popup_title: "Match Result",
+	close_online2v2_winner_popup: "Exit",
 
 	//online xox
 	onlinexox_title: "Online Lobby",
@@ -521,6 +560,19 @@ const cn_texts = {
 	online1v1_match_result_text: "比赛结果",
 	close_online1v1_winner_popup: "退出",
 
+	//online 2v2
+	online2v2_title: "在线大厅",
+	online2v2_gameinfo_text1: "在线",
+	online2v2_gameinfo_text2: "2对2",
+	online2v2_gameinfo_text3: "4位玩家",
+	online2v2_header_text1: "地图选择",
+	online2v2_header_text2: "玩家",
+	online2v2_map_none: "无",
+	online2v2_team1_text: "第1组",
+	online2v2_team2_text: "第2组",
+	online2v2_winner_popup_title: "比赛结果",
+	close_online2v2_winner_popup: "退出",
+
 	//online xox
 	onlinexox_title: "在线大厅",
 	onlinexox_gameinfo_text1: "在线",
@@ -589,6 +641,20 @@ const cn_texts = {
 	"Match found!": "找到比赛！",
 	"Match starting in": "比赛将在",
 	"match ongoing": "比赛进行中",
+	"Match terminated because a player has disconnected": "比赛已终止，因为玩家已断开连接",
+
+	//online2v2 strings
+	"Waiting...": "等待中...",
+	"Match Result": "比赛结果",
+	"Online Lobby": "在线大厅",
+	"Online": "在线",
+	"2 vs 2": "2对2",
+	"4 Players": "4位玩家",
+	"Map Selection": "地图选择",
+	"Players": "玩家",
+	"None": "无",
+	"Exit": "退出",
+	
 
 	//xox strings
 	"Matches": "比赛数",

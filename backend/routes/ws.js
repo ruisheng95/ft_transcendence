@@ -238,8 +238,7 @@ const root = async function (fastify) {
       connection.on("close", () => {
         const player = onlineMatchmaking.getPlayerByConnection(connection);
         if (player.gameInstance) {
-          // Stop game if any one player disconnected
-          player.gameInstance.stopGame();
+          player.gameInstance.handlePlayerDisconnected(connection);
           player.gameInstance = null;
         }
         onlineMatchmaking.removePlayerByConnection(connection);

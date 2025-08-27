@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { add_history, disable_back_navigation, enable_back_navigation} from "./spa-navigation";
+import { disable_back_navigation, enable_back_navigation} from "./spa-navigation";
 import { translate_text } from "./language";
+import { handle_language_change } from "./language";
+import { start_game_countdown } from "./game-online-1v1";
+
 import "./gamestyle.css";
 // let first_call_flag = false;
 
@@ -67,7 +70,7 @@ function setup_2v2_ui() {
 		team1_display = document.createElement("div");
 		team1_display.id = "online2v2_team1_name_display";
 		team1_display.className = "text-2xl font-bold";
-		team1_display.innerHTML = "<h1>Team 1</h1>";
+		team1_display.innerHTML = `<h1>${translate_text("Team 1")}</h1>`;
 		player_names_container.appendChild(team1_display);
 	}
 	
@@ -75,7 +78,7 @@ function setup_2v2_ui() {
 		team2_display = document.createElement("div");
 		team2_display.id = "online2v2_team2_name_display";
 		team2_display.className = "text-2xl font-bold";
-		team2_display.innerHTML = "<h1>Team 2</h1>";
+		team2_display.innerHTML = `<h1>${translate_text("Team 2")}</h1>`;
 		player_names_container.appendChild(team2_display);
 	}
 	
@@ -103,6 +106,7 @@ export function online_2v2_play()
 {
 
 	add_2v2_popups_to_dom();
+	handle_language_change(localStorage.getItem("current_language") || "english");
 
 	// Add unique ID to test using the same browser
 	const sessionParam = localStorage.getItem("session") || "";
@@ -121,9 +125,6 @@ export function online_2v2_play()
 		el?.click();
 
 	game_obj.innerHTML = `
-	<div id="game_buttons" class="flex gap-[400px] mb-[20px] mt-[20px]">
-		<button id="online2v2_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Start game")}</button>
-	</div>
 
 	<div class="flex items-center">
 		<!-- Left side controls -->
@@ -164,7 +165,6 @@ export function online_2v2_play()
 	</div>
 	`;
 
-	const start_game_button = document.querySelector<HTMLButtonElement>("#online2v2_start_game_button");
 	const board = document.querySelector<HTMLDivElement>("#online2v2_game_board");
 	const leftplayer1 = document.querySelector<HTMLDivElement>("#online2v2_leftplayer1");
 	const leftplayer2 = document.querySelector<HTMLDivElement>("#online2v2_leftplayer2");
@@ -174,7 +174,7 @@ export function online_2v2_play()
 	const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 
 	//bruh stupid ts
-	if(!board || !leftplayer1 || !leftplayer2 || !rightplayer1 || !rightplayer2 || !ball || !start_game_button || !game_popup)
+	if(!board || !leftplayer1 || !leftplayer2 || !rightplayer1 || !rightplayer2 || !ball || !game_popup)
 		throw new Error("Required game elements not found 4");
 
 	//vars
@@ -197,7 +197,6 @@ export function online_2v2_play()
 	socket.addEventListener("message", process_msg_from_socket);
 	document.addEventListener('keydown', handleKeyDown);
 	document.addEventListener('keyup', handleKeyUp);
-	start_game_button.addEventListener("click", start_the_fkin_game)
 
 	setup_2v2_ui();
 
@@ -209,6 +208,10 @@ export function online_2v2_play()
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
+		const optional_msg_div = document.querySelector<HTMLDivElement>("#online2v2_optional_msg");
+
+		if(!optional_msg_div) throw new Error("process msg socket elements not found");
+
 		console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
 			
@@ -224,9 +227,6 @@ export function online_2v2_play()
 			if(playing == false)
 				return ;
 
-			if (start_game_button)
-				start_game_button.style.display = "none";
-
 			ballX = msg_obj.ballX;
 			ballY = msg_obj.ballY;
 			leftplayer1Y = msg_obj.leftplayer1Y;
@@ -239,9 +239,15 @@ export function online_2v2_play()
 		{
 			if(playing == false)
 				return ;
-			if (start_game_button)
-				start_game_button.style.display = "block";
+
 			playing = false;
+			optional_msg_div.innerHTML = "";
+			handle_game_end(msg_obj);
+		}
+		else if(msg_obj.type == "player_dced")
+		{
+			playing = false;
+			optional_msg_div.innerHTML = translate_text("Match terminated because a player has disconnected");
 			handle_game_end(msg_obj);
 		}
 	}
@@ -341,7 +347,7 @@ export function online_2v2_play()
 			
 			mm_status_div.innerHTML = `
 			<div class="flex justify-center">
-				<div>Searching for players (${players.length}/4)</div>
+				<div>${translate_text("Searching for players")} (${players.length}/4)</div>
 				<div class="animate-pulse [animation-delay:0ms]">.</div>
 				<div class="animate-pulse [animation-delay:300ms]">.</div>
 				<div class="animate-pulse [animation-delay:600ms]">.</div>
@@ -366,9 +372,9 @@ export function online_2v2_play()
 					}
 				} else {
 					if(i < 2) {
-						team1_html += `<div class="text-gray-500 text-[20px] mb-2">Waiting...</div>`;
+						team1_html += `<div class="text-gray-500 text-[20px] mb-2">${translate_text("Waiting...")}</div>`;
 					} else {
-						team2_html += `<div class="text-gray-500 text-[20px] mb-2">Waiting...</div>`;
+						team2_html += `<div class="text-gray-500 text-[20px] mb-2">${translate_text("Waiting...")}</div>`;
 					}
 				}
 			}
@@ -379,7 +385,7 @@ export function online_2v2_play()
 		else if(msg_obj.status === "Lobby full")
 		{
 			disable_back_navigation();
-			start_match_countdown(mm_status_div);
+			start_matchmaking_countdown(mm_status_div);
 			
 			team1_player1_name = players[0];
 			team1_player2_name = players[1];
@@ -401,15 +407,16 @@ export function online_2v2_play()
 		matchmaking_popup.classList.remove("hidden");
 	}
 
-	function start_match_countdown(mm_status_div: HTMLDivElement)
+	function start_matchmaking_countdown(mm_status_div: HTMLDivElement)
 	{
 		const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online2v2_matchmaking_popup");
 		const team1_display_div = document.querySelector<HTMLDivElement>("#online2v2_team1_name_display");
 		const team2_display_div = document.querySelector<HTMLDivElement>("#online2v2_team2_name_display");
 		const map_input = document.querySelector<HTMLInputElement>("#input-map");
+		const game_countdown_div = document.querySelector<HTMLDivElement>("#online_game_countdown");
 
-		if(!game_popup || !matchmaking_popup || !team1_display_div || !team2_display_div || !map_input) 
+		if(!game_countdown_div || !game_popup || !matchmaking_popup || !team1_display_div || !team2_display_div || !map_input) 
 			throw new Error("start match countdown elements not found");
 
 		let countdown = 3;
@@ -417,8 +424,8 @@ export function online_2v2_play()
 		//show initial countdown cuz setinterval starts one sec late
 		mm_status_div.innerHTML = `
 			<div class="flex flex-col items-center">
-				<div>Match found!</div>
-				<div>Match starting in ${countdown}</div>
+				<div>${translate_text("Match found!")}</div>
+				<div>${translate_text("Match starting in")} ${countdown}</div>
 			</div>
 			`;
 		countdown--;
@@ -426,8 +433,8 @@ export function online_2v2_play()
 		const interval = setInterval(() => {
 			mm_status_div.innerHTML = `
 			<div class="flex flex-col items-center">
-				<div>Match found!</div>
-				<div>Match starting in ${countdown}</div>
+				<div>${translate_text("Match found!")}</div>
+				<div>${translate_text("Match starting in")} ${countdown}</div>
 			</div>
 			`;
 			
@@ -450,9 +457,17 @@ export function online_2v2_play()
 				game_popup.style.backgroundImage = map_input.value;
 				init_positions();
 				render_positions();
+
+				setTimeout(() => {
+					if (my_player_index === 0)
+						start_the_fkin_game();
+				}, 4000);
+				
+				start_game_countdown(game_countdown_div);
 			}
 		}, 1000);
 	}
+
 
 	function handle_game_end(gameover_obj : any)
 	{
@@ -486,24 +501,24 @@ export function online_2v2_play()
 
 		if(gameover_obj.winner == "team1")
 		{
-			online2v2_left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			online2v2_left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
 			online2v2_left_point.forEach(e => {
 				e.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
 			})
 
-			online2v2_right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			online2v2_right_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 			online2v2_right_point.forEach(e => {
 				e.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
 			})
 		}
 		else
 		{
-			online2v2_right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			online2v2_right_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
 			online2v2_right_point.forEach(e => {
 				e.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
 			})
 
-			online2v2_left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			online2v2_left_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 			online2v2_left_point.forEach(e => {
 				e.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
 			})
@@ -517,28 +532,28 @@ export function online_2v2_play()
 
 		close_online_2v2_winner_popup_button.addEventListener("click", () => {
 			online2v2_winner_popup.classList.add("hidden");
-			add_history("");
 		})
 	}
 }
+
 
 const online2v2_matchmaking_popup = html`
 	<div id="online2v2_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-6 font-bold">Online Lobby</h1>
+		<h1 id="online2v2_title" class="text-4xl text-center mb-6 font-bold">Online Lobby</h1>
 
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4 mb-10">
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 vs 2</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">4 Players</span>
+			<span id="online2v2_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
+			<span id="online2v2_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 vs 2</span>
+			<span id="online2v2_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">4 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
 		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
-			<h2 class="text-2xl font-bold pb-2">Map Selection</h2>
-			<h2 class="text-2xl font-bold pb-2">Players</h2>
+			<h2 id="online2v2_header_text1" class="text-2xl font-bold pb-2">Map Selection</h2>
+			<h2 id="online2v2_header_text2" class="text-2xl font-bold pb-2">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->
@@ -546,7 +561,7 @@ const online2v2_matchmaking_popup = html`
 		
 			<!-- Map Selection -->
 			<section class="grid grid-cols-2 gap-6 px-12">
-				<div data-map="" data-game="online2v2" class="mapselect-logic2 text-2xl flex items-center justify-center select-map">None</div>
+				<div id="online2v2_map_none" data-map="" data-game="online2v2" class="mapselect-logic2 text-2xl flex items-center justify-center select-map">None</div>
 				<img data-map="url('/map-1.avif')" class="mapselect-logic2 object-cover select-map" src="/map-1.avif" alt="map">
 				<img data-map="url('/map-2.avif')" class="mapselect-logic2 object-cover select-map" src="/map-2.avif" alt="map">
 				<img data-map="url('/map-3.png')" class="mapselect-logic2 object-cover select-map" src="/map-3.png" alt="map">
@@ -554,10 +569,10 @@ const online2v2_matchmaking_popup = html`
 
 			<!-- Player List -->
 			<section class="w-full text-4xl font-bold flex flex-col items-center justify-center text-center space-y-6 rounded-xl">
-				<h2 class="text-xl font-bold mb-4 border py-1 px-6 rounded-xl">Team 1</h2>
+				<h2 id="online2v2_team1_text" class="text-xl font-bold mb-4 border py-1 px-6 rounded-xl">Team 1</h2>
 				<div id="online2v2_mm_team1_names"></div>
 				<div class="w-1/4 pixel-font text-5xl text-yellow-400">VS</div>
-				<h2 class="text-xl font-bold mb-4 border py-1 px-6 rounded-xl">Team 2</h2>
+				<h2 id="online2v2_team2_text" class="text-xl font-bold mb-4 border py-1 px-6 rounded-xl">Team 2</h2>
 				<div id="online2v2_mm_team2_names"></div>
 			</section>
 		</main>
@@ -578,7 +593,7 @@ const online_2v2_winner_popup = html`
 		<div id="online_2v2_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
 			<!-- Tournament Title -->
-			<h1 class="text-5xl font-bold text-center">Match Result</h1>
+			<h1 id="online2v2_winner_popup_title" class="text-5xl font-bold text-center">Match Result</h1>
 
 			<!-- Result Layout -->
 			<section class="grid grid-cols-2 w-full place-items-center">
@@ -612,7 +627,7 @@ const online_2v2_winner_popup = html`
 					</div>
 				</div>
 			</section>
-	
+			<div id="online2v2_optional_msg"></div>
 
 			<button id="close_online2v2_winner_popup" class="button-primary">Exit</button>
 		</div>

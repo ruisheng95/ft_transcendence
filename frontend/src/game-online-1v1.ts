@@ -113,7 +113,7 @@ export function online_1v1_play()
 		}
 		else if(msg_obj.type === "player_dced")
 		{		
-			optional_msg_div.innerHTML = "Match terminated because a player has disconnected";
+			optional_msg_div.innerHTML = translate_text("Match terminated because a player has disconnected");
 			handle_game_end(msg_obj);
 		}
 	}
@@ -267,7 +267,7 @@ export function online_1v1_play()
 				init_positions();
 				render_positions();
 
-				// // Auto-click start button after 5 seconds
+				//auto start after 4s
 				setTimeout(() => {
 					const playersArr = JSON.parse(msg_obj.players);
 					if (playersArr[0] === localStorage.getItem("current_username"))
@@ -279,53 +279,6 @@ export function online_1v1_play()
 		}, 1000);
 	}
 
-	function start_game_countdown(game_countdown_div: HTMLDivElement)
-	{
-		let gameCountdown = 3;
-		
-		game_countdown_div.classList.remove("hidden");
-		game_countdown_div.innerHTML = `
-			<div class="absolute inset-0 flex items-center justify-center z-1">
-				<div class="text-8xl font-bold text-white animate-pulse">
-					${gameCountdown}
-				</div>
-			</div>
-		`;
-		
-		gameCountdown--;
-		
-		const gameInterval = setInterval(() => {
-			if (gameCountdown > 0)
-			{
-				game_countdown_div.innerHTML = `
-					<div class="absolute inset-0 flex items-center justify-center z-1">
-						<div class="text-8xl font-bold text-white animate-pulse">
-							${gameCountdown}
-						</div>
-					</div>
-				`;
-			}
-			else if (gameCountdown === 0)
-			{
-				game_countdown_div.innerHTML = `
-					<div class="absolute inset-0 flex items-center justify-center z-1">
-						<div class="text-8xl font-bold text-white animate-bounce">
-							GO!
-						</div>
-					</div>
-				`;
-			}
-			else
-			{
-				//hide countdown
-				clearInterval(gameInterval);
-				game_countdown_div.classList.add("hidden");
-				game_countdown_div.innerHTML = "";
-			}
-			
-			gameCountdown--;
-		}, 1000);
-	}
 
 	function handle_game_end(gameover_obj : any)
 	{
@@ -388,6 +341,54 @@ export function online_1v1_play()
 			click_pong_modes_button();
 		}
 	}
+}
+
+export function start_game_countdown(game_countdown_div: HTMLDivElement)
+{
+	let gameCountdown = 3;
+	
+	game_countdown_div.classList.remove("hidden");
+	game_countdown_div.innerHTML = `
+		<div class="absolute inset-0 flex items-center justify-center z-1">
+			<div class="text-8xl font-bold text-white animate-pulse">
+				${gameCountdown}
+			</div>
+		</div>
+	`;
+	
+	gameCountdown--;
+	
+	const gameInterval = setInterval(() => {
+		if (gameCountdown > 0)
+		{
+			game_countdown_div.innerHTML = `
+				<div class="absolute inset-0 flex items-center justify-center z-1">
+					<div class="text-8xl font-bold text-white animate-pulse">
+						${gameCountdown}
+					</div>
+				</div>
+			`;
+		}
+		else if (gameCountdown === 0)
+		{
+			game_countdown_div.innerHTML = `
+				<div class="absolute inset-0 flex items-center justify-center z-1">
+					<div class="text-8xl font-bold text-white animate-bounce">
+						GO!
+					</div>
+				</div>
+			`;
+		}
+		else
+		{
+			//hide countdown
+			clearInterval(gameInterval);
+			game_countdown_div.classList.add("hidden");
+			game_countdown_div.innerHTML = "";
+		}
+		
+		gameCountdown--;
+	}, 1000);
 }
 
 const online1v1_matchmaking_popup = html`
