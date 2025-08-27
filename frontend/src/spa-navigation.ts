@@ -10,13 +10,15 @@ let prev_url = "";
 
 import { vs_AI_spa_nav} from "./vs_AI";
 import { exported_stop_game_ft } from "./game-local-display_game";
-import { open_local1v1, open_local2v2, open_localTour } from "./game-local-pre_game";
+import { open_local1v1, open_local2v2, open_localTour, open_localxox } from "./game-local-pre_game";
 import { open_pong_modes } from "./pong_modes";
 import { open_settings_page } from "./settings";
 import { open_friend_page } from "./friends";
 import { open_playerstats_page } from "./player_stats";
 import { online_1v1_play } from "./game-online-1v1";
 import { WS } from "./class/WS";
+import { open_xox_modes } from "./xox_dashboard";
+import { xox_online_play } from "./game-online-xox";
 
 export function add_history(path : string)
 {
@@ -70,6 +72,11 @@ window.addEventListener("popstate", (event) => {
 	socket?.close();
 	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 
+	//cleanup ws-online-xox socket
+	const socket_xox = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-xox`);
+	socket_xox?.close();
+	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-xox`);
+
 	display_other_pages(event.state.page);
 });
 
@@ -95,6 +102,11 @@ function rmv_all_pgs_except_index()
 	const online_game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 	const online1v1_matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
 
+	const xox_popup  = document.querySelector<HTMLButtonElement>("#xox_dashboard_popup");
+	const xox_game_popup = document.querySelector<HTMLDivElement>("#xox_game_popup");
+	const registration_xox = document.querySelector<HTMLDivElement>("#localxox_registration");
+	const xox_matchmaking_popup = document.querySelector<HTMLDivElement>("#onlinexox_matchmaking_popup");
+
 
 	const exit_mm = document.querySelector<HTMLButtonElement>("#online1v1_exit_matchmaking");
 
@@ -103,7 +115,8 @@ function rmv_all_pgs_except_index()
 		|| !registration_tournament || !localTour_matchmaking_popup
 		|| !vs_AI_winner_popup
 		|| !playerstats_popup || !settings_popup
-		|| !online1v1_winner_popup || !online_game_popup || !online1v1_matchmaking_popup || !exit_mm)
+		|| !online1v1_winner_popup || !online_game_popup || !online1v1_matchmaking_popup || !exit_mm
+		|| !xox_popup || !xox_game_popup || !registration_xox || !xox_matchmaking_popup)
 		throw new Error("remove all pages elements not found");
 
 	pong_modes_popup.classList.add("hidden");
@@ -125,6 +138,11 @@ function rmv_all_pgs_except_index()
 
 	online1v1_winner_popup.classList.add("hidden");
 	online1v1_matchmaking_popup.classList.add("hidden");
+
+	xox_popup.classList.add("hidden");
+	xox_game_popup.classList.add("hidden");
+	registration_xox.classList.add("hidden");
+	xox_matchmaking_popup.classList.add("hidden");
 }
 
 function display_other_pages(path : string)
@@ -139,8 +157,6 @@ function display_other_pages(path : string)
 	if(!logout_button
 		|| !playerstats_popup || !settings_popup
 		|| !vs_AI_game_button) throw new Error("display othar pages elements not found");
-
-	console.log("PATH: ", path);
 
 	rmv_all_pgs_except_index();
 	
@@ -164,6 +180,12 @@ function display_other_pages(path : string)
 			online_1v1_play(); break;
 		case "/friends":
 			open_friend_page(); break;
+		case "/tic_tac_toe":
+			open_xox_modes(); break;
+		case "/tic_tac_toe/localgame":
+			open_localxox(); break;
+		case "/tic_tac_toe/onlinegame":
+			xox_online_play(); break;
 		case "login": 
 			logout_button.click(); break;
 	}

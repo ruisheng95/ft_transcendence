@@ -104,7 +104,6 @@ function cleanup_2v2_ui() {
 
 export function online_2v2_play()
 {
-
 	add_2v2_popups_to_dom();
 	handle_language_change(localStorage.getItem("current_language") || "english");
 

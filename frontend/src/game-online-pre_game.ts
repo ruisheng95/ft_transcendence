@@ -14,19 +14,16 @@ export function online_play_menus_setup()
 	if (!online_1v1_button || !online_2v2_button || !online_tournament_button)
 		throw new Error("online play menus stuff not found");
 
-	online_1v1_button.addEventListener("click", online1v1_button_ft);
+	online_1v1_button.addEventListener("click", () => {
+		add_history("/pong/online1v1");
+		online_1v1_play();
+	});
 
 	online_2v2_button.addEventListener("click", () => {
 		// online_play_menus_popup.classList.add("hidden"); moved to hide in online 2v2
 		online_2v2_play();
 		add_history("/pong/online2v2");
 	});
-}
-
-export function online1v1_button_ft()
-{
-	add_history("/pong/online1v1");
-	online_1v1_play();
 }
 
 export const online_play_menus_popup = `

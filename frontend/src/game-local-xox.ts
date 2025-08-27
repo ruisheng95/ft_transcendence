@@ -2,7 +2,7 @@
 import "./gamestyle.css";
 import { WS } from "./class/WS";
 import { removeAllEventListenersFromButton } from "./gameindex";
-import { add_history } from "./spa-navigation";
+import { click_xox_modes_button } from "./xox_dashboard";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -109,7 +109,7 @@ export function xox_game_setup()
 				const game_popup = document.querySelector<HTMLDivElement>("#xox_game_popup");
 				if (game_popup)
 					game_popup.classList.add("hidden");
-				add_history("/tic_tac_toe");
+				click_xox_modes_button();
 			});
 		}
 	}

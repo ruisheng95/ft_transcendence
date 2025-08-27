@@ -6,6 +6,7 @@ import { local_tour_game_popup, local_tour_game_setup } from "./game-local-tourn
 import { xox_game_popup, xox_game_setup } from "./game-local-xox";
 import { add_history } from "./spa-navigation";
 import { click_pong_modes_button } from "./pong_modes";
+import { click_xox_modes_button } from "./xox_dashboard";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -88,12 +89,8 @@ export function local_play_menus_setup()
 	});
 
 	local_xox_button.addEventListener("click", () => {
-		p1_name_xox.value = "";
-		p2_name_xox.value = "";
-		registration_xox.classList.remove("hidden");
-		const el = document.querySelector<HTMLDivElement>('[data-game="localxox"]');
-		el?.click();
-		add_history("localgame/tic_tac-toe");
+		open_localxox();
+		add_history("/tic_tac_toe/localgame");
 	})
 
 	close_1v1_registration.addEventListener("click", () => {
@@ -113,7 +110,7 @@ export function local_play_menus_setup()
 
 	close_xox_registration.addEventListener("click", () => {
 		registration_xox.classList.add("hidden");
-		add_history("localgame");
+		click_xox_modes_button();
 	});
 
 	local_1v1_game_setup();
@@ -171,6 +168,22 @@ export function open_localTour()
 	p3_name_input_tour.value = "";
 	p4_name_input_tour.value = "";
 	const el = document.querySelector<HTMLDivElement>('[data-game="localTour"]');
+	el?.click();
+}
+
+export function open_localxox()
+{
+	const p1_name_xox = document.querySelector<HTMLInputElement>("#localxox_name1_input");
+	const p2_name_xox = document.querySelector<HTMLInputElement>("#localxox_name2_input");
+	const registration_xox = document.querySelector<HTMLDivElement>("#localxox_registration");
+
+	if(!p1_name_xox || !p2_name_xox || !registration_xox)
+		throw new Error("open localxox elements not found");
+
+	p1_name_xox.value = "";
+	p2_name_xox.value = "";
+	registration_xox.classList.remove("hidden");
+	const el = document.querySelector<HTMLDivElement>('[data-game="localxox"]');
 	el?.click();
 }
 

@@ -19,17 +19,36 @@ export function xox_setup ()
 		throw new Error("Error pf_config stuff not found");
 
 	xox_button.addEventListener("click", () => {
-		hide_all_main_pages();
-		xox_popup.classList.remove("hidden");
-		xox_button.classList.add("bg-yellow-400");
-		xox_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
-		fetch_data();
-		add_history("tic_tac_toe");
+		open_xox_modes();
+		add_history("/tic_tac_toe");
 	});
 
 	xox_online_button.addEventListener("click", () => {
 		xox_online_play();
+		add_history("/tic_tac_toe/onlinegame");
 	});
+}
+
+export function open_xox_modes()
+{
+	const xox_button = document.querySelector<HTMLButtonElement>("#xox_button");
+	const xox_popup  = document.querySelector<HTMLButtonElement>("#xox_dashboard_popup");
+	const xox_online_button = document.querySelector<HTMLButtonElement>("#online_xox_button");
+
+	if(!xox_button || !xox_popup || !xox_online_button)
+		throw new Error("Error pf_config stuff not found");
+	
+	hide_all_main_pages();
+	xox_popup.classList.remove("hidden");
+	xox_button.classList.add("bg-yellow-400");
+	xox_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
+	fetch_data();
+}
+
+export function click_xox_modes_button()
+{
+	const xox_button = document.querySelector<HTMLButtonElement>("#xox_button");
+	xox_button?.click();
 }
 
 function resultStatus(status: number)
