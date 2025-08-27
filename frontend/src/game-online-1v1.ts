@@ -22,9 +22,6 @@ export function online_1v1_play()
 	el?.click();
 
 	game_obj.innerHTML = html`
-	<div id="online_game_buttons" class="flex gap-[400px] mb-[20px]">
-		<button id="online_game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Start game")}</button>
-	</div>
 	<div class="flex ">
 		<div class="flex flex-col space-y-2  mr-[20px]">
 			<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
@@ -53,7 +50,6 @@ export function online_1v1_play()
 	</div>
 	`;
 
-	const start_game_button = document.querySelector<HTMLButtonElement>("#online_game_start_game_button");
 	const board = document.querySelector<HTMLDivElement>("#online_game_board");
 	const rightplayer = document.querySelector<HTMLDivElement>("#online_game_rightplayer");
 	const leftplayer = document.querySelector<HTMLDivElement>("#online_game_leftplayer");
@@ -61,13 +57,11 @@ export function online_1v1_play()
 	const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 
 	//bruh stupid ts
-	if(!board || !rightplayer || !leftplayer || !ball || !start_game_button || !game_popup)
+	if(!board || !rightplayer || !leftplayer || !ball || !game_popup)
 		throw new Error("Required game elements not found 3");
 
 	//vars
-	let ball_len = 0, ballX = 0, ballY = 0, dy = 0, dx = 0,
-    boardHeight = 0, boardWidth = 0, board_border_width = 0,
-    block_height = 0, block_width = 0, player_speed = 0,
+	let ball_len = 0, ballX = 0, ballY = 0, board_border_width = 0, block_height = 0,
     rightplayerY = 0, leftplayerY = 0, player_indent = 0;
 
 	//playing status
@@ -81,38 +75,12 @@ export function online_1v1_play()
 	socket.addEventListener("message", process_msg_from_socket);
 	document.addEventListener('keydown', handleKeyDown);
 	document.addEventListener('keyup', handleKeyUp);
-	start_game_button.addEventListener("click", start_the_fkin_game)
 
 	function start_the_fkin_game()
-	{
-		//init the init game JSON obj
-		const config_obj = {
-
-			//type
-			type: "game_start",
-
-			//board stuff
-			boardHeight: boardHeight,
-			boardWidth: boardWidth,
-			board_border_width: board_border_width,
-
-			//player stuff
-			block_height: block_height,
-			block_width: block_width,
-			player_speed: player_speed,
-			player_indent: player_indent,
-
-			// Ball stuff
-			ball_len: ball_len,
-			ballX: ballX,
-			ballY: ballY,
-			dy: dy,
-			dx: dx,
-		};
-		
+	{	
 		//send the init JSON to backend
 		if (socket.readyState === WebSocket.OPEN)
-			socket.send(JSON.stringify(config_obj));
+			socket.send(JSON.stringify({type: "game_start"}));
 	}
 
 	function process_msg_from_socket(message: MessageEvent)
@@ -131,38 +99,19 @@ export function online_1v1_play()
 			if(playing == false)
 				return ;
 
-			//remove the start button
-			if (start_game_button)
-				start_game_button.classList.add("hidden");
-			// Send in this format:
-			// [ballX, ballY, leftPlayerY, rightPlayerY, speed_x, speed_y]
 			ballX = msg_obj.d[0];
 			ballY = msg_obj.d[1];
 			leftplayerY = msg_obj.d[2];
 			rightplayerY = msg_obj.d[3];
-			dx = msg_obj.d[4];
-			dy = msg_obj.d[5];
 			render_positions();
 		}
 		else if(msg_obj.type == "game_over")
 		{		
-			// //add back online1v1 button
-			// const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
-			// if(!online_1v1_button) throw new Error("online1v1 button not found");
-			// online_1v1_button.addEventListener("click", online1v1_button_ft);
-			// online_1v1_button.innerHTML = "Online";
-
 			optional_msg_div.innerHTML = "";
 			handle_game_end(msg_obj);
 		}
 		else if(msg_obj.type === "player_dced")
 		{		
-			// //add back online1v1 button
-			// const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
-			// if(!online_1v1_button) throw new Error("online1v1 button not found");
-			// online_1v1_button.addEventListener("click", online1v1_button_ft);
-			// online_1v1_button.innerHTML = "Online";
-
 			optional_msg_div.innerHTML = "Match terminated because a player has disconnected";
 			handle_game_end(msg_obj);
 		}
@@ -176,20 +125,10 @@ export function online_1v1_play()
 			ball_len = ball.clientWidth;
 			ballX = board.clientWidth / 2 - ball_len / 2 + 2;
 			ballY = board.clientHeight / 2 - ball_len / 2;
-			dy = 2;
-			dx = 2;
-
-			//board stuff
-			boardHeight = board.clientHeight;
-			boardWidth = board.clientWidth;
 			board_border_width = parseInt(getComputedStyle(board).borderLeftWidth);
-
-			//players settings
 			block_height = rightplayer.clientHeight;
-			block_width = rightplayer.clientWidth;
-			player_speed = 5;
-			rightplayerY = board.clientHeight / 2 - (block_height / 2);
-			leftplayerY = board.clientHeight / 2 - (block_height / 2);
+			rightplayerY = board.clientHeight / 2 - (block_height / 2) + board_border_width;
+			leftplayerY = board.clientHeight / 2 - (block_height / 2) + board_border_width;
 			player_indent = 20;
 		}
 	}
@@ -272,12 +211,11 @@ export function online_1v1_play()
 		else if(msg_obj.status === "Lobby full")
 		{
 			disable_back_navigation();
-			start_match_countdown(mm_status_div);
+			start_matchmaking_countdown(mm_status_div, msg_obj);
 			p1_name = players[0];
 			p2_name = players[1];
 			exit_mm.classList.add("hidden");
 		}
-
 
 		p1_name_div.innerHTML = p1_name;
 		p2_name_div.innerHTML = p2_name;
@@ -285,15 +223,16 @@ export function online_1v1_play()
 		matchmaking_popup.classList.remove("hidden");
 	}
 
-	function start_match_countdown(mm_status_div: HTMLDivElement)
+	function start_matchmaking_countdown(mm_status_div: HTMLDivElement, msg_obj : any)
 	{
 		const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
 		const p1_name_div = document.querySelector<HTMLDivElement>("#online_p1_name_display");
 		const p2_name_div = document.querySelector<HTMLDivElement>("#online_p2_name_display");
 		const map_input = document.querySelector<HTMLInputElement>("#input-map");
+		const game_countdown_div = document.querySelector<HTMLDivElement>("#online_game_countdown");
 
-		if(!game_popup || !matchmaking_popup || !p1_name_div || !p2_name_div || !map_input) throw new Error("start match countdown elements not found");
+		if(!game_countdown_div || !game_popup || !matchmaking_popup || !p1_name_div || !p2_name_div || !map_input) throw new Error("start match countdown elements not found");
 
 		let countdown = 3;
 
@@ -327,19 +266,63 @@ export function online_1v1_play()
 				init_positions();
 				render_positions();
 
-				// //blur out online1v1 button in case user exits
-				// const online_1v1_button = document.querySelector<HTMLButtonElement>("#online_1v1_button");
-				// if(!online_1v1_button) throw new Error("online1v1 button not found");
-				// online_1v1_button.removeEventListener("click", online1v1_button_ft);
-				// online_1v1_button.innerHTML = `${translate_text("match ongoing")}`;
-
 				// // Auto-click start button after 5 seconds
-				// setTimeout(() => {
-				// 	const start_game_button = document.querySelector<HTMLButtonElement>("#online_game_start_game_button");
-				// 	if (start_game_button && start_game_button.style.display !== "none")
-				// 		start_the_fkin_game();
-				// }, 5000);
+				setTimeout(() => {
+					const playersArr = JSON.parse(msg_obj.players);
+					if (playersArr[0] === localStorage.getItem("current_username"))
+						start_the_fkin_game();
+				}, 4000);
+
+				start_game_countdown(game_countdown_div);
 			}
+		}, 1000);
+	}
+
+	function start_game_countdown(game_countdown_div: HTMLDivElement)
+	{
+		let gameCountdown = 3;
+		
+		game_countdown_div.classList.remove("hidden");
+		game_countdown_div.innerHTML = `
+			<div class="absolute inset-0 flex items-center justify-center z-1">
+				<div class="text-8xl font-bold text-white animate-pulse">
+					${gameCountdown}
+				</div>
+			</div>
+		`;
+		
+		gameCountdown--;
+		
+		const gameInterval = setInterval(() => {
+			if (gameCountdown > 0)
+			{
+				game_countdown_div.innerHTML = `
+					<div class="absolute inset-0 flex items-center justify-center z-1">
+						<div class="text-8xl font-bold text-white animate-pulse">
+							${gameCountdown}
+						</div>
+					</div>
+				`;
+			}
+			else if (gameCountdown === 0)
+			{
+				game_countdown_div.innerHTML = `
+					<div class="absolute inset-0 flex items-center justify-center z-1">
+						<div class="text-8xl font-bold text-white animate-bounce">
+							GO!
+						</div>
+					</div>
+				`;
+			}
+			else
+			{
+				//hide countdown
+				clearInterval(gameInterval);
+				game_countdown_div.classList.add("hidden");
+				game_countdown_div.innerHTML = "";
+			}
+			
+			gameCountdown--;
 		}, 1000);
 	}
 
@@ -392,9 +375,7 @@ export function online_1v1_play()
 		//socket cleanup
 		socket.close();
 		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-		
-		if (start_game_button)
-			start_game_button.classList.remove("hidden");
+
 		playing = false;
 		
 		close_online_1v1_winner_popup_button.removeEventListener("click", close_online1v1_winner_popup_ft);
@@ -452,7 +433,7 @@ const online1v1_matchmaking_popup = html`
 		<div id="mm_status" class="text-4xl mt-10"></div>
 		
 		<!--Exit Button -->
-		<button id="online1v1_exit_matchmaking" class="absolute top-10 right-10 button-remove">
+		<button id="online1v1_exit_matchmaking" class="absolute top-10 right-10 w-6 h-6 bg-yellow-400 rounded flex items-center justify-center hover:bg-yellow-300">
 			<i class="fas fa-times text-black text-xl"></i>
 		</button>
 	</div>
@@ -504,6 +485,7 @@ export const online_game_popup = html`
 	<div id="online_game_popup" class="hidden bg-gray-950 bg-cover bg-center fixed inset-0">
 		<div class="bg-black/70 h-full flex flex-col justify-center items-center">
 			<div class="flex flex-col items-center bg-transparent text-white">
+				<div id="online_game_countdown"></div>
 				<div id="online_game_board_area"></div>
 				<div id="online_names" class="flex gap-[600px] mb-[16px]">
 					<div id="online_p1_name_display" class="text-red-500 text-[3vh] font-bold mr-[20px]"><h1>player1</h1></div>
