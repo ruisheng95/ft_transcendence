@@ -14,6 +14,9 @@ export function online_1v1_play()
 {
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 
+	const tournament_context = localStorage.getItem("tournament_context");
+	const gameMode = tournament_context ? "Tournament" : "1 vs 1";
+
 	const game_obj = document.querySelector<HTMLDivElement>("#online_game_board_area");
 	
 	if(!game_obj) throw new Error("Game obj not found");
@@ -184,6 +187,11 @@ export function online_1v1_play()
 
 		if(!exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
 
+		const gameModeSpan = matchmaking_popup.querySelector('section span:nth-child(2)');
+		if (gameModeSpan) {
+			gameModeSpan.textContent = gameMode;
+		}
+
 		const players = JSON.parse(msg_obj.players);
 		if(msg_obj.status === "Waiting for players")
 		{
@@ -326,7 +334,55 @@ export function online_1v1_play()
 		online1v1_winner_popup.classList.remove("hidden");
 		game_popup.classList.add("hidden");
 
-		//socket cleanup
+		// check if in tournament
+		const tournament_context = localStorage.getItem("tournament_context");
+		
+		if (tournament_context) {
+			const context = JSON.parse(tournament_context);
+			const tournament_socket = WS.getInstance(context.socket_url);
+			
+			let winner_email;
+			let loser_email;
+			
+			if (gameover_obj.winner_email && gameover_obj.loser_email) {
+				winner_email = gameover_obj.winner_email;
+				loser_email = gameover_obj.loser_email;
+			} else {
+				// just in case lol
+				console.log("Backend didn't provide emails");
+				const winner_name = gameover_obj.winner === "leftplayer" ? p1_name : p2_name;
+				
+				if (context.current_players.player1.name === winner_name) {
+					winner_email = context.current_players.player1.email;
+					loser_email = context.current_players.player2.email;
+				} else {
+					winner_email = context.current_players.player2.email;
+					loser_email = context.current_players.player1.email;
+				}
+			}
+			
+			if (tournament_socket.readyState === WebSocket.OPEN) {
+				tournament_socket.send(JSON.stringify({
+					type: "game_result",
+					tournament_id: context.tournament_id,
+					match_id: context.current_match_id,
+					winner_email: winner_email,
+					loser_email: loser_email
+				}));
+			} else {
+				// wait for socket to open then send the message
+				tournament_socket.addEventListener('open', () => {
+					tournament_socket.send(JSON.stringify({
+						type: "game_result",
+						tournament_id: context.tournament_id,
+						match_id: context.current_match_id,
+						winner_email: winner_email,
+						loser_email: loser_email
+					}));
+				}, { once: true }); // once: true - ensure the listener is removed after execution
+			}
+		}
+
 		socket.close();
 		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 
@@ -389,9 +445,23 @@ export function start_game_countdown(game_countdown_div: HTMLDivElement)
 		
 		gameCountdown--;
 	}, 1000);
+
+	// close_online_1v1_winner_popup_button.addEventListener("click", () => {
+	// 		online1v1_winner_popup.classList.add("hidden");
+			
+	// 		// check if in tournament
+	// 		const tournament_context = localStorage.getItem("tournament_context");
+	// 		if (tournament_context) {
+	// 			// return to tournament bracket
+	// 			add_history("/onlinegame");
+	// 		} else {
+	// 			// return to index
+	// 			add_history("");
+	// 		}
+	// 	})
 }
 
-const online1v1_matchmaking_popup = html`
+const online1v1_matchmaking_popup = (gameMode: string) => html`
 		<div id="online1v1_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
@@ -400,7 +470,7 @@ const online1v1_matchmaking_popup = html`
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4 mb-10">
 			<span id="online1v1_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
-			<span id="online1v1_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
+			<span id="online1v1_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">${gameMode}</span>
 			<span id="online1v1_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
@@ -481,9 +551,9 @@ const online_1v1_winner_popup = html`
 	</div>
 `
 
-export const online_game_popup = html`
+export const online_game_popup = (gameMode = "1 vs 1") => html`
 
-	${online1v1_matchmaking_popup}
+	${online1v1_matchmaking_popup(gameMode)}
 	<div id="online_game_popup" class="hidden bg-gray-950 bg-cover bg-center fixed inset-0">
 		<div class="bg-black/70 h-full flex flex-col justify-center items-center">
 			<div class="flex flex-col items-center bg-transparent text-white">

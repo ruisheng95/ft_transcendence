@@ -58,6 +58,30 @@ function insert_playerstats_and_history_main()
 			const total_matches = total_wins + total_loss;
 			const winrate = total_matches != 0 ? Math.round((total_wins / total_matches) * 100) : 0;
 			
+			function getOrdinalSuffix(num: number): string {
+				const j = num % 10;
+				if (j == 1) {
+					return "st";
+				}
+				if (j == 2) {
+					return "nd";
+				}
+				if (j == 3) {
+					return "rd";
+				}
+				return "th";
+			}
+
+			function getPlacementColor(placement: number): string {
+				switch(placement) {
+					case 1: return "text-yellow-400";
+					case 2: return "text-gray-300";
+					case 3: return "text-orange-400";
+					case 4: return "text-blue-400";
+					default: return "text-gray-400";
+				}
+			}
+
 			const rating_div = document.querySelector<HTMLDivElement>("#playerstats_rating");
 			const winstreak_div = document.querySelector<HTMLDivElement>("#playerstats_winstreak");
 			const total_matches_div = document.querySelector<HTMLDivElement>("#playerstats_total_matches");
@@ -93,38 +117,58 @@ function insert_playerstats_and_history_main()
 				{
 					const entry = msg_obj.history[i];
 					let user_result = '';
+					let result_color = '';
 					const username = localStorage.getItem("current_username");
-					
+					const isTournament = entry.match_type === "Tournament";
+
+					// tournament - show placement
+					// others - win/loss
 					if(entry.user1_name == username)
 					{
-						if(entry.user1_result == 1)
-							user_result = "Win";
-						else 
-							user_result = "Loss";
+						if(isTournament) {
+							const placement = entry.user1_result;
+							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+							result_color = getPlacementColor(placement);
+						} else {
+							user_result = entry.user1_result == 1 ? "Win" : "Loss";
+							result_color = entry.user1_result == 1 ? "text-green-500" : "text-red-500";
+						}
 					}
 
 					if(entry.user2_name == username)
 					{
-						if(entry.user2_result == 1)
-							user_result = "Win";
-						else 
-							user_result = "Loss";
+						if(isTournament) {
+							const placement = entry.user2_result;
+							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+							result_color = getPlacementColor(placement);
+						} else {
+							user_result = entry.user2_result == 1 ? "Win" : "Loss";
+							result_color = entry.user2_result == 1 ? "text-green-500" : "text-red-500";
+						}
 					}
 
 					if(entry.user3_name && entry.user3_name == username)
 					{
-						if(entry.user3_result == 1)
-							user_result = "Win";
-						else 
-							user_result = "Loss";
+						if(isTournament) {
+							const placement = entry.user3_result;
+							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+							result_color = getPlacementColor(placement);
+						} else {
+							user_result = entry.user3_result == 1 ? "Win" : "Loss";
+							result_color = entry.user3_result == 1 ? "text-green-500" : "text-red-500";
+						}
 					}
 					
 					if(entry.user4_name && entry.user4_name == username)
 					{
-						if(entry.user4_result == 1)
-							user_result = "Win";
-						else 
-							user_result = "Loss";
+						if(isTournament) {
+							const placement = entry.user4_result;
+							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+							result_color = getPlacementColor(placement);
+						} else {
+							user_result = entry.user4_result == 1 ? "Win" : "Loss";
+							result_color = entry.user4_result == 1 ? "text-green-500" : "text-red-500";
+						}
 					}
 					
 					history += `
@@ -152,7 +196,7 @@ function insert_playerstats_and_history_main()
 									<span class="tooltip-2">${entry.user4_name}</span>
 								</div>` : ""}
 							</div>
-							<span class="${user_result == "Win" ? "text-green-500" : "text-red-500"} font-semibold">${user_result}</span>
+							<span class="${result_color} font-semibold">${user_result}</span>
 						</div>`;
 				}
 			}

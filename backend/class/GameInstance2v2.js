@@ -364,7 +364,7 @@ export class GameInstance2v2 {
       .prepare("INSERT INTO PONG_MATCH (date, match_type, user1_email, user1_result, user2_email, user2_result, user3_email, user3_result, user4_email, user4_result) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
       .run(
         curr_date, 
-        "pong 2v2", 
+        "Pong 2v2", 
         winning_team_emails[0], 1, 
         winning_team_emails[1], 1, 
         losing_team_emails[0], 0,
