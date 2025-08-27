@@ -1,0 +1,9 @@
+# Alpine Linux with better_sqlite3 will encounter error
+# "fcntl64: symbol not found". It has something to do with the platform OS
+# using libc or glibc. Exclude the node_modules directory and separately 
+# run 'npm install' inside Alpine Linux
+node_modules/
+
+# Don't copy database file into image. Instead mount the database file
+# to persist to host
+data.db

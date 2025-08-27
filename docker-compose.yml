@@ -1,0 +1,21 @@
+networks:
+  trust_me_bro:
+
+services:
+  backend:
+    build: ./backend
+    image: ft-transcendence-backend
+    restart: always
+    networks:
+      - trust_me_bro
+    volumes:
+      - ./backend/data.db:/app/data.db:rw,z
+  frontend:
+    build: ./frontend
+    image: ft-transcendence-frontend
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    restart: always
+    networks:
+      - trust_me_bro
