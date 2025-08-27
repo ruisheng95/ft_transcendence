@@ -34,8 +34,101 @@ const root = async function (fastify) {
           add_friend(message_obj.name);
         else if (message_obj.type === "remove_friend_name")
           remove_friend(message_obj.name);
-        else if (message_obj.type === "logout") logout();
-		else if (message_obj.type === "get_playerstats") send_playerstats();
+        else if (message_obj.type === "logout") 
+          logout();
+		    else if (message_obj.type === "get_playerstats") 
+          send_playerstats();
+        else if (message_obj.type === "get_xoxstats")
+          send_xoxstats();
+      }
+
+    //   function add_xox_match(message_obj)
+    //   {
+    //       const email = fastify.get_email_by_session(request);
+
+    //       try {
+    //         const stmt = fastify.betterSqlite3.prepare(`
+    //         INSERT INTO XOX (left_email, left_result, right_email, right_result)
+    //         VALUES (?, ?, ?, ?, ?)
+    //       `);
+
+    //       stmt.run(
+              
+    //         );
+
+    //         const ret_obj = {
+    //             type: "add_xox_match_status",
+    //             status: "success",
+    //         };
+
+    //         connection.send(JSON.stringify(ret_obj));
+
+    //       } catch (err) {
+
+    //         console.error("DB Error:", err.message);
+    //         const ret_obj = {
+    //             type: "add_xox_match_status",
+    //             status: "success",
+    //         };
+
+    //         connection.send(JSON.stringify(ret_obj));
+    //       }
+          
+    //   }
+
+      function send_xoxstats()
+      {
+        const email = fastify.get_email_by_session(request);
+        const HISTORY = fastify.betterSqlite3
+          .prepare("SELECT date, left_email, left_result, right_email, right_result FROM XOX WHERE left_email = ? OR right_email = ?")
+          .all(email, email);
+        
+        function get_username(email)
+        {
+          const { USERNAME } = fastify.betterSqlite3
+          .prepare("SELECT USERNAME FROM USER WHERE EMAIL = ?")
+          .get(email);
+
+          return USERNAME;
+        }
+
+        let win = 0;
+        let lose = 0;
+        let tie = 0;
+        let total = 0;
+        let history = [];
+
+  
+        for (const entry of HISTORY) {
+
+          let create_history = {
+            date: entry.date,
+            left: get_username(entry.left_email),
+            right: get_username(entry.right_email),  
+          }
+
+            if ((entry.left_email == email &&  entry.left_result === 2) || (entry.right_email == email &&  entry.right_result === 2))
+            {
+              win++;
+              create_history["result"] = 2;
+            }
+            else if ((entry.left_email == email &&  entry.left_result === 1) || (entry.right_email == email &&  entry.right_result === 1))
+            {
+              lose++;
+              create_history["result"] = 1;
+
+            }
+            else
+                tie++;
+            total++;
+            history.push(create_history);                 
+        }
+    
+        const win_rate = Math.trunc((win / total) * 100) || 0;
+
+        const ret_obj = { type: "xoxstats_info",tie, total, win, lose, win_rate, history};
+        
+        connection.send(JSON.stringify(ret_obj));
       }
 
 	  function send_playerstats()

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./gamestyle.css";
-import { add_history } from "./spa-navigation";
+// import { add_prev_url_to_history } from "./spa-navigation";
+import { translate_text } from "./language";
+import { click_pong_modes_button } from "./pong_modes";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -72,7 +74,7 @@ export function local_2v2_game_setup()
 
 	close_local2v2_winner_popup.addEventListener("click", () => {
 		local2v2_winner_popup.classList.add("hidden");
-		add_history("");
+		click_pong_modes_button();
 	});
 }
 
@@ -81,7 +83,7 @@ const local2v2_winner_popup = html`
 		<div id="local2v2_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
 			<!-- Tournament Title -->
-			<h1 class="text-5xl font-bold text-center">Match Result</h1>	
+			<h1 id="local2v2_match_result_text" class="text-5xl font-bold text-center">Match Result</h1>	
 			
 			<!-- Result Layout -->
 			<section class="grid grid-cols-2 w-full place-items-center">
@@ -110,8 +112,8 @@ export const local_2v2_game_popup = html`
 		<div class="bg-black/70 h-full flex flex-col justify-center items-center text-white">
 			<div id="local_2v2_game_board_area"></div>
 			<div id="local2v2_player_names" class="flex gap-[600px] mb-[16px] mt-[20px]">
-				<div id="local2v2_team1_name_display" class="text-2xl font-bold"><h1>Team 1</h1></div>
-				<div id="local2v2_team2_name_display" class="text-2xl font-bold"><h1>Team 2</h1></div>
+				<div id="local2v2_team1_name_display" class="text-2xl font-bold"><h1>${translate_text("Team 1")}</h1></div>
+				<div id="local2v2_team2_name_display" class="text-2xl font-bold"><h1>${translate_text("Team 2")}</h1></div>
 			</div>
 		</div>
 	</div>
@@ -201,14 +203,14 @@ function local_2v2_game_init()
 
 	game_obj.innerHTML = `
 	<div id="local2v2_game_buttons" class="flex gap-[400px] mb-[20px] mt-[20px]">
-		<button id="close_local_2v2_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
-		<button id="local2v2_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
+		<button id="close_local_2v2_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Exit game")}</button>
+		<button id="local2v2_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Start game")}</button>
 	</div>
 
 	<div class="flex items-center">
 		<!-- Left side controls -->
 		<div class="flex flex-col space-y-4 mr-4">
-			<div class="text-white text-center mb-2">Team 1</div>
+			<div class="text-white text-center mb-2">${translate_text("Team 1")}</div>
 			<div class="flex flex-col space-y-2">
 				<div class="bg-red-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-red-500 text-white">W</div>
 				<div class="bg-red-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-red-500 text-white">S</div>
@@ -231,7 +233,7 @@ function local_2v2_game_init()
 
 		<!-- Right side controls -->
 		<div class="flex flex-col space-y-4 ml-4">
-			<div class="text-white text-center mb-2">Team 2</div>
+			<div class="text-white text-center mb-2">${translate_text("Team 2")}</div>
 			<div class="flex flex-col space-y-2">
 				<div class="bg-blue-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-blue-500 text-white">=</div>
 				<div class="bg-blue-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-blue-500 text-white">[</div>
@@ -273,6 +275,8 @@ function local_2v2_game_init()
 	close_local_2v2_game.addEventListener("click", () => {
 		playing = false;
 		local_2v2_game_popup.classList.add("hidden");
+		// add_prev_url_to_history();
+		click_pong_modes_button();
 	});
 
 	//functions
@@ -330,7 +334,7 @@ function local_2v2_game_init()
 				return;
 			playing = false;
 			if (start_game_button)
-				start_game_button.style.display = "block";
+				start_game_button.classList.remove("hidden");
 			local2v2_display_winner(msg_obj);
 		}
 	}
@@ -413,12 +417,12 @@ function local_2v2_game_init()
 		local2v2_right_name2.innerText = p4_name_input_element.value || "Player4";
 
 		if(gameover_obj.winner == "leftside") {
-			local2v2_left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
-			local2v2_right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			local2v2_left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
+			local2v2_right_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 		}
 		else {
-			local2v2_right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
-			local2v2_left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			local2v2_right_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
+			local2v2_left_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 		}
 		
 		local2v2_winner_popup.classList.remove("hidden");

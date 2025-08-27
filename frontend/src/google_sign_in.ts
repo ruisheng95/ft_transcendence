@@ -5,7 +5,7 @@ const google_sign_in = document.querySelector<HTMLButtonElement>("#google_sign_i
 if (!google_sign_in) throw new Error("board element not found");
 
 //setup stuffs
-const client_id = "313465714569-nq8gfim6in2iki8htj3t326vhbunl23a.apps.googleusercontent.com" //the client id is like to tell google wat is using the google sign-in feature (in this case my ft_transcendence project in google cloud)
+const client_id = import.meta.env.VITE_GOOGLE_SIGN_IN_API; //the client id is like to tell google wat is using the google sign-in feature (in this case my ft_transcendence project in google cloud)
 const uri = "http://localhost" // redirect link after auth
 
 

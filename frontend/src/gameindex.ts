@@ -16,6 +16,7 @@ import {friends_popup, friends_page_setup } from "./friends.ts";
 
 // import { local_play_game_setup, local_play_game_popup } from "./game.ts";
 import { vs_AI_game_setup, vs_AI_game_popup } from "./vs_AI.ts";
+import { xox_setup, xox_popup } from "./xox_dashboard.ts";
 
 import {local_play_menus_setup, local_play_menus_popup} from "./game-local-pre_game.ts"
 import { online_play_menus_setup, online_play_menus_popup} from "./game-online-pre_game.ts";
@@ -23,14 +24,13 @@ import { online_tour_game_popup } from "./game-online-tournament.ts";
 
 import { game_popup } from "./game-local-display_game.ts";
 import { online_game_popup } from "./game-online-1v1.ts";
-
-
-import { add_history } from "./spa-navigation.ts";
+import { onlinexox_popups } from "./game-online-xox.ts";
 
 import { WS } from "./class/WS.ts";
-import { pong_modes_popup, pong_modes_setup } from "./pong_modes.ts";
+import { click_pong_modes_button, pong_modes_popup, pong_modes_setup } from "./pong_modes.ts";
 
 import DOMPurify from 'dompurify';
+import { handle_language_change } from "./language.ts";
 
 export function index_init()
 {
@@ -86,8 +86,9 @@ export function index_init()
 
 	localStorage.setItem("current_username", player.username);
 	main_ft();
+	handle_language_change(`${localStorage.getItem("current_language")}`);
 
-	add_history(""); //temporarily add /gameindex.html/ to history cuz wanna have the popstate effect
+	click_pong_modes_button();
 	// socket.send(JSON.stringify({ type: "get_player_friends" })); //get friends list
 	}
 
@@ -139,19 +140,19 @@ export function index_init()
 				
 				<!-- Game Section -->
 				<div class="border-l border-gray-700 py-1 px-3">
-					<div class="text-sm tracking-widest mb-1">Game</div>
+					<div id = "header_game" class="text-sm tracking-widest mb-1">Game</div>
 					<div class="flex items-center space-x-2">
 
 						<!-- Pong -->
-						<button id="pong_modes_button" class="relative group px-3 py-2 rounded-lg bg-yellow-400">
+						<button id="pong_modes_button" class="relative group px-3 py-2 rounded-lg bg-yellow-400 flex items-center">
 							<i class="fas fa-table-tennis text-xl text-black"></i>
-							<span class="tooltip-1">Pong</span>
+							<span id="header_pong" class="tooltip-1">Pong</span>
 						</button>
 
 						<!-- XOX -->
-						<button class="relative group px-3 py-2 rounded-lg">
+						<button id="xox_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-th text-xl"></i>
-							<span class="tooltip-1">Tic-Tac-Toe</span>
+							<span id="header_tic_tac_toe" class="tooltip-1">Tic-Tac-Toe</span>
 						</button>
 
 					</div>
@@ -159,25 +160,25 @@ export function index_init()
 
 				<!-- Menu Selection -->
 				<div class="border-l border-gray-700 py-1 px-3">
-					<div class="text-sm tracking-widest mb-1">Menu</div>
+					<div id = "header_menu" class="text-sm tracking-widest mb-1">Menu</div>
 					<div class="flex items-center space-x-2">
 
 						<!-- Friends -->
-						<button id ="display_friends_page_button" class="relative group px-3 py-2 rounded-lg">
+						<button id ="display_friends_page_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-users text-xl"></i>
-							<span class="tooltip-1">Friends</span>
+							<span id="header_friends" class="tooltip-1">Friends</span>
 						</button>
 
 						<!-- Settings -->
-						<button id="settings_button" class="relative group px-3 py-2 rounded-lg">
+						<button id="settings_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-cog text-xl"></i>
-							<span class="tooltip-1">Settings</span>
+							<span id="header_settings" class="tooltip-1">Settings</span>
 						</button>
 
 						<!-- Logout -->
-						<button id="logout_button" class="relative group px-3 py-2 rounded-lg">
+						<button id="logout_button" class="relative group px-3 py-2 rounded-lg flex items-center">
 							<i class="fas fa-sign-out-alt text-xl"></i>
-							<span class="tooltip-1">Logout</span>
+							<span id="header_logout" class="tooltip-1">Logout</span>
 						</button>
 
 					</div>
@@ -190,13 +191,14 @@ export function index_init()
 
 
 	game.innerHTML = DOMPurify.sanitize(`
-		<div id = "screen" class = "h-screen bg-gray-950 overflow-hidden">
+		<div id = "screen" class = "h-screen bg-gray-950 overflow-auto">
 			${header_sec}
 			${pong_modes_popup}
 			${friends_popup}
 
 			${playerstats_popup}
 			${settings_popup}
+			${xox_popup}
 
 			${local_play_menus_popup}
 			${vs_AI_game_popup}
@@ -205,7 +207,7 @@ export function index_init()
 				
 			${game_popup}
 			${online_game_popup()}
-
+			${onlinexox_popups}
 			</div>
 		`);
 
@@ -213,12 +215,12 @@ export function index_init()
 	playerstats_setup();
 	settings_setup();
 
-
 	local_play_menus_setup();
 	online_play_menus_setup();
 	vs_AI_game_setup();
 
 	friends_page_setup();
+	xox_setup();
 
 	document
 		.querySelector<HTMLButtonElement>("#logout_button")
@@ -297,4 +299,11 @@ export function display_login_page()
 	login.classList.remove("hidden");
 	if(location.pathname != "/login")
 		history.pushState({ page: "login" }, "login", `/login`);
+}
+
+export function removeAllEventListenersFromButton(button: HTMLButtonElement): HTMLButtonElement
+{
+    const newButton = button.cloneNode(true) as HTMLButtonElement;
+    button.parentNode?.replaceChild(newButton, button);
+    return newButton;
 }

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import "./gamestyle.css";
 import { display_game } from "./game-local-display_game";
-import { add_history } from "./spa-navigation";
+import { translate_text } from "./language";
+import { click_pong_modes_button } from "./pong_modes";
 
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
@@ -58,7 +59,7 @@ export function local_1v1_game_setup()
 
 	close_local1v1_winner_popup.addEventListener("click", () => {
 		local1v1_winner_popup.classList.add("hidden");
-		add_history("");
+		click_pong_modes_button();
 	});
 }
 
@@ -67,7 +68,7 @@ const local1v1_winner_popup = html`
 		<div id="local1v1_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
 			<!-- Tournament Title -->
-			<h1 class="text-5xl font-bold text-center">Match Result</h1>	
+			<h1 id="local1v1_match_result_text" class="text-5xl font-bold text-center">Match Result</h1>	
 			
 			<!-- Result Layout -->
 			<section class="grid grid-cols-2 w-full place-items-center">
@@ -148,12 +149,12 @@ function local1v1_display_winner(gameover_obj : any)
 	local1v1_right_name.innerText = p2_name_input_element.value || "Player2";
 
 	if(gameover_obj.winner == "leftplayer") {
-		local1v1_left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
-		local1v1_right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+		local1v1_left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
+		local1v1_right_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 	}
 	else {
-		local1v1_right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
-		local1v1_left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+		local1v1_right_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
+		local1v1_left_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 	}
 
 	local1v1_winner_popup.classList.remove("hidden");

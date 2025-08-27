@@ -2,6 +2,7 @@ import "./gamestyle.css";
 import { online_1v1_play } from "./game-online-1v1";
 import { online_2v2_play } from "./game-online-2v2";
 import { online_tour_game_setup } from "./game-online-tournament";
+import { add_history } from "./spa-navigation";
 
 // online_play_menus	
 export function online_play_menus_setup()
@@ -17,12 +18,15 @@ export function online_play_menus_setup()
 		throw new Error("online play menus stuff not found");
 
 	online_1v1_button.addEventListener("click", () => {
-		// online_play_menus_popup.classList.add("hidden"); moved to hide in online 1v1
+		// clear tournament context for 1v1
+		localStorage.removeItem("tournament_context");
+		add_history("/pong/online1v1");
 		online_1v1_play();
 	});
 
 	online_2v2_button.addEventListener("click", () => {
 		online_2v2_play();
+		add_history("/pong/online2v2");
 	});
 
 	online_tournament_button.addEventListener("click", () => {

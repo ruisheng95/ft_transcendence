@@ -4,7 +4,7 @@ export const about_popup = `
 
 	<!-- Header -->
 	 <div class="bg-gray-950 text-white px-8 flex items-center justify-between">
-		<span class="text-3xl font-bold">About</span>
+		<span id="about_title" class="text-3xl font-bold">About</span>
 		<div class="flex items-center space-x-4">
 			<img class="h-20 object-cover" src="/42-KL.png" alt="42-KL">
 			<button id="close_about_button" class="text-white hover:text-red-400 transition-colors">
@@ -17,18 +17,18 @@ export const about_popup = `
 	<div class="py-16 px-32 grid grid-cols-12 gap-12 items-center">
 
 		<!-- Project Description -->
-		<div class="col-span-6 space-y-6 text-lg text-gray-700">
-			<p>
+		<div id ="about_body" class="col-span-6 space-y-6 text-lg text-gray-700">
+			<p id="about_body_p1">
 				Part of the 42 school curriculum, this project focuses on the design, 
 				development, and deployment of a full-stack web application.
 			</p>   
-			<p>
+			<p id="about_body_p2">
 				The application features a modern take on the classic 1970s Pong 
 				game. Players can compete in real-time matches with friends or 
 				sharpen their skills in practice mode against AI. Progress can be tracked 
 				through detailed analytics and game history.
 			</p>
-			<p>
+			<p id="about_body_p3">
 				Feeling bored or want a change of pace? Try out our secondary game: 
 				<br>Tic-Tac-Toe
 			</p>
@@ -38,7 +38,7 @@ export const about_popup = `
 		<div class="bg-white col-span-3 space-y-8 rounded-xl p-8 shadow-md shadow-gray-200">
 			<div>
 				<i class="fas fa-code text-2xl mr-4"></i>
-				<span class="text-2xl font-bold">Frontend</span>
+				<span id="about_frontend_text" class="text-2xl font-bold">Frontend</span>
 			</div>
 			<ul class="list-disc pl-5 space-y-2 text-gray-700">
 				<li>HTML5</li>
@@ -55,7 +55,7 @@ export const about_popup = `
 		<div class="bg-white col-span-3 space-y-8 rounded-xl p-8 shadow-md shadow-gray-200">
 			<div>
 				<i class="fas fa-server text-2xl mr-4"></i>
-				<span class="text-2xl font-bold">Backend</span>
+				<span id="about_backend_text" class="text-2xl font-bold">Backend</span>
 			</div>
 			<ul class="list-disc pl-5 space-y-2 text-gray-700">
 				<li>Node.js</li>
@@ -70,7 +70,7 @@ export const about_popup = `
 	</div>
 
 	<!-- Team Member ---------------------------------------------------------->
-	<div class="text-center text-3xl font-bold pb-10">Team members</div>
+	<div id="about_team_members_text" class="text-center text-3xl font-bold pb-10">Team members</div>
 	
 	<div class=" px-32 flex justify-center items-center gap-20">
 		<div class="flex flex-col text-center">

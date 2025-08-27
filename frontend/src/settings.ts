@@ -2,6 +2,7 @@ import { pf_config_popup, pf_config_setup } from "./config_profile";
 import { hide_all_main_pages } from "./pong_modes.ts";
 import { WS } from "./class/WS.ts";
 import { add_history } from "./spa-navigation.ts";
+import { handle_language_change, translate_text } from "./language.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -25,8 +26,9 @@ export function settings_setup ()
 	const error_display = document.querySelector<HTMLDivElement>("#show_error");
 	const header_pfp = document.querySelector<HTMLImageElement>("#header_img");
 	const header_name = document.querySelector<HTMLDivElement>("#header_name");
+	const language_radios = document.querySelectorAll<HTMLInputElement>('.radio-language');
 
-	if(!settings_popup || !error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_popup || !pfp_button || !input_pfp || !pfp_img_preview || !settings_button || !name_lock)
+	if(!language_radios || !settings_popup || !error_display || !header_pfp || !header_name || !name_input || !save_pf_config || !pf_config_popup || !pfp_button || !input_pfp || !pfp_img_preview || !settings_button || !name_lock)
 		throw new Error("Error pf_config stuff not found");
 
 	name_lock.addEventListener("click", () => {
@@ -39,16 +41,7 @@ export function settings_setup ()
 	});
 
 	settings_button.addEventListener("click", () => {
-		hide_all_main_pages();
-		settings_popup.classList.remove("hidden");
-		settings_button.classList.add("bg-yellow-400");
-		settings_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
-		error_display.innerText = "";
-		name_input.value = header_name.innerText;
-		pfp_img_preview.src = header_pfp.src;
-		name_input.disabled = false;
-		name_lock.click();
-
+		open_settings_page();
 		add_history("settings");
 	});
 
@@ -63,13 +56,13 @@ export function settings_setup ()
 		if(!valid_chars.includes(input_str[input_str.length - 1]))
 		{
 			error_display.classList.remove("hidden");
-			error_display.innerText = "Alphabets, numbers or '_' only";
+			error_display.innerText = translate_text("Alphabets, numbers or '_' only");
 			name_input.value = input_str.substring(0, input_str.length - 1);
 		}
-		else if(input_str.length > 30)
+		else if(input_str.length > 20)
 		{
 			error_display.classList.remove("hidden");
-			error_display.innerText = "Search too long";
+			error_display.innerText = translate_text("input name too long");
 			name_input.value = input_str.substring(0, input_str.length - 1);
 		}
 		else
@@ -95,7 +88,7 @@ export function settings_setup ()
 					header_pfp.src = response.pfp;
 			}
 			else
-				error_display.innerText = response.error_msg;
+				error_display.innerText = translate_text(response.error_msg);
 		}
 	});
 
@@ -162,13 +155,54 @@ export function settings_setup ()
 		add_history("");
 	});
 	
+	language_radios.forEach(radio => {
+        radio.addEventListener('change', (event) => {
+            const target = event.target as HTMLInputElement;
+            if (target.checked)
+                handle_language_change(target.value);
+        });
+    });
+
 	pf_config_setup();
 }
 
+export function open_settings_page()
+{
+	const settings_button = document.querySelector<HTMLButtonElement>("#settings_button");
+    const settings_popup  = document.querySelector<HTMLButtonElement>("#settings_popup");
+	const error_display = document.querySelector<HTMLDivElement>("#show_error");
+	const name_input = document.querySelector<HTMLInputElement>("#username_input");
+	const pfp_img_preview = document.querySelector<HTMLImageElement>("#avatar_img");
+	const name_lock = document.querySelector<HTMLInputElement>("#username_lock");
+	const header_pfp = document.querySelector<HTMLImageElement>("#header_img");
+	const header_name = document.querySelector<HTMLDivElement>("#header_name");
+
+	if(!settings_button || !settings_popup || !error_display || !name_input || !pfp_img_preview
+		|| !name_lock || !header_pfp || !header_name)
+		throw new Error("open settings page elements not found");
+
+	hide_all_main_pages();
+	settings_popup.classList.remove("hidden");
+	settings_button.classList.add("bg-yellow-400");
+	settings_button.querySelector<HTMLDivElement>("i")?.classList.add("text-black");
+	error_display.innerText = "";
+	name_input.value = header_name.innerText;
+	pfp_img_preview.src = header_pfp.src;
+	name_input.disabled = false;
+	name_lock.click();
+
+	//set the correct language radio button
+    const currentLanguage = localStorage.getItem("current_language") || "english";
+    const languageRadios = document.querySelectorAll<HTMLInputElement>('.radio-language');
+    
+    languageRadios.forEach(radio => {
+        radio.checked = (radio.value === currentLanguage);
+    });
+}
 
 export const settings_popup = html`
 
-	<div id="settings_popup" class="hidden h-[90vh] inter-font text-white">
+	<div id="settings_popup" class="hidden h-[90vh] inter-font text-white bg-gray-950">
 		
 		<!-- this id=pf_config_button used by others, will break if remove -->
 		<button id="pf_config_button" class="border hidden">Link to pf_config (original)</button>
@@ -181,7 +215,7 @@ export const settings_popup = html`
 				<!-- Subtitle -->
 				<div class="pl-4 space-x-3 mb-2">
 					<i class="fas fa-user text-4xl"></i>
-					<span class="text-2xl font-bold">Profile</span>
+					<span id="settings_profile_text" class="text-2xl font-bold">Profile</span>
 				</div>
 				
 				<!-- Config Setting -->
@@ -206,7 +240,7 @@ export const settings_popup = html`
 							class="bg-gray-300 w-full px-6 py-3 rounded-full text-center font-semibold outline-none focus:ring-2 focus:ring-yellow-400"
 							value="John Lennon" 
 							type="text"
-							maxlength="30"
+							maxlength="21"
 							id="username_input"
 							disabled
 							>
@@ -226,7 +260,7 @@ export const settings_popup = html`
 				<!-- Subtitle -->
 				<div class="pl-4 space-x-3 mb-2">
 					<i class="fas fa-language text-4xl"></i>
-					<span class="text-2xl font-bold">Language</span>
+					<span id="settings_language_text" class="text-2xl font-bold">Language</span>
 				</div>
 				
 				<!-- Config Setting -->
@@ -237,8 +271,7 @@ export const settings_popup = html`
 						<input class="radio-language"
 							type="radio"
 							name="language" 
-							value="english" 
-							checked >
+							value="english"  >
 						<span class="text-2xl">English</span>
 					</label>
 
@@ -257,8 +290,8 @@ export const settings_popup = html`
 						<input class="radio-language"
 							type="radio"
 							name="language" 
-							value="mandarin" >
-						<span class="text-2xl">普通话</span>
+							value="chinese" >
+						<span class="text-2xl">华语</span>
 					</label>
 
 				</div>

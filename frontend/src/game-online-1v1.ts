@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { add_history, disable_navigation, enable_navigation, terminate_history } from "./spa-navigation";
+import { disable_back_navigation, enable_back_navigation } from "./spa-navigation";
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
+import { removeAllEventListenersFromButton } from "./gameindex.ts";
+import { translate_text } from "./language.ts";
+import { click_pong_modes_button } from "./pong_modes.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -23,10 +26,6 @@ export function online_1v1_play()
 	el?.click();
 
 	game_obj.innerHTML = html`
-	<div id="online_game_buttons" class="flex gap-[400px] mb-[20px]">
-		<button id="online_close_game" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
-		<button id="online_game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
-	</div>
 	<div class="flex ">
 		<div class="flex flex-col space-y-2  mr-[20px]">
 			<div class="bg-white/20 w-12 h-12 flex items-center justify-center font-bold text-lg rounded-lg">
@@ -55,22 +54,18 @@ export function online_1v1_play()
 	</div>
 	`;
 
-	const start_game_button = document.querySelector<HTMLButtonElement>("#online_game_start_game_button");
 	const board = document.querySelector<HTMLDivElement>("#online_game_board");
 	const rightplayer = document.querySelector<HTMLDivElement>("#online_game_rightplayer");
 	const leftplayer = document.querySelector<HTMLDivElement>("#online_game_leftplayer");
 	const ball = document.querySelector<HTMLDivElement>("#online_game_ball");
-	const close_game_button = document.querySelector<HTMLButtonElement>("#online_close_game");
 	const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 
 	//bruh stupid ts
-	if(!board || !rightplayer || !leftplayer || !ball || !start_game_button || !close_game_button || !game_popup)
+	if(!board || !rightplayer || !leftplayer || !ball || !game_popup)
 		throw new Error("Required game elements not found 3");
 
 	//vars
-	let ball_len = 0, ballX = 0, ballY = 0, dy = 0, dx = 0,
-    boardHeight = 0, boardWidth = 0, board_border_width = 0,
-    block_height = 0, block_width = 0, player_speed = 0,
+	let ball_len = 0, ballX = 0, ballY = 0, board_border_width = 0, block_height = 0,
     rightplayerY = 0, leftplayerY = 0, player_indent = 0;
 
 	//playing status
@@ -84,59 +79,20 @@ export function online_1v1_play()
 	socket.addEventListener("message", process_msg_from_socket);
 	document.addEventListener('keydown', handleKeyDown);
 	document.addEventListener('keyup', handleKeyUp);
-	start_game_button.addEventListener("click", start_the_fkin_game)
-
-	close_game_button.addEventListener("click", () => {
-		game_popup.classList.add("hidden");
-		playing = false;
-		// check if in tournament
-		const tournament_context = localStorage.getItem("tournament_context");
-		if (tournament_context) {
-			// return to tournament page
-			socket.close();
-			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-			add_history("/onlinegame");
-		} else {
-			terminate_history();
-			socket.close();
-			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-		}
-	});
 
 	function start_the_fkin_game()
-	{
-		//init the init game JSON obj
-		const config_obj = {
-
-			//type
-			type: "game_start",
-
-			//board stuff
-			boardHeight: boardHeight,
-			boardWidth: boardWidth,
-			board_border_width: board_border_width,
-
-			//player stuff
-			block_height: block_height,
-			block_width: block_width,
-			player_speed: player_speed,
-			player_indent: player_indent,
-
-			// Ball stuff
-			ball_len: ball_len,
-			ballX: ballX,
-			ballY: ballY,
-			dy: dy,
-			dx: dx,
-		};
-		
+	{	
 		//send the init JSON to backend
 		if (socket.readyState === WebSocket.OPEN)
-			socket.send(JSON.stringify(config_obj));
+			socket.send(JSON.stringify({type: "game_start"}));
 	}
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
+		const optional_msg_div = document.querySelector<HTMLDivElement>("#online1v1_optional_msg");
+
+		if(!optional_msg_div) throw new Error("process msg socket elements not found");
+
 		console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
 			
@@ -147,30 +103,20 @@ export function online_1v1_play()
 			if(playing == false)
 				return ;
 
-			//remove the start button
-			if (start_game_button)
-				start_game_button.style.display = "none";
-			// Send in this format:
-			// [ballX, ballY, leftPlayerY, rightPlayerY, speed_x, speed_y]
 			ballX = msg_obj.d[0];
 			ballY = msg_obj.d[1];
 			leftplayerY = msg_obj.d[2];
 			rightplayerY = msg_obj.d[3];
-			dx = msg_obj.d[4];
-			dy = msg_obj.d[5];
 			render_positions();
 		}
 		else if(msg_obj.type == "game_over")
-		{
-			if(playing == false)
-			{
-				socket.close();
-				WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-				return;
-			}
-			if (start_game_button)
-				start_game_button.style.display = "block";
-			playing = false;
+		{		
+			optional_msg_div.innerHTML = "";
+			handle_game_end(msg_obj);
+		}
+		else if(msg_obj.type === "player_dced")
+		{		
+			optional_msg_div.innerHTML = translate_text("Match terminated because a player has disconnected");
 			handle_game_end(msg_obj);
 		}
 	}
@@ -183,20 +129,10 @@ export function online_1v1_play()
 			ball_len = ball.clientWidth;
 			ballX = board.clientWidth / 2 - ball_len / 2 + 2;
 			ballY = board.clientHeight / 2 - ball_len / 2;
-			dy = 2;
-			dx = 2;
-
-			//board stuff
-			boardHeight = board.clientHeight;
-			boardWidth = board.clientWidth;
 			board_border_width = parseInt(getComputedStyle(board).borderLeftWidth);
-
-			//players settings
 			block_height = rightplayer.clientHeight;
-			block_width = rightplayer.clientWidth;
-			player_speed = 5;
-			rightplayerY = board.clientHeight / 2 - (block_height / 2);
-			leftplayerY = board.clientHeight / 2 - (block_height / 2);
+			rightplayerY = board.clientHeight / 2 - (block_height / 2) + board_border_width;
+			leftplayerY = board.clientHeight / 2 - (block_height / 2) + board_border_width;
 			player_indent = 20;
 		}
 	}
@@ -247,7 +183,7 @@ export function online_1v1_play()
 		const p1_name_div = document.querySelector<HTMLDivElement>("#online_mm_p1_name");
 		const p2_name_div = document.querySelector<HTMLDivElement>("#online_mm_p2_name");
 		const mm_status_div = document.querySelector<HTMLDivElement>("#mm_status");
-		const exit_mm = document.querySelector<HTMLButtonElement>("#online1v1_exit_matchmaking");
+		let exit_mm = document.querySelector<HTMLButtonElement>("#online1v1_exit_matchmaking");
 
 		if(!exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
 
@@ -263,18 +199,19 @@ export function online_1v1_play()
 			
 			mm_status_div.innerHTML = `
 			<div class="flex justify-center">
-				<div>Searching for players</div>
+				<div>${translate_text("Searching for players")}</div>
 				<div class="animate-pulse [animation-delay:0ms]">.</div>
 				<div class="animate-pulse [animation-delay:300ms]">.</div>
 				<div class="animate-pulse [animation-delay:600ms]">.</div>
 			</div>
 			` //pulsing dots aniamtion lmaoo
 
+			exit_mm = removeAllEventListenersFromButton(exit_mm);
 			exit_mm.addEventListener("click", () => {
 				matchmaking_popup.classList.add("hidden");
 				socket.close();
 				WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-				add_history("");
+				click_pong_modes_button();
 			});
 
 			p1_name = players[0];
@@ -282,13 +219,13 @@ export function online_1v1_play()
 		}
 		else if(msg_obj.status === "Lobby full")
 		{
-			disable_navigation();
-			start_match_countdown(mm_status_div);
+			disable_back_navigation();
+			start_matchmaking_countdown(mm_status_div, msg_obj);
+			console.log(players);
 			p1_name = players[0];
 			p2_name = players[1];
 			exit_mm.classList.add("hidden");
 		}
-
 
 		p1_name_div.innerHTML = p1_name;
 		p2_name_div.innerHTML = p2_name;
@@ -296,23 +233,24 @@ export function online_1v1_play()
 		matchmaking_popup.classList.remove("hidden");
 	}
 
-	function start_match_countdown(mm_status_div: HTMLDivElement)
+	function start_matchmaking_countdown(mm_status_div: HTMLDivElement, msg_obj : any)
 	{
 		const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
 		const p1_name_div = document.querySelector<HTMLDivElement>("#online_p1_name_display");
 		const p2_name_div = document.querySelector<HTMLDivElement>("#online_p2_name_display");
 		const map_input = document.querySelector<HTMLInputElement>("#input-map");
+		const game_countdown_div = document.querySelector<HTMLDivElement>("#online_game_countdown");
 
-		if(!game_popup || !matchmaking_popup || !p1_name_div || !p2_name_div || !map_input) throw new Error("start match countdown elements not found");
+		if(!game_countdown_div || !game_popup || !matchmaking_popup || !p1_name_div || !p2_name_div || !map_input) throw new Error("start match countdown elements not found");
 
 		let countdown = 3;
 
 		//show initial countdown cuz setinterval starts one sec late
 		mm_status_div.innerHTML = `
 			<div class="flex flex-col items-center">
-				<div>Match found!</div>
-				<div>Match starting in ${countdown}</div>
+				<div>${translate_text("Match found!")}</div>
+				<div>${translate_text("Match starting in")} ${countdown}</div>
 			</div>
 			`;
 		countdown--;
@@ -320,8 +258,8 @@ export function online_1v1_play()
 		const interval = setInterval(() => {
 			mm_status_div.innerHTML = `
 			<div class="flex flex-col items-center">
-				<div>Match found!</div>
-				<div>Match starting in ${countdown}</div>
+				<div>${translate_text("Match found!")}</div>
+				<div>${translate_text("Match starting in")} ${countdown}</div>
 			</div>
 			`;
 			
@@ -337,9 +275,19 @@ export function online_1v1_play()
 				p2_name_div.innerHTML = p2_name;
 				init_positions();
 				render_positions();
+
+				//auto start after 4s
+				setTimeout(() => {
+					const playersArr = JSON.parse(msg_obj.players);
+					if (playersArr[0] === localStorage.getItem("current_username"))
+						start_the_fkin_game();
+				}, 4000);
+
+				start_game_countdown(game_countdown_div);
 			}
 		}, 1000);
 	}
+
 
 	function handle_game_end(gameover_obj : any)
 	{
@@ -360,23 +308,27 @@ export function online_1v1_play()
 		)
 			throw new Error("Online1v1 winner display elements not found");
 
-		enable_navigation();
+		
+		if(playing == false)
+				return;
+
+		enable_back_navigation();
 
 		online1v1_left_name.innerText = p1_name;
 		online1v1_right_name.innerText = p2_name;
 
 		if(gameover_obj.winner == "leftplayer") {
-			online1v1_left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			online1v1_left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
 			online1v1_left_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
 
-			online1v1_right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			online1v1_right_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 			online1v1_right_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
 		}
 		else {
-			online1v1_right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
+			online1v1_right_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
 			online1v1_right_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
 
-			online1v1_left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			online1v1_left_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 			online1v1_left_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
 		}
 
@@ -434,28 +386,87 @@ export function online_1v1_play()
 
 		socket.close();
 		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
+
+		playing = false;
 		
-		close_online_1v1_winner_popup_button.addEventListener("click", () => {
-			online1v1_winner_popup.classList.add("hidden");
-			
-			// check if in tournament
-			const tournament_context = localStorage.getItem("tournament_context");
-			if (tournament_context) {
-				// return to tournament bracket
-				add_history("/onlinegame");
-			} else {
-				// return to index
-				add_history("");
-			}
-		})
+		close_online_1v1_winner_popup_button.removeEventListener("click", close_online1v1_winner_popup_ft);
+		close_online_1v1_winner_popup_button.addEventListener("click", close_online1v1_winner_popup_ft);
+
+		function close_online1v1_winner_popup_ft()
+		{
+			online1v1_winner_popup?.classList.add("hidden");
+			click_pong_modes_button();
+		}
 	}
+}
+
+export function start_game_countdown(game_countdown_div: HTMLDivElement)
+{
+	let gameCountdown = 3;
+	
+	game_countdown_div.classList.remove("hidden");
+	game_countdown_div.innerHTML = `
+		<div class="absolute inset-0 flex items-center justify-center z-1">
+			<div class="text-8xl font-bold text-white animate-pulse">
+				${gameCountdown}
+			</div>
+		</div>
+	`;
+	
+	gameCountdown--;
+	
+	const gameInterval = setInterval(() => {
+		if (gameCountdown > 0)
+		{
+			game_countdown_div.innerHTML = `
+				<div class="absolute inset-0 flex items-center justify-center z-1">
+					<div class="text-8xl font-bold text-white animate-pulse">
+						${gameCountdown}
+					</div>
+				</div>
+			`;
+		}
+		else if (gameCountdown === 0)
+		{
+			game_countdown_div.innerHTML = `
+				<div class="absolute inset-0 flex items-center justify-center z-1">
+					<div class="text-8xl font-bold text-white animate-bounce">
+						GO!
+					</div>
+				</div>
+			`;
+		}
+		else
+		{
+			//hide countdown
+			clearInterval(gameInterval);
+			game_countdown_div.classList.add("hidden");
+			game_countdown_div.innerHTML = "";
+		}
+		
+		gameCountdown--;
+	}, 1000);
+
+	// close_online_1v1_winner_popup_button.addEventListener("click", () => {
+	// 		online1v1_winner_popup.classList.add("hidden");
+			
+	// 		// check if in tournament
+	// 		const tournament_context = localStorage.getItem("tournament_context");
+	// 		if (tournament_context) {
+	// 			// return to tournament bracket
+	// 			add_history("/onlinegame");
+	// 		} else {
+	// 			// return to index
+	// 			add_history("");
+	// 		}
+	// 	})
 }
 
 const online1v1_matchmaking_popup = (gameMode: string) => html`
 		<div id="online1v1_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-6 font-bold">Online Lobby</h1>
+		<h1 id="online1v1_title" class="text-4xl text-center mb-6 font-bold">Online Lobby</h1>
 
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4 mb-10">
@@ -466,8 +477,8 @@ const online1v1_matchmaking_popup = (gameMode: string) => html`
 		
 		<!-- Game Setting Header -->
 		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
-			<h2 class="text-2xl font-bold pb-2">Map Selection</h2>
-			<h2 class="text-2xl font-bold pb-2">Players</h2>
+			<h2 id="online1v1_header_text1" class="text-2xl font-bold pb-2">Map Selection</h2>
+			<h2 id="online1v1_header_text2" class="text-2xl font-bold pb-2">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->
@@ -475,7 +486,7 @@ const online1v1_matchmaking_popup = (gameMode: string) => html`
 		
 			<!-- Map Selection -->
 			<section class="grid grid-cols-2 gap-6 px-12">
-				<div data-map="" data-game="online1v1" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
+				<div id="online1v1_map_none" data-map="" data-game="online1v1" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
 				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
 				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
 				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
@@ -495,7 +506,7 @@ const online1v1_matchmaking_popup = (gameMode: string) => html`
 		<div id="mm_status" class="text-4xl mt-10"></div>
 		
 		<!--Exit Button -->
-		<button id="online1v1_exit_matchmaking" class="absolute top-10 right-10 button-remove">
+		<button id="online1v1_exit_matchmaking" class="absolute top-10 right-10 w-6 h-6 bg-yellow-400 rounded flex items-center justify-center hover:bg-yellow-300">
 			<i class="fas fa-times text-black text-xl"></i>
 		</button>
 	</div>
@@ -507,7 +518,7 @@ const online_1v1_winner_popup = html`
 		<div id="online_1v1_popup_screen" class="w-[70vw] h-[70vh] flex flex-col justify-between items-center">
 
 			<!-- Tournament Title -->
-			<h1 class="text-5xl font-bold text-center">Match Result</h1>	
+			<h1 id="online1v1_match_result_text" class="text-5xl font-bold text-center">Match Result</h1>	
 			
 			<!-- Result Layout -->
 			<section class="grid grid-cols-2 w-full place-items-center">
@@ -533,19 +544,21 @@ const online_1v1_winner_popup = html`
 					</div>
 				</div>
 			</section>
+			<div id="online1v1_optional_msg"></div>
 
 			<!-- Exit Game Button -->
 			<button id="close_online1v1_winner_popup" class="button-primary">Exit</button>
 		</div>
 	</div>
-`
+`;
 
-export const online_game_popup = (gameMode = "1 vs 1") => html`
+export const online_game_popup = (gameMode = "1 vs 1") => html `
 
 	${online1v1_matchmaking_popup(gameMode)}
 	<div id="online_game_popup" class="hidden bg-gray-950 bg-cover bg-center fixed inset-0">
 		<div class="bg-black/70 h-full flex flex-col justify-center items-center">
 			<div class="flex flex-col items-center bg-transparent text-white">
+				<div id="online_game_countdown"></div>
 				<div id="online_game_board_area"></div>
 				<div id="online_names" class="flex gap-[600px] mb-[16px]">
 					<div id="online_p1_name_display" class="text-red-500 text-[3vh] font-bold mr-[20px]"><h1>player1</h1></div>

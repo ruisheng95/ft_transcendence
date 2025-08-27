@@ -2,7 +2,6 @@
 
 import { online_1v1_play } from "./game-online-1v1";
 import { add_history } from "./spa-navigation";
-import { terminate_history } from "./spa-navigation";
 
 export function online_tour_manager()
 {
@@ -85,7 +84,6 @@ export function online_tour_manager()
 	exit_tournament_button.addEventListener("click", () => {
 		socket.close();
 		onlineTour_matchmaking_popup.classList.add("hidden");
-		terminate_history();
 	});
 
 	function process_msg_from_socket(message: MessageEvent)

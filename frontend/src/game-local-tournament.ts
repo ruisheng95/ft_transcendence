@@ -77,7 +77,7 @@ const localTour_matchmaking_popup = html`
 		<div id="localTour_matchmaking_popup_screen" class="w-full h-[80vh] flex flex-col justify-between items-center">
 
 			<div id="localTour_matchmaking_header" class="text-center mb-6">
-				<h1 class="text-5xl font-bold">Tournament Bracket</h1>
+				<h1 id="localTour_tournament_bracket_text" class="text-5xl font-bold">Tournament Bracket</h1>
 			</div>
 
 			<div class="flex justify-center w-full mb-8">
@@ -119,7 +119,7 @@ const localTour_matchmaking_popup = html`
 				<!-- loser bracket -->
 				<div class="h-30 border mx-6"></div>
 				<div class="flex flex-col items-center relative">
-					<div class="absolute text-xl -top-10">Loser's Bracket</div>
+					<div id="localTour_losers_bracket_text" class="absolute text-xl -top-10">Loser's Bracket</div>
 						<div class="flex items-center">
 							<div class="flex flex-col space-y-8">
 								<div id="localTour_loser1_bracket" class="border rounded-lg w-40 py-2 text-center">?</div>
@@ -136,7 +136,7 @@ const localTour_matchmaking_popup = html`
 
 			<!-- current battle -->
 			<div id="localTour_matchmaking_currentbattle" class="text-center bg-white/20 w-2/3 rounded-xl pt-6 pb-12">
-				<h1 class="text-2xl font-bold mb-10">Current Battle</h1>
+				<h1 id="localTour_current_battle_text" class="text-2xl font-bold mb-10">Current Battle</h1>
 				<section class="flex items-center justify-center">
 					<div id="localTour_p1_matchmaking_name" class="text-5xl font-bold"></div>
 					<div class="w-1/4 pixel-font text-5xl text-yellow-400">VS</div>
@@ -146,7 +146,7 @@ const localTour_matchmaking_popup = html`
 
 			<!-- rankings display -->
 			<div id="localTour_matchmaking_rankingdiv" class="hidden">
-				<h1 class="text-2xl border-b-2 pb-2">🏆 Final Rankings 🏆</h1>
+				<h1 id="localTour_final_rankings_text" class="text-2xl border-b-2 pb-2">🏆 Final Rankings 🏆</h1>
 				<div class="flex flex-col items-center my-8">
 					<div>
 					<div class="flex items-center gap-5 py-2">

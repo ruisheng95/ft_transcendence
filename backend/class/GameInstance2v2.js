@@ -16,6 +16,7 @@ export const defaultGameSetting2v2 = {
 export class GameInstance2v2 {
   #emailsArray = []; // [team1_player1, team1_player2, team2_player1, team2_player2]
   #fastify = null;
+  #clean_disconnect_flag = false; //ck added
   #connectionArray = [];
   #boardHeight = 0;
   #boardWidth = 0;
@@ -123,6 +124,7 @@ export class GameInstance2v2 {
       this.#ballX + this.#ball_len >= this.#boardWidth
     ) {
       // Game hit border, end game
+	  this.#clean_disconnect_flag = true;
       const winning_team = this.#ballX <= this.#ball_len / 2 ? "team2" : "team1";
       clearInterval(this.#game_interval_id);
       this.#sendJson({ type: MsgType.GAME_OVER, winner: winning_team });
@@ -293,6 +295,46 @@ export class GameInstance2v2 {
     this.#connectionArray.forEach((connection) => connection.close());
     this.#connectionArray.length = 0;
   }
+
+  handlePlayerDisconnected(disconnectedConnection) {
+	if(this.#clean_disconnect_flag === true)
+		return;
+
+	const playerIndex = this.#connectionArray.indexOf(disconnectedConnection);
+	if (playerIndex === -1) return;
+	
+	const disconnectedEmail = this.#emailsArray[playerIndex];
+	console.log(`Player ${disconnectedEmail} disconnected from 2v2 game`);
+	
+	let winning_team_emails = [];
+	let losing_team_emails = [];
+	let winner_team_name = "";
+	
+	if (playerIndex === 0 || playerIndex === 1)
+	{
+		winning_team_emails = [this.#emailsArray[2], this.#emailsArray[3]]; // Team 2 wins
+		losing_team_emails = [this.#emailsArray[0], this.#emailsArray[1]];  // Team 1 loses
+		winner_team_name = "team2";
+	}
+	else
+	{
+		winning_team_emails = [this.#emailsArray[0], this.#emailsArray[1]]; // Team 1 wins
+		losing_team_emails = [this.#emailsArray[2], this.#emailsArray[3]];  // Team 2 loses
+		winner_team_name = "team1";
+	}
+	
+	// Update team stats using the same method as normal game end
+	this.#update_team_stats_aftergame(winning_team_emails, losing_team_emails);
+	
+	// Notify all players about the disconnection and winner
+	this.#sendJson({
+		type: "player_dced", 
+		winner: winner_team_name,
+		disconnected_player: disconnectedEmail
+	});
+	
+	this.stopGame();
+	}
 
   isGamePlayer(connection) {
     const found = this.#connectionArray.some((conn) => conn === connection);

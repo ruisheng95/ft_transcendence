@@ -3,7 +3,10 @@ import "./gamestyle.css";
 import { local_1v1_game_popup, local_1v1_game_setup } from "./game-local-1v1";
 import { local_2v2_game_popup, local_2v2_game_setup } from "./game-local-2v2";
 import { local_tour_game_popup, local_tour_game_setup } from "./game-local-tournament";
+import { xox_game_popup, xox_game_setup } from "./game-local-xox";
 import { add_history } from "./spa-navigation";
+import { click_pong_modes_button } from "./pong_modes";
+import { click_xox_modes_button } from "./xox_dashboard";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -15,12 +18,18 @@ export function local_play_menus_setup()
 	const local_1v1_button = document.querySelector<HTMLButtonElement>("#local_1v1_button");
 	const local_2v2_button = document.querySelector<HTMLButtonElement>("#local_2v2_button");
 	const local_tournament_button = document.querySelector<HTMLButtonElement>("#local_tournament_button");
+	const local_xox_button = document.querySelector<HTMLButtonElement>("#local_xox_button");
+
  	const registration_1v1 = document.querySelector<HTMLDivElement>("#local1v1_registration");
 	const registration_2v2 = document.querySelector<HTMLDivElement>("#local2v2_registration");
 	const registration_tournament = document.querySelector<HTMLDivElement>("#localTour_registration");
+	const registration_xox = document.querySelector<HTMLDivElement>("#localxox_registration");
+
 	const close_1v1_registration = document.querySelector<HTMLButtonElement>("#close_1v1_registration");
 	const close_2v2_registration = document.querySelector<HTMLButtonElement>("#close_2v2_registration");
 	const close_tournament_registration = document.querySelector<HTMLButtonElement>("#close_tournament_registration");
+	const close_xox_registration = document.querySelector<HTMLButtonElement>("#close_xox_registration");
+
 	const all_maps = document.querySelectorAll<HTMLButtonElement>(".mapselect-logic");
 	const map_input = document.querySelector<HTMLInputElement>("#input-map");
 
@@ -37,16 +46,21 @@ export function local_play_menus_setup()
 	const p3_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p3_name_input");
 	const p4_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p4_name_input");
 
+	const p1_name_xox = document.querySelector<HTMLInputElement>("#localxox_name1_input");
+	const p2_name_xox = document.querySelector<HTMLInputElement>("#localxox_name2_input");
+
 	if (!local_1v1_button || !local_2v2_button || !local_tournament_button || !registration_1v1 || 
 		!registration_2v2 || !registration_tournament || !close_1v1_registration || !close_2v2_registration || 
 		!close_tournament_registration || !all_maps || !map_input || !p1_name_input || !p2_name_input ||
 		!p1_name_input_tour || !p2_name_input_tour || !p3_name_input_tour || !p4_name_input_tour ||
-		!p1_name_input_2v2 || !p2_name_input_2v2 || !p3_name_input_2v2 || !p4_name_input_2v2)
+		!p1_name_input_2v2 || !p2_name_input_2v2 || !p3_name_input_2v2 || !p4_name_input_2v2 ||
+		!local_xox_button || !registration_xox || !close_xox_registration || !p1_name_xox || !p2_name_xox
+	)
 		throw new Error("some navigation stuff not found");
-	
+
+	//init ALL maps
 	all_maps.forEach(map => {
 		map.addEventListener("click", () => {
-
 			all_maps.forEach(m => {
 				m.classList.add("grayscale");
 				m.classList.remove("border-yellow-400", "shadow-md");
@@ -60,54 +74,117 @@ export function local_play_menus_setup()
 	})
 
 	local_1v1_button.addEventListener("click", () => {
-		registration_1v1.classList.remove("hidden");
-		p1_name_input.value = "";
-		p2_name_input.value = "";
-		const el = document.querySelector<HTMLDivElement>('[data-game="local1v1"]');
-		el?.click();
-		add_history("localgame/1v1");
+		open_local1v1();
+		add_history("/pong/local1v1");
 	});
 
 	local_2v2_button.addEventListener("click", () => {
-		registration_2v2.classList.remove("hidden");
-		p1_name_input_2v2.value = "";
-		p2_name_input_2v2.value = "";
-		p3_name_input_2v2.value = "";
-		p4_name_input_2v2.value = "";
-		const el = document.querySelector<HTMLDivElement>('[data-game="local2v2"]');
-		el?.click();
-		add_history("localgame/2v2");
+		open_local2v2();
+		add_history("/pong/local2v2");
 	});
 
 	local_tournament_button.addEventListener("click", () => {
-		registration_tournament.classList.remove("hidden");
-		p1_name_input_tour.value = "";
-		p2_name_input_tour.value = "";
-		p3_name_input_tour.value = "";
-		p4_name_input_tour.value = "";
-		const el = document.querySelector<HTMLDivElement>('[data-game="localTour"]');
-		el?.click();
-		add_history("localgame/tournament");
+		open_localTour();
+		add_history("/pong/localtournament");
 	});
+
+	local_xox_button.addEventListener("click", () => {
+		open_localxox();
+		add_history("/tic_tac_toe/localgame");
+	})
 
 	close_1v1_registration.addEventListener("click", () => {
 		registration_1v1.classList.add("hidden");
-		add_history("localgame");
+		click_pong_modes_button();
 	});
 
 	close_2v2_registration.addEventListener("click", () => {
 		registration_2v2.classList.add("hidden");
-		add_history("localgame");
+		click_pong_modes_button();
 	});
 
 	close_tournament_registration.addEventListener("click", () => {
 		registration_tournament.classList.add("hidden");
-		add_history("localgame");
+		click_pong_modes_button();
+	});
+
+	close_xox_registration.addEventListener("click", () => {
+		registration_xox.classList.add("hidden");
+		click_xox_modes_button();
 	});
 
 	local_1v1_game_setup();
 	local_2v2_game_setup();
 	local_tour_game_setup();
+	xox_game_setup();
+}
+
+export function open_local1v1()
+{
+	const registration_1v1 = document.querySelector<HTMLDivElement>("#local1v1_registration");
+	const p1_name_input = document.querySelector<HTMLInputElement>("#local1v1_p1_name_input");
+	const p2_name_input = document.querySelector<HTMLInputElement>("#local1v1_p2_name_input");
+
+	if(!registration_1v1 || !p1_name_input || !p2_name_input) throw new Error("open local1v1 elements not found");
+	registration_1v1.classList.remove("hidden");
+	p1_name_input.value = "";
+	p2_name_input.value = "";
+	const el = document.querySelector<HTMLDivElement>('[data-game="local1v1"]');
+	el?.click();
+}
+
+export function open_local2v2()
+{
+	const registration_2v2 = document.querySelector<HTMLDivElement>("#local2v2_registration");
+	const p1_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p1_name_input");
+	const p2_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p2_name_input");
+	const p3_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p3_name_input");
+	const p4_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p4_name_input");
+
+	if(!registration_2v2 || !p1_name_input_2v2 || !p2_name_input_2v2 || !p3_name_input_2v2 || !p4_name_input_2v2) throw new Error("open local2v2 elements not found");
+	
+	registration_2v2.classList.remove("hidden");
+	p1_name_input_2v2.value = "";
+	p2_name_input_2v2.value = "";
+	p3_name_input_2v2.value = "";
+	p4_name_input_2v2.value = "";
+	const el = document.querySelector<HTMLDivElement>('[data-game="local2v2"]');
+	el?.click();
+}
+
+export function open_localTour()
+{
+	const registration_tournament = document.querySelector<HTMLDivElement>("#localTour_registration");
+	const p1_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p1_name_input");
+	const p2_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p2_name_input");
+	const p3_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p3_name_input");
+	const p4_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p4_name_input");
+
+	if(!registration_tournament || !p1_name_input_tour || !p2_name_input_tour || !p3_name_input_tour || !p4_name_input_tour) throw new Error("open localTour elements not found");
+
+	registration_tournament.classList.remove("hidden");
+	p1_name_input_tour.value = "";
+	p2_name_input_tour.value = "";
+	p3_name_input_tour.value = "";
+	p4_name_input_tour.value = "";
+	const el = document.querySelector<HTMLDivElement>('[data-game="localTour"]');
+	el?.click();
+}
+
+export function open_localxox()
+{
+	const p1_name_xox = document.querySelector<HTMLInputElement>("#localxox_name1_input");
+	const p2_name_xox = document.querySelector<HTMLInputElement>("#localxox_name2_input");
+	const registration_xox = document.querySelector<HTMLDivElement>("#localxox_registration");
+
+	if(!p1_name_xox || !p2_name_xox || !registration_xox)
+		throw new Error("open localxox elements not found");
+
+	p1_name_xox.value = "";
+	p2_name_xox.value = "";
+	registration_xox.classList.remove("hidden");
+	const el = document.querySelector<HTMLDivElement>('[data-game="localxox"]');
+	el?.click();
 }
 
 // export const local_play_menus_popup = `
@@ -235,19 +312,19 @@ const local1v1_Registration = html`
 	<div id="local1v1_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
+		<h1 id="local1v1_title" class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
 
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4">
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
+			<span id="local1v1_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
+			<span id="local1v1_gameinfo_text2"class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
+			<span id="local1v1_gameinfo_text3"class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
 		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
-			<h2 class="text-2xl font-bold">Map Selection</h2>
-			<h2 class="text-2xl font-bold">Players</h2>
+			<h2 id="local1v1_header_text1" class="text-2xl font-bold">Map Selection</h2>
+			<h2 id="local1v1_header_text2" class="text-2xl font-bold">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->
@@ -255,7 +332,7 @@ const local1v1_Registration = html`
 		
 			<!-- Map Selection -->
 			<section class="grid grid-cols-2 gap-6 px-12">
-				<div data-map="" data-game="local1v1" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
+				<div id="local1v1_map_none" data-map="" data-game="local1v1" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
 				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
 				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
 				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
@@ -281,8 +358,9 @@ const local1v1_Registration = html`
 
 		<!-- Start Button -->
 		<div class="flex justify-center">
-			<button id="local_1v1_start_button" class="button-primary">
-				<i class="fas fa-play mr-4"></i>Start Match
+			<button id="local_1v1_start_button" class="button-primary flex items-center">
+				<i class="fas fa-play mr-4"></i>
+				<div id="local1v1_startmatch_text">Start Match</div>
 			</button>
 		</div>
 		
@@ -297,19 +375,19 @@ const localTour_Registration = html`
 	<div id="localTour_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
+		<h1 id="localTour_title" class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
 
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4">
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Tournament</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">4 Players</span>
+			<span id="localTour_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
+			<span id="localTour_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">Tournament</span>
+			<span id="localTour_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">4 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
 		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
-			<h2 class="text-2xl font-bold">Map Selection</h2>
-			<h2 class="text-2xl font-bold">Players</h2>
+			<h2 id="localTour_header_text1" class="text-2xl font-bold">Map Selection</h2>
+			<h2 id="localTour_header_text2" class="text-2xl font-bold">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->
@@ -317,7 +395,7 @@ const localTour_Registration = html`
 		
 			<!-- Map Selection -->
 			<section class="grid grid-cols-2 gap-6 px-12">
-				<div data-map="" data-game="localTour" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
+				<div data-map="" data-game="localTour" id="localTour_map_none" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
 				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
 				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
 				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
@@ -353,8 +431,9 @@ const localTour_Registration = html`
 
 		<!-- Start Button -->
 		<div class="flex justify-center">
-			<button id="local_tour_main_start_button" class="button-primary">
-				<i class="fas fa-play mr-4"></i>Start Match
+			<button id="local_tour_main_start_button" class="button-primary flex items-center">
+				<i class="fas fa-play mr-4"></i>
+				<div id="localTour_startmatch_text">Start Match</div>
 			</button>
 		</div>
 		
@@ -369,19 +448,19 @@ const local2v2_Registration = html`
 	<div id="local2v2_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
-		<h1 class="text-4xl text-center mb-b font-bold">Match Registration</h1>
+		<h1 id="local2v2_title" class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
 
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4">
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 vs 2</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">4 Players</span>
+			<span id="local2v2_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
+			<span id="local2v2_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 vs 2</span>
+			<span id="local2v2_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">4 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
 		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
-			<h2 class="text-2xl font-bold">Map Selection</h2>
-			<h2 class="text-2xl font-bold">Players</h2>
+			<h2 id="local2v2_header_text1" class="text-2xl font-bold">Map Selection</h2>
+			<h2 id="local2v2_header_text2" class="text-2xl font-bold">Players</h2>
 		</header>
 
 		<!-- Game Setting Details -->
@@ -389,7 +468,7 @@ const local2v2_Registration = html`
 		
 			<!-- Map Selection -->
 			<section class="grid grid-cols-2 gap-6 px-12">
-				<div data-map="" data-game="local2v2" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
+				<div data-map="" data-game="local2v2" id="local2v2_map_none" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
 				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
 				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
 				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
@@ -425,13 +504,77 @@ const local2v2_Registration = html`
 
 		<!-- Start Button -->
 		<div class="flex justify-center">
-			<button id="local_2v2_start_button" class="button-primary">
-				<i class="fas fa-play mr-4"></i>Start Match
+			<button id="local_2v2_start_button" class="button-primary flex items-center">
+				<i class="fas fa-play mr-4"></i>
+				<div id="local2v2_startmatch_text">Start Match</div>
 			</button>
 		</div>
 		
 		<!--Exit Button -->
 		<button id="close_2v2_registration" class="absolute top-10 right-10 button-remove">
+			<i class="fas fa-times text-black text-xl"></i>
+		</button>
+	</div>
+`;
+
+const localxox_Registration = html`
+	<div id="localxox_registration" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
+		
+		<!--Title -->
+		<h1 id="localxox_registration_title" class="text-4xl text-center mb-6 font-bold">Match Registration</h1>
+
+		<!-- Game Information -->
+		<section class="flex items-center justify-center space-x-4">
+			<span id="localxox_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Local Play</span>
+			<span id="localxox_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">Tic-Tac-Toe</span>
+			<span id="localxox_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
+		</section>
+		
+		<!-- Game Setting Header -->
+		<header class="grid grid-cols-[3fr_2fr] gap-10 text-center">
+			<h2 id="localxox_header_text1" class="text-2xl font-bold">Map Selection</h2>
+			<h2 id="localxox_header_text2" class="text-2xl font-bold">Players</h2>
+		</header>
+
+		<!-- Game Setting Details -->
+		<main class="grid grid-cols-[3fr_2fr] gap-10 place-items-center mb-10">
+		
+			<!-- Map Selection -->
+			<section class="grid grid-cols-2 gap-6 px-12">
+				<div id="localxox_map_none" data-map="" data-game="localxox" class="mapselect-logic text-2xl flex items-center justify-center select-map">None</div>
+				<img data-map="url('/map-1.avif')" class="mapselect-logic object-cover select-map" src="/map-1.avif" alt="map">
+				<img data-map="url('/map-2.avif')" class="mapselect-logic object-cover select-map" src="/map-2.avif" alt="map">
+				<img data-map="url('/map-3.png')" class="mapselect-logic object-cover select-map" src="/map-3.png" alt="map">
+			</section>
+
+			<!-- Player List -->
+			<section class="px-12 space-y-6 text-black">
+				<input class="w-full bg-white text-lg focus:outline-none rounded-full px-10 py-4"
+					type="text" 
+					placeholder="Player Name"
+					id="localxox_name1_input" 
+					maxlength="24">
+				<input class="w-full bg-white text-lg focus:outline-none rounded-full px-10 py-4"
+					type="text"
+					id="localxox_name2_input"
+					placeholder="Player Name" 
+					maxlength="24">
+
+				<!-- Error Message -->
+				<div id="localxox_error_msg" class="h-8 err-msg text-center"></div>
+			</section>
+		</main>
+
+		<!-- Start Button -->
+		<div class="flex justify-center">
+			<button id="localxox_start" class="button-primary">
+				<i class="fas fa-play mr-4"></i>
+				<span id="localxox_startmatch_text">Start Match</span>
+			</button>
+		</div>
+		
+		<!--Exit Button -->
+		<button id="close_xox_registration" class="absolute top-10 right-10 button-remove">
 			<i class="fas fa-times text-black text-xl"></i>
 		</button>
 	</div>
@@ -444,8 +587,10 @@ export const local_play_menus_popup = html`
 	${local1v1_Registration}
 	${local2v2_Registration}
 	${localTour_Registration}
+	${localxox_Registration}
 
 	${local_1v1_game_popup}
 	${local_2v2_game_popup}
 	${local_tour_game_popup}
+	${xox_game_popup}
 `;

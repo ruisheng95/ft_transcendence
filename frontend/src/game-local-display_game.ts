@@ -1,7 +1,10 @@
 // => void means return value is void
 //AI flag is optional arg wif default value set as false
 
-import { terminate_history } from "./spa-navigation";
+// import { add_prev_url_to_history } from "./spa-navigation";
+import { translate_text } from "./language";
+import { click_pong_modes_button } from "./pong_modes";
+
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 let stop_game_ft = () => {};
@@ -53,8 +56,8 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 
 	game_obj.innerHTML = html`
 	<div id="game_buttons" class="flex gap-[400px] mb-[20px]">
-		<button id="close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Exit game</button>
-		<button id="game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">Start game</button>
+		<button id="close_game" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Exit game")}</button>
+		<button id="game_start_game_button" type="button" class="text-white text-[20px] border border-white px-[10px] py-[5px]">${translate_text("Start game")}</button>
 	</div>
 
 	<div class="flex">
@@ -104,10 +107,11 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	document.addEventListener('keyup', handleKeyUp);
 	start_game_button.addEventListener("click", start_the_fkin_game);
 	close_game_button.addEventListener("click", () => {
-			game_popup.classList.add("hidden");
-			start_game_button.classList.remove("hidden");
-			playing = false;
-			terminate_history();
+		game_popup.classList.add("hidden");
+		start_game_button.classList.remove("hidden");
+		playing = false;
+		// add_prev_url_to_history();
+		click_pong_modes_button();
 		});
 
 	// AI STUFF
@@ -250,7 +254,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 			if (playing == false)
 				return;
 			
-			if(Math.random() < 0.95) //simulate human distractions lol and slow reaction
+			if(Math.random() < 0.92) //simulate human distractions lol and slow reaction
 				return;
 
 			const paddle_center = rightplayerY + block_height / 2;

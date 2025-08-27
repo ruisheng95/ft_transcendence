@@ -1,6 +1,7 @@
 import { add_history } from "./spa-navigation";
 import { WS } from "./class/WS";
-
+import { translate_text } from "./language";
+import { click_pong_modes_button } from "./pong_modes";
 //player stats
 export function playerstats_setup ()
 {
@@ -14,16 +15,27 @@ export function playerstats_setup ()
 		throw new Error("Error playerstats buttons not found");
 
 	playerstats_button.addEventListener("click", () => {
-		playerstats_popup.classList.remove("hidden");
-		pong_modes_popup.classList.add("hidden");
-		insert_playerstats_and_history_main();
-		add_history("playerstats");
+		open_playerstats_page();
+		add_history("/playerstats");
 	});
 
 	close_playerstats.addEventListener("click", () => {
 		playerstats_popup.classList.add("hidden");
 		pong_modes_popup.classList.remove("hidden");
+		click_pong_modes_button();
 	});
+}
+
+export function open_playerstats_page()
+{
+	const playerstats_popup = document.querySelector<HTMLButtonElement>("#playerstats_popup");
+	const pong_modes_popup = document.querySelector<HTMLDivElement>("#pong_modes_popup");
+
+	if(!playerstats_popup || !pong_modes_popup) throw new Error("open playerstats page elements not found");
+
+	playerstats_popup.classList.remove("hidden");
+	pong_modes_popup.classList.add("hidden");
+	insert_playerstats_and_history_main();
 }
 
 function insert_playerstats_and_history_main()
@@ -90,28 +102,13 @@ function insert_playerstats_and_history_main()
 			winrate_bar.style.width = `${winrate}%`;
 
 			//history
-			let history = `
-				<h2 class="text-xl font-bold mb-6 flex items-center">
-					<i class="fa fa-history mr-3"></i>
-					Match History
-				</h2>
-
-				<!-- Table Header -->
-				<div class="grid grid-cols-[2fr_2fr_3fr_1fr] gap-4 pr-9 px-4 mb-1 font-semibold">
-					<span>Date</span>
-					<span>Match Type</span>
-					<span>Players</span>
-					<span>Result</span>
-				</div>
-				
-				<!-- Table Entry -->
-				<div class="h-[73vh] overflow-y-scroll pr-2 space-y-3">`;
+			let history = `<div class="h-[73vh] overflow-y-scroll pr-2 space-y-3">`;
 
 			if(msg_obj.history.length == 0)
 			{
 				history += `
 					<div class="flex flex-col w-full h-full justify-center items-center text-gray-400">
-						<span class="text-xl">No match history yet</span>
+						<span class="text-xl">${translate_text("No match history yet")}</span>
 					</div>`;
 			}
 			else
@@ -204,9 +201,7 @@ function insert_playerstats_and_history_main()
 				}
 			}
 
-			history += `
-				</div>`;
-
+			history += "</div>";
 			const history_div = document.querySelector<HTMLDivElement>("#playerstats_history");
 			if(!history_div) throw new Error("history div not found");
 			history_div.innerHTML = history;
@@ -224,7 +219,7 @@ export const playerstats_popup = `
 				<div class="w-5/12">
 					<h2 class="text-xl font-bold mb-6 flex items-center">
 						<i class="fa-solid fa-chart-pie mr-3"></i>
-						Statistics
+						<div id="playerstats_satistics">Statistics</div>
 					</h2>
 
 					<div class="grid grid-cols-2 grid-rows-3 gap-4">
@@ -233,7 +228,7 @@ export const playerstats_popup = `
 						<div class="bg-white/20 rounded-lg px-4 py-2">
 							<div class="flex items-center mb-2">
 								<i class="fas fa-star text-yellow-400 text-2xl mr-3"></i>
-								<span class="font-semibold">Rating</span>
+								<span id="playerstats_rating_header" class="font-semibold">Rating</span>
 							</div>
 							<div id="playerstats_rating" class="text-5xl font-bold text-end">
 							</div>
@@ -243,7 +238,7 @@ export const playerstats_popup = `
 						<div class="bg-white/20 rounded-lg px-4 py-2">
 							<div class="flex items-center mb-2">
 								<i class="fas fa-fire text-yellow-400 text-2xl mr-3"></i>
-								<span class="font-semibold">Winning Streak</span>
+								<span id="playerstats_winstreak_header" class="font-semibold">Winning Streak</span>
 							</div>
 							<div id="playerstats_winstreak" class="text-5xl font-bold text-end">
 							</div>
@@ -253,7 +248,7 @@ export const playerstats_popup = `
 						<div class="bg-white/20 rounded-lg px-4 py-2">
 							<div class="flex items-center mb-2">
 								<i class="fas fa-gamepad text-yellow-400 text-2xl mr-3"></i>
-								<span class="font-semibold">Total Matches</span>
+								<span id="playerstats_total_matches_header" class="font-semibold">Total Matches</span>
 							</div>
 							<div id="playerstats_total_matches" class="text-5xl font-bold text-end">
 							</div>
@@ -263,7 +258,7 @@ export const playerstats_popup = `
 						<div class="bg-white/20 rounded-lg px-4 py-2">
 							<div class="flex items-center mb-2">
 								<i class="fas fa-face-laugh-squint text-yellow-400 text-2xl mr-3"></i>
-								<span class="font-semibold">Total Wins</span>
+								<span id="playerstats_total_wins_header" class="font-semibold">Total Wins</span>
 							</div>
 							<div id="playerstats_total_wins" class="text-5xl font-bold text-end">
 							</div>
@@ -273,7 +268,7 @@ export const playerstats_popup = `
 						<div class="bg-white/20 rounded-lg px-4 py-2">
 							<div class="flex items-center mb-2">
 								<i class="fa-solid fa-face-sad-cry text-yellow-400 text-2xl mr-3"></i>
-								<span class="font-semibold">Total Loses</span>
+								<span id="playerstats_total_loss_header" class="font-semibold">Total Loses</span>
 							</div>
 							<div id="playerstats_total_loss" class="text-5xl font-bold text-end">
 							</div>
@@ -283,7 +278,7 @@ export const playerstats_popup = `
 						<div class="bg-white/20 rounded-lg px-4 py-2 col-span-2">
 							<div class="flex items-center mb-4">
 								<i class="fas fa-balance-scale text-yellow-400 text-2xl mr-3"></i>
-								<span class="font-semibold">Win Rate</span>
+								<span id="playerstats_total_winrate_header" class="font-semibold">Win Rate</span>
 							</div>
 							<div class="mb-4 w-full bg-red-500 rounded-full h-4">
 								<div id="playerstats_winrate_bar" class="bg-green-500 h-4 rounded-l-full"></div>
@@ -295,7 +290,23 @@ export const playerstats_popup = `
 				</div>
 				
 				<!-- History Section -->
-				<div id="playerstats_history" class="w-7/12"></div>
+				<div class="w-7/12">
+					<h2 class="text-xl font-bold mb-6 flex items-center">
+						<i class="fa fa-history mr-3"></i>
+						<div id="playerstats_match_history">Match History</div>
+					</h2>
+
+					<!-- Table Header -->
+					<div class="grid grid-cols-[2fr_2fr_3fr_1fr] gap-4 pr-9 px-4 mb-1 font-semibold">
+						<span id="playerstats_date">Date</span>
+						<span id="playerstats_match_type">Match Type</span>
+						<span id="playerstats_players">Players</span>
+						<span id="playerstats_result">Result</span>
+					</div>
+					
+					<!-- Table Entry -->
+					<div id="playerstats_history"></div>
+				</div>
 			</main>
 
 			<footer class="group fixed bottom-12 left-12 duration-200 transition-opacity">
@@ -303,7 +314,7 @@ export const playerstats_popup = `
 					class="flex items-center font-semibold text-xl mb-1">
 					<i class="fas fa-chevron-left text-yellow-400 text-2xl"></i>
 					<i class="fas fa-chevron-left text-yellow-400 text-2xl"></i>
-					<span class="pl-4">Game Selection</span>
+					<span id="playerstats_game_selection_footer" class="pl-4">Game Selection</span>
 				</button>
 				<div class="h-1 opacity-0 group-hover:opacity-100 bg-yellow-400 w-full"></div>
 			</footer>

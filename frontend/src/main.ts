@@ -3,8 +3,10 @@ import "./style.css";
 
 import { setupCounter } from "./counter.ts";
 import { about_popup } from "./about.ts";
+import { init_language } from "./language.ts";
 
 history.pushState({page: "login"}, "login", "/login");
+init_language();
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 <div id="login_page" class="bg-gray-950 text-white min-h-screen inter-font flex flex-col items-center justify-center">

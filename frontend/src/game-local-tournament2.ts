@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { display_game } from "./game-local-display_game";
-import { add_history } from "./spa-navigation";
+import { click_pong_modes_button } from "./pong_modes";
+
 
 export function local_tour_manager(p1_name: string, p2_name : string, p3_name : string, p4_name : string)
 {
@@ -214,7 +215,7 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 		close_finalwinner_popup_button.addEventListener("click", () =>{
 			if(localTour_matchmaking_popup)
 				localTour_matchmaking_popup.classList.add("hidden");
-			add_history("");
+			click_pong_modes_button();
 		});
 
 		currentbattle_div.classList.add("hidden");
