@@ -469,9 +469,9 @@ const online1v1_matchmaking_popup = (gameMode: string) => html`
 
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4 mb-10">
-			<span id="online1v1_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
-			<span id="online1v1_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">${gameMode}</span>
-			<span id="online1v1_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">${gameMode}</span>
+			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
@@ -549,9 +549,9 @@ const online_1v1_winner_popup = html`
 			<button id="close_online1v1_winner_popup" class="button-primary">Exit</button>
 		</div>
 	</div>
-`
+`;
 
-export const online_game_popup = (gameMode = "1 vs 1") => html`
+export const online_game_popup = (gameMode = "1 vs 1") => html `
 
 	${online1v1_matchmaking_popup(gameMode)}
 	<div id="online_game_popup" class="hidden bg-gray-950 bg-cover bg-center fixed inset-0">

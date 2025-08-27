@@ -206,7 +206,7 @@ export function index_init()
 			${online_tour_game_popup}
 				
 			${game_popup}
-			${online_game_popup}
+			${online_game_popup()}
 			${onlinexox_popups}
 			</div>
 		`);
@@ -214,7 +214,6 @@ export function index_init()
 	pong_modes_setup();
 	playerstats_setup();
 	settings_setup();
-
 
 	local_play_menus_setup();
 	online_play_menus_setup();
