@@ -317,26 +317,46 @@ export function online_1v1_play()
 		online1v1_left_name.innerText = p1_name;
 		online1v1_right_name.innerText = p2_name;
 
+		// check if in tournament first to determine point display
+		const tournament_context = localStorage.getItem("tournament_context");
+		
 		if(gameover_obj.winner == "leftplayer") {
 			online1v1_left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
-			online1v1_left_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+			// only show points if not in tournament
+			if (!tournament_context) {
+				online1v1_left_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+			} else {
+				online1v1_left_point.innerHTML = "";
+			}
 
 			online1v1_right_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
-			online1v1_right_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
+			// only show points if not in tournament
+			if (!tournament_context) {
+				online1v1_right_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
+			} else {
+				online1v1_right_point.innerHTML = "";
+			}
 		}
 		else {
 			online1v1_right_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
-			online1v1_right_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+			// only show points if not in tournament
+			if (!tournament_context) {
+				online1v1_right_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+			} else {
+				online1v1_right_point.innerHTML = "";
+			}
 
 			online1v1_left_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
-			online1v1_left_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
+			// only show points if not in tournament
+			if (!tournament_context) {
+				online1v1_left_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
+			} else {
+				online1v1_left_point.innerHTML = "";
+			}
 		}
 
 		online1v1_winner_popup.classList.remove("hidden");
 		game_popup.classList.add("hidden");
-
-		// check if in tournament
-		const tournament_context = localStorage.getItem("tournament_context");
 		
 		if (tournament_context) {
 			const context = JSON.parse(tournament_context);
@@ -537,7 +557,7 @@ const online_1v1_winner_popup = html`
 					<!-- Result Status -->
 					<div id="online1v1_left_result" class="mb-20"></div>
 					<!-- Player Details -->
-					<div class="flex items-center justify-between px-4">
+					<div class="flex flex-col items-center justify-center space-y-4">
 						<span id="online1v1_left_name" class="text-2xl font-medium"></span>
 						<div id="online1v1_left_point" class="text-5xl flex"></div>
 					</div>
@@ -548,7 +568,7 @@ const online_1v1_winner_popup = html`
 					<!-- Result Status -->
 					<div id="online1v1_right_result" class="mb-20"></div>
 					<!-- Player Details -->
-					<div class="flex items-center justify-between px-4">
+					<div class="flex flex-col items-center justify-center space-y-4">
 						<span id="online1v1_right_name" class="text-2xl font-medium"></span>
 						<div id="online1v1_right_point" class="text-5xl flex"></div>
 					</div>
