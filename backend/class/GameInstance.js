@@ -455,7 +455,8 @@ export class OnlineMatchmaking {
         );
       });
     } else {
-      connection.send(
+		pendingPlayerLobby.forEach((player) => {
+        player.connection.send(
         JSON.stringify({
           type: MsgType.MATCHMAKING_STATUS,
           status: "Waiting for players",
@@ -463,8 +464,9 @@ export class OnlineMatchmaking {
           players: JSON.stringify(
             pendingPlayerLobby.map((player) => player.username)
           ),
-        })
-      );
+          })
+        );
+      });
     }
   }
 
