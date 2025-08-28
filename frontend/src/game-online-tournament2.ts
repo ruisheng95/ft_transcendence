@@ -220,8 +220,9 @@ export function online_tour_manager()
 	{		
 		const p1_name_display = document.querySelector<HTMLDivElement>("#onlineTour_p1_matchmaking_name");
 		const p2_name_display = document.querySelector<HTMLDivElement>("#onlineTour_p2_matchmaking_name");
+		const currentbattle_div = document.querySelector<HTMLDivElement>("#onlineTour_matchmaking_currentbattle");
 		
-		if(!p1_name_display || !p2_name_display)
+		if(!p1_name_display || !p2_name_display || !currentbattle_div)
 			return;
 
 		p1_name_display.innerHTML = players[0];
@@ -236,6 +237,13 @@ export function online_tour_manager()
 			const isInCurrentMatch = players.includes(playerName);
 			return isMyEmail && isInCurrentMatch;
 		});
+
+		// highlight if current player is in this match
+		if (isInMatch) {
+			currentbattle_div.classList.add("ring-4", "ring-yellow-400", "ring-opacity-75", "bg-yellow-400/10");
+		} else {
+			currentbattle_div.classList.remove("ring-4", "ring-yellow-400", "ring-opacity-75", "bg-yellow-400/10");
+		}
 
 		const startBattleButton = document.querySelector<HTMLButtonElement>("#onlineTour_open_game");
 		if (startBattleButton) {
@@ -309,6 +317,12 @@ export function online_tour_manager()
 		const winner = msg_obj.winner;
 		const loser = msg_obj.loser;
 		const round = msg_obj.round;
+
+		// remove highlight
+		const currentbattle_div = document.querySelector<HTMLDivElement>("#onlineTour_matchmaking_currentbattle");
+		if (currentbattle_div) {
+			currentbattle_div.classList.remove("ring-4", "ring-yellow-400", "ring-opacity-75", "bg-yellow-400/10");
+		}
 
 		if(round === 1) {
 			Tournament_state.match_winners[0] = winner;
@@ -411,6 +425,10 @@ export function online_tour_manager()
 		finalwinner_div.classList.add("hidden");
 		open_game_button.classList.add("hidden");
 		close_finalwinner_button.classList.add("hidden");
+		
+		if (currentbattle_div) {
+			currentbattle_div.classList.remove("ring-4", "ring-yellow-400", "ring-opacity-75", "bg-yellow-400/10");
+		}
 	}
 
 	function make_final_ranking()
