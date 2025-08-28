@@ -350,8 +350,11 @@ export class OnlineTournament {
         };
 
         tournament.players.forEach(player => {
-            if (player.connection.readyState === 1)
+            if (player.connection.readyState === 1) {
                 player.connection.send(JSON.stringify(completeMsg));
+                // clear tournament_id after tournament ends
+                player.tournament_id = null;
+            }
         });
 
         this.#updateTournamentStats(tournament);
