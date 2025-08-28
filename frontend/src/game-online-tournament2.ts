@@ -2,6 +2,7 @@
 
 import { online_1v1_play } from "./game-online-1v1";
 import { add_history } from "./spa-navigation";
+import { translate_text } from "./language";
 
 export function online_tour_manager()
 {
@@ -147,7 +148,7 @@ export function online_tour_manager()
 		if(msg_obj.status === "Waiting for players") {
 			status_div.innerHTML = `
 			<div class="flex justify-center">
-				<div>Waiting for players</div>
+				<div>${translate_text("Waiting for players")}</div>
 				<div class="animate-pulse [animation-delay:0ms]">.</div>
 				<div class="animate-pulse [animation-delay:300ms]">.</div>
 				<div class="animate-pulse [animation-delay:600ms]">.</div>
@@ -155,7 +156,7 @@ export function online_tour_manager()
 			`;
 		}
 		else if(msg_obj.status === "Tournament starting") {
-			status_div.innerHTML = "Tournament starting! Preparing bracket...";
+			status_div.innerHTML = translate_text("Tournament starting! Preparing bracket...");
 		}
 	}
 
