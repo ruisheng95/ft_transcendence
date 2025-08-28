@@ -247,17 +247,6 @@ export function online_tour_manager()
 				startBattleButton.classList.add("hidden");
 			}
 		}
-
-		// // Clean up any existing test buttons
-		// const parentNode = startBattleButton?.parentNode;
-		// if (parentNode) {
-		// 	const existingTestButtons = parentNode.querySelectorAll('button[class*="ml-"]');
-		// 	existingTestButtons.forEach(button => {
-		// 		if (button.textContent?.includes('Test:')) {
-		// 			button.remove();
-		// 		}
-		// 	});
-		// }
 	}
 
 	function request_game_start()

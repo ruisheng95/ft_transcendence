@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { disable_back_navigation, enable_back_navigation } from "./spa-navigation";
+import { disable_back_navigation, enable_back_navigation, add_history } from "./spa-navigation";
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
@@ -342,6 +342,9 @@ export function online_1v1_play()
 			const context = JSON.parse(tournament_context);
 			const tournament_socket = WS.getInstance(context.socket_url);
 			
+			close_online_1v1_winner_popup_button.textContent = "Returning to tournament...";
+			close_online_1v1_winner_popup_button.disabled = true;
+			
 			let winner_email;
 			let loser_email;
 			
@@ -382,6 +385,16 @@ export function online_1v1_play()
 					}));
 				}, { once: true }); // once: true - ensure the listener is removed after execution
 			}
+			
+			//auto return to tournament after result page
+			setTimeout(() => {
+				online1v1_winner_popup?.classList.add("hidden");
+				add_history("/onlinegame?from_game=true");
+			}, 3000);
+		} else {
+			// normal 1v1 - manual exit button
+			close_online_1v1_winner_popup_button.removeEventListener("click", close_online1v1_winner_popup_ft);
+			close_online_1v1_winner_popup_button.addEventListener("click", close_online1v1_winner_popup_ft);
 		}
 
 		socket.close();
@@ -389,9 +402,6 @@ export function online_1v1_play()
 
 		playing = false;
 		
-		close_online_1v1_winner_popup_button.removeEventListener("click", close_online1v1_winner_popup_ft);
-		close_online_1v1_winner_popup_button.addEventListener("click", close_online1v1_winner_popup_ft);
-
 		function close_online1v1_winner_popup_ft()
 		{
 			online1v1_winner_popup?.classList.add("hidden");
