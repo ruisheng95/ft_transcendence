@@ -426,6 +426,10 @@ export function online_tour_manager()
 		open_game_button.classList.add("hidden");
 		close_finalwinner_button.classList.add("hidden");
 		
+		if (exit_tournament_button) {
+			exit_tournament_button.classList.remove("hidden");
+		}
+		
 		if (currentbattle_div) {
 			currentbattle_div.classList.remove("ring-4", "ring-yellow-400", "ring-opacity-75", "bg-yellow-400/10");
 		}
