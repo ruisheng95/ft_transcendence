@@ -122,6 +122,21 @@ export function online_tour_manager()
 			Tournament_state.current_players = msg_obj.players;
 			Tournament_state.current_round = msg_obj.round;
 			show_current_battle(msg_obj.players);
+			
+			// auto start the match 
+			const myEmail = localStorage.getItem("session") || "";
+			const isInMatch = Tournament_state.player_emails.some((email, index) => {
+				const isMyEmail = email === myEmail;
+				const playerName = Tournament_state.players[index];
+				const isInCurrentMatch = msg_obj.players.includes(playerName);
+				return isMyEmail && isInCurrentMatch;
+			});
+			
+			if (isInMatch) {
+				setTimeout(() => {
+					request_game_start();
+				}, 3000);
+			}
 		}
 		else if(msg_obj.type === "match_result") {
 			handle_match_end(msg_obj);
@@ -214,7 +229,7 @@ export function online_tour_manager()
 
 		const myEmail = localStorage.getItem("session") || "";
 		
-        // only battling player will see start button
+        // check if current user is in this match
 		const isInMatch = Tournament_state.player_emails.some((email, index) => {
 			const isMyEmail = email === myEmail;
 			const playerName = Tournament_state.players[index];
@@ -222,63 +237,27 @@ export function online_tour_manager()
 			return isMyEmail && isInCurrentMatch;
 		});
 
-		handleStartBattleButton(isInMatch);
-	}
-
-	function handleStartBattleButton(shouldShow: boolean) {
 		const startBattleButton = document.querySelector<HTMLButtonElement>("#onlineTour_open_game");
-		if (!startBattleButton)
-			return;
-
-		// TESTING: clean up any existing test buttons first
-		const parentNode = startBattleButton.parentNode;
-		if (parentNode) {
-			const existingTestButtons = parentNode.querySelectorAll('button[class*="ml-"]');
-			existingTestButtons.forEach(button => {
-				if (button.textContent?.includes('Test:')) {
-					button.remove();
-				}
-			});
+		if (startBattleButton) {
+			if (isInMatch) {
+				startBattleButton.textContent = "Starting match automatically...";
+				startBattleButton.disabled = true;
+				startBattleButton.classList.remove("hidden");
+			} else {
+				startBattleButton.classList.add("hidden");
+			}
 		}
-		
-		if (shouldShow) {
-			startBattleButton.classList.remove("hidden");
-			
-			// Clear any existing event listeners by cloning
-			const newButton = startBattleButton.cloneNode(true) as HTMLButtonElement;
-			startBattleButton.parentNode?.replaceChild(newButton, startBattleButton);
-			
-			newButton.addEventListener("click", () => {
-				request_game_start();
-			});
 
-			// TESTING: add test buttons
-			const testWinButton = document.createElement('button');
-			testWinButton.textContent = 'Test: I Win!';
-			testWinButton.className = 'button-primary ml-4';
-			testWinButton.addEventListener('click', () => {
-				console.log('Test: User clicked I Win button');
-				if (socket.readyState === WebSocket.OPEN) {
-					socket.send(JSON.stringify({ type: "test_game_result" }));
-				}
-			});
-			
-			const testLoseButton = document.createElement('button');
-			testLoseButton.textContent = 'Test: I Lose!';
-			testLoseButton.className = 'button-secondary ml-2';
-			testLoseButton.addEventListener('click', () => {
-				console.log('Test: User clicked I Lose button');
-				if (socket.readyState === WebSocket.OPEN) {
-					socket.send(JSON.stringify({ type: "test_game_result_lose" }));
-				}
-			});
-			
-			newButton.parentNode?.appendChild(testWinButton);
-			newButton.parentNode?.appendChild(testLoseButton);
-
-		} else {
-			startBattleButton.classList.add("hidden");
-		}
+		// // Clean up any existing test buttons
+		// const parentNode = startBattleButton?.parentNode;
+		// if (parentNode) {
+		// 	const existingTestButtons = parentNode.querySelectorAll('button[class*="ml-"]');
+		// 	existingTestButtons.forEach(button => {
+		// 		if (button.textContent?.includes('Test:')) {
+		// 			button.remove();
+		// 		}
+		// 	});
+		// }
 	}
 
 	function request_game_start()
@@ -486,14 +465,6 @@ export function online_tour_manager()
 
 		// hide start battle button
 		current_open_game_button.classList.add("hidden");
-
-		// TESTING: clean up test buttons
-		const existingTestButtons = current_open_game_button.parentNode?.querySelectorAll('button[class*="ml-"]');
-		existingTestButtons?.forEach(button => {
-			if (button.textContent?.includes('Test:')) {
-				button.remove();
-			}
-		});
 		
         // hide leave tournament button
 		if (exit_tournament_button) {
