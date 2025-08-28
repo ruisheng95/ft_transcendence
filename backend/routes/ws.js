@@ -252,6 +252,17 @@ const root = async function (fastify) {
           player.gameInstance = null;
         }
         onlineMatchmaking.removePlayerByConnection(connection);
+
+		//send JSON to all players in the lobby that a player has left
+		const remainingPlayers = onlineMatchmaking.getWaitingPlayers(4, 'pong');
+   		 remainingPlayers.forEach(player => {
+			player.connection.send(JSON.stringify({
+				type: MsgType.MATCHMAKING_STATUS,
+				status: "Waiting for players",
+				gameType: 'pong',
+				players: JSON.stringify(remainingPlayers.map(player => player.username)),
+      	}))});
+
         request.log.info("Socket disconnect: " + player.email);
       });
 

@@ -482,6 +482,16 @@ export class OnlineMatchmaking {
       this.#playerArray.splice(index, 1);
     }
   }
+
+  getWaitingPlayers(gameNoOfPlayers, gameType) {
+  const nonPlayingPlayers = this.#playerArray.filter(
+    (player) => !player.gameInstance
+  );
+  
+  return nonPlayingPlayers.filter(
+    (player) => player.gameNoOfPlayers === gameNoOfPlayers && player.gameType === gameType
+  	);
+  }
 }
 
 // export class OnlineMatchmaking {

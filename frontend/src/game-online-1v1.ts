@@ -276,8 +276,6 @@ export function online_1v1_play()
 				game_popup.classList.remove("hidden");
 				game_popup.style.backgroundImage = map_input.value;
 				matchmaking_popup.classList.add("hidden");
-				p1_name_div.innerHTML = p1_name;
-				p2_name_div.innerHTML = p2_name;
 				init_positions();
 				render_positions();
 
@@ -288,6 +286,9 @@ export function online_1v1_play()
 						start_the_fkin_game();
 				}, 4000);
 
+				//moved this down abit to ensure the DOM is loaded and the names can be put inside
+				p1_name_div.innerHTML = p1_name;
+				p2_name_div.innerHTML = p2_name;
 				start_game_countdown(game_countdown_div);
 			}
 		}, 1000);

@@ -112,6 +112,7 @@ export function online_2v2_play()
 	const uniqueId = Date.now() + Math.random(); 
 	const socketUrl = `${import.meta.env.VITE_SOCKET_URL}/ws-online-2v2?session=${sessionParam}&uid=${uniqueId}`;
 	const socket = new WebSocket(socketUrl);
+	let player_dced_flag = false;
 
 	const game_obj = document.querySelector<HTMLDivElement>("#online_game_board_area");
 	
@@ -208,8 +209,9 @@ export function online_2v2_play()
 	function process_msg_from_socket(message: MessageEvent)
 	{
 		const optional_msg_div = document.querySelector<HTMLDivElement>("#online2v2_optional_msg");
+		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online2v2_matchmaking_popup");
 
-		if(!optional_msg_div) throw new Error("process msg socket elements not found");
+		if(!matchmaking_popup || !optional_msg_div) throw new Error("process msg socket elements not found");
 
 		console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
@@ -236,17 +238,14 @@ export function online_2v2_play()
 		}
 		else if(msg_obj.type == "game_over")
 		{
-			if(playing == false)
-				return ;
-
-			playing = false;
 			optional_msg_div.innerHTML = "";
 			handle_game_end(msg_obj);
 		}
 		else if(msg_obj.type == "player_dced")
 		{
-			playing = false;
+			player_dced_flag = true;
 			optional_msg_div.innerHTML = translate_text("Match terminated because a player has disconnected");
+			matchmaking_popup.classList.add("hidden");
 			handle_game_end(msg_obj);
 		}
 	}
@@ -442,6 +441,10 @@ export function online_2v2_play()
 			if (countdown < 0)
 			{
 				clearInterval(interval);
+
+				if(player_dced_flag === true)
+					return;
+				
 				game_popup.classList.remove("hidden");
 				matchmaking_popup.classList.add("hidden");
 				
@@ -470,7 +473,6 @@ export function online_2v2_play()
 
 	function handle_game_end(gameover_obj : any)
 	{
-
 		const online2v2_left_result = document.querySelector<HTMLDivElement>("#online2v2_left_result");
 		const online2v2_left_name1 = document.querySelector<HTMLDivElement>("#online2v2_left_name1");
 		const online2v2_left_name2 = document.querySelector<HTMLDivElement>("#online2v2_left_name2");
@@ -491,6 +493,10 @@ export function online_2v2_play()
 		)
 			throw new Error("Online2v2 winner display elements not found");
 
+		if(playing == false)
+				return ;
+
+		playing = false;
 		enable_back_navigation();
 
 		online2v2_left_name1.innerText = team1_player1_name;
@@ -580,7 +586,7 @@ const online2v2_matchmaking_popup = html`
 		<div id="online2v2_mm_status" class="text-4xl mt-10"></div>
 		
 		<!--Exit Button -->
-		<button id="online2v2_exit_matchmaking" class="absolute top-10 right-10 button-remove">
+		<button id="online2v2_exit_matchmaking" class="absolute top-10 right-10 w-6 h-6 bg-yellow-400 rounded flex items-center justify-center hover:bg-yellow-300">
 			<i class="fas fa-times text-black text-xl"></i>
 		</button>
 		
