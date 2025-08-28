@@ -13,7 +13,7 @@ const html = (strings: TemplateStringsArray, ...values: unknown[]) =>
 export function online_1v1_play()
 {
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-
+	let player_dced_flag = false;
 	const tournament_context = localStorage.getItem("tournament_context");
 	const gameMode = tournament_context ? "Tournament" : "1 vs 1";
 
@@ -90,8 +90,9 @@ export function online_1v1_play()
 	function process_msg_from_socket(message: MessageEvent)
 	{
 		const optional_msg_div = document.querySelector<HTMLDivElement>("#online1v1_optional_msg");
+		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
 
-		if(!optional_msg_div) throw new Error("process msg socket elements not found");
+		if(!optional_msg_div || !matchmaking_popup) throw new Error("process msg socket elements not found");
 
 		console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
@@ -117,6 +118,8 @@ export function online_1v1_play()
 		else if(msg_obj.type === "player_dced")
 		{		
 			optional_msg_div.innerHTML = translate_text("Match terminated because a player has disconnected");
+			player_dced_flag = true;
+			matchmaking_popup.classList.add("hidden");
 			handle_game_end(msg_obj);
 		}
 	}
@@ -268,6 +271,8 @@ export function online_1v1_play()
 			if (countdown < 0)
 			{
 				clearInterval(interval);
+				if(player_dced_flag === true)
+					return; 
 				game_popup.classList.remove("hidden");
 				game_popup.style.backgroundImage = map_input.value;
 				matchmaking_popup.classList.add("hidden");
