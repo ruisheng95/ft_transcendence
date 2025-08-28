@@ -244,6 +244,10 @@ export class GameInstanceXOX
 	}
 
 	handlePlayerDisconnected(disconnectedConnection) {
+		
+		if (this.#idleTimer)
+			clearTimeout(this.#idleTimer);
+		
 		const playerIndex = this.#connectionArray.indexOf(disconnectedConnection);
 		if (playerIndex === -1) return;
 		

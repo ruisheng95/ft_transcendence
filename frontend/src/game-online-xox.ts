@@ -113,7 +113,7 @@ export function xox_online_play()
 		mm_status_div.innerHTML = `
 			<div class="flex flex-col items-center">
 				<div>${translate_text("Match found!")}</div>
-				<div>${translate_text("Match starting in")} ${countdown}<</div>
+				<div>${translate_text("Match starting in")} ${countdown}</div>
 			</div>
 			`;
 		countdown--;
@@ -349,8 +349,11 @@ export function xox_online_play()
 		instruction.classList.add("hidden");
 		disableCells(true);
 
-		socket.close();
-		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-xox`);
+		if(socket.readyState === WebSocket.OPEN)
+		{
+			socket.close();
+			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-xox`);
+		}
 	}
 }
 
