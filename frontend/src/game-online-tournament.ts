@@ -31,7 +31,7 @@ const onlineTour_matchmaking_popup = html`
 
 			<!-- Leave Tournament X Button -->
 			<button id="onlineTour_exit_matchmaking" class="absolute top-4 right-4 w-6 h-6 bg-yellow-400 rounded flex items-center justify-center hover:bg-yellow-300">
-				<i class="fas fa-times text-lg"></i>
+				<i class="fas fa-times text-black text-xl"></i>
 			</button>
 
 			<div id="onlineTour_matchmaking_header" class="text-center mb-6">
