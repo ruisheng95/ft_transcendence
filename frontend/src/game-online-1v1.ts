@@ -348,6 +348,9 @@ export function online_1v1_play()
 			const context = JSON.parse(tournament_context);
 			const tournament_socket = WS.getInstance(context.socket_url);
 			
+			close_online_1v1_winner_popup_button.textContent = translate_text("Returning to tournament...");
+			close_online_1v1_winner_popup_button.disabled =true;
+			
 			let winner_email;
 			let loser_email;
 			
