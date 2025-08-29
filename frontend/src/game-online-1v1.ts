@@ -190,7 +190,7 @@ export function online_1v1_play()
 
 		if(!exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
 
-		const gameModeSpan = matchmaking_popup.querySelector('section span:nth-child(2)');
+		const gameModeSpan = document.querySelector('#online1v1_gameinfo_text2');
 		if (gameModeSpan) {
 			gameModeSpan.textContent = translate_text(gameMode);
 		}
@@ -468,7 +468,7 @@ export function start_game_countdown(game_countdown_div: HTMLDivElement)
 	// 	})
 }
 
-const online1v1_matchmaking_popup = (gameMode: string) => html`
+const online1v1_matchmaking_popup = html`
 		<div id="online1v1_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
@@ -477,7 +477,7 @@ const online1v1_matchmaking_popup = (gameMode: string) => html`
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4 mb-10">
 			<span id="online1v1_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">${gameMode}</span>
+			<span id="online1v1_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
 			<span id="online1v1_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
@@ -558,9 +558,9 @@ const online_1v1_winner_popup = html`
 	</div>
 `;
 
-export const online_game_popup = (gameMode = "1 vs 1") => html `
+export const online_game_popup = html `
 
-	${online1v1_matchmaking_popup(gameMode)}
+	${online1v1_matchmaking_popup}
 	<div id="online_game_popup" class="hidden bg-gray-950 bg-cover bg-center fixed inset-0">
 		<div class="bg-black/70 h-full flex flex-col justify-center items-center">
 			<div class="flex flex-col items-center bg-transparent text-white">
