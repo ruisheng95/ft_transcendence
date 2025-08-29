@@ -236,6 +236,8 @@ const bm_texts = {
 	"Match starting in": "Permainan bermula dalam",
 	"match ongoing": "perlawanan sedang berlangsung",
 	"Match terminated because a player has disconnected": "Perlawanan ditamatkan kerana pemain telah terputus sambungan",
+	"1 vs 1": "1 lawan 1",
+	"Tournament": "Kejohanan",
 
 	//online2v2 strings
 	"Waiting...": "Menunggu...",
@@ -697,6 +699,8 @@ const cn_texts = {
 	"Match starting in": "比赛将在",
 	"match ongoing": "比赛进行中",
 	"Match terminated because a player has disconnected": "比赛已终止，因为玩家已断开连接",
+	"1 vs 1": "1对1",
+	"Tournament": "锦标赛",
 
 	//online2v2 strings
 	"Waiting...": "等待中...",

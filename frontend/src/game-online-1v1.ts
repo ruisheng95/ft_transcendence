@@ -192,7 +192,7 @@ export function online_1v1_play()
 
 		const gameModeSpan = matchmaking_popup.querySelector('section span:nth-child(2)');
 		if (gameModeSpan) {
-			gameModeSpan.textContent = gameMode;
+			gameModeSpan.textContent = translate_text(gameMode);
 		}
 
 		const players = JSON.parse(msg_obj.players);
@@ -476,9 +476,9 @@ const online1v1_matchmaking_popup = (gameMode: string) => html`
 
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4 mb-10">
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
+			<span id="online1v1_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
 			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">${gameMode}</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
+			<span id="online1v1_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
