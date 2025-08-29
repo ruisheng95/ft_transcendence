@@ -232,6 +232,10 @@ const bm_texts = {
 	"None": "Tiada",
 	"Exit": "Keluar",
 
+	//onlinetour strings
+	"Starting match automatically...": "Memulakan perlawanan secara automatik...",
+	"Returning to tournament...": "Kembali ke kejohanan...",
+
 	//xox strings
 	"Matches": "Perlawanan",
 	"Ties": "Seri",
@@ -654,7 +658,10 @@ const cn_texts = {
 	"Players": "玩家",
 	"None": "无",
 	"Exit": "退出",
-	
+
+	//onlinetour strings
+	"Starting match automatically...": "自动开始比赛...",
+	"Returning to tournament...": "正在返回锦标赛...",
 
 	//xox strings
 	"Matches": "比赛数",

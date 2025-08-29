@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { online_1v1_play } from "./game-online-1v1";
+import { translate_text } from "./language";
 import { add_history } from "./spa-navigation";
 
 // global flag to prevent multiple tournament managers
@@ -248,7 +249,7 @@ export function online_tour_manager()
 		const startBattleButton = document.querySelector<HTMLButtonElement>("#onlineTour_open_game");
 		if (startBattleButton) {
 			if (isInMatch) {
-				startBattleButton.textContent = "Starting match automatically...";
+				startBattleButton.textContent = translate_text("Starting match automatically...");
 				startBattleButton.disabled = true;
 				startBattleButton.classList.remove("hidden");
 			} else {
