@@ -25,8 +25,8 @@ export function online_play_menus_setup()
 	});
 
 	online_2v2_button.addEventListener("click", () => {
-		online_2v2_play();
 		add_history("/pong/online2v2");
+		online_2v2_play();
 	});
 
 	online_tournament_button.addEventListener("click", () => {
