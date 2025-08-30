@@ -75,52 +75,6 @@ const root = async function (fastify) {
                         msg.loser_email
                     )
                 }
-                // TESTING: test win button
-                else if (msg.type === "test_game_result") {
-                    console.log("Tournament: Received test game result - user wins");
-                    const tournament = tournamentManager.getTournament(playerInfo.tournament_id);
-                    if (tournament && tournament.current_match) {
-                        const players = tournament.current_match.players;
-                        const winner = players.find(p => p.session === playerInfo.session);
-                        const loser = players.find(p => p.session !== playerInfo.session);
-                        if (winner && loser) {
-                        console.log(`Tournament: Test result - ${winner.username} wins, ${loser.username} loses`);
-                        tournamentManager.handleGameResult(
-                            tournament.id,
-                            tournament.current_match.id,
-                            winner.email,
-                            loser.email 
-                        );
-                        } else {
-                            console.error("Tournament: Could not find winner/loser players for test");
-                        }
-                    } else {
-                        console.error("Tournament: No tournament or current match found for test");
-                    }
-                }
-                //TESTING lose button
-                else if (msg.type === "test_game_result_lose") {
-                    console.log("Tournament: Received test game result - user loses");
-                    const tournament = tournamentManager.getTournament(playerInfo.tournament_id);
-                    if (tournament && tournament.current_match) {
-                        const players = tournament.current_match.players;
-                        const loser = players.find(p => p.session === playerInfo.session);
-                        const winner = players.find(p => p.session !== playerInfo.session);
-                        if (winner && loser) {
-                            console.log(`Tournament: Test result - ${winner.username} wins, ${loser.username} loses`);
-                            tournamentManager.handleGameResult(
-                                tournament.id,
-                                tournament.current_match.id,
-                                winner.email,
-                                loser.email
-                            );
-                        } else {
-                            console.error("Tournament: Could not find winner/loser players for test");
-                        }
-                    } else {
-                        console.error("Tournament: No tournament or current match found for test");
-                    }
-                }
             } catch(error) {
                 console.error("Error: tournament processing: ", error);
             }

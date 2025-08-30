@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { disable_back_navigation, enable_back_navigation } from "./spa-navigation";
+import { disable_back_navigation, enable_back_navigation, add_history } from "./spa-navigation";
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
@@ -323,33 +323,53 @@ export function online_1v1_play()
 		online1v1_left_name.innerText = p1_name;
 		online1v1_right_name.innerText = p2_name;
 
+		// check if in tournament first to determine point display
+		const tournament_context = localStorage.getItem("tournament_context");
+		
 		if(gameover_obj.winner == "leftplayer") {
 			online1v1_left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
-			online1v1_left_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+			// only show points if not in tournament
+			if (!tournament_context) {
+				online1v1_left_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+			} else {
+				online1v1_left_point.innerHTML = "";
+			}
 
 			online1v1_right_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
-			online1v1_right_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
+			// only show points if not in tournament
+			if (!tournament_context) {
+				online1v1_right_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
+			} else {
+				online1v1_right_point.innerHTML = "";
+			}
 		}
 		else {
 			online1v1_right_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
-			online1v1_right_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+			// only show points if not in tournament
+			if (!tournament_context) {
+				online1v1_right_point.innerHTML = `<span class="result-win">+5<i class="fas fa-arrow-up"></i></span>`;
+			} else {
+				online1v1_right_point.innerHTML = "";
+			}
 
 			online1v1_left_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
-			online1v1_left_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
+			// only show points if not in tournament
+			if (!tournament_context) {
+				online1v1_left_point.innerHTML = `<span class="result-lose">-5<i class="fas fa-arrow-down"></i></span>`;
+			} else {
+				online1v1_left_point.innerHTML = "";
+			}
 		}
 
 		online1v1_winner_popup.classList.remove("hidden");
 		game_popup.classList.add("hidden");
-
-		// check if in tournament
-		const tournament_context = localStorage.getItem("tournament_context");
 		
 		if (tournament_context) {
 			const context = JSON.parse(tournament_context);
 			const tournament_socket = WS.getInstance(context.socket_url);
 			
 			close_online_1v1_winner_popup_button.textContent = translate_text("Returning to tournament...");
-			close_online_1v1_winner_popup_button.disabled =true;
+			close_online_1v1_winner_popup_button.disabled = true;
 			
 			let winner_email;
 			let loser_email;
@@ -391,6 +411,16 @@ export function online_1v1_play()
 					}));
 				}, { once: true }); // once: true - ensure the listener is removed after execution
 			}
+			
+			//auto return to tournament after result page
+			setTimeout(() => {
+				online1v1_winner_popup?.classList.add("hidden");
+				add_history("/onlinegame?from_game=true");
+			}, 3000);
+		} else {
+			// normal 1v1 - manual exit button
+			close_online_1v1_winner_popup_button.removeEventListener("click", close_online1v1_winner_popup_ft);
+			close_online_1v1_winner_popup_button.addEventListener("click", close_online1v1_winner_popup_ft);
 		}
 
 		socket.close();
@@ -398,9 +428,6 @@ export function online_1v1_play()
 
 		playing = false;
 		
-		close_online_1v1_winner_popup_button.removeEventListener("click", close_online1v1_winner_popup_ft);
-		close_online_1v1_winner_popup_button.addEventListener("click", close_online1v1_winner_popup_ft);
-
 		function close_online1v1_winner_popup_ft()
 		{
 			online1v1_winner_popup?.classList.add("hidden");
@@ -536,7 +563,7 @@ const online_1v1_winner_popup = html`
 					<!-- Result Status -->
 					<div id="online1v1_left_result" class="mb-20"></div>
 					<!-- Player Details -->
-					<div class="flex items-center justify-between px-4">
+					<div class="flex flex-col items-center justify-center space-y-4">
 						<span id="online1v1_left_name" class="text-2xl font-medium"></span>
 						<div id="online1v1_left_point" class="text-5xl flex"></div>
 					</div>
@@ -547,7 +574,7 @@ const online_1v1_winner_popup = html`
 					<!-- Result Status -->
 					<div id="online1v1_right_result" class="mb-20"></div>
 					<!-- Player Details -->
-					<div class="flex items-center justify-between px-4">
+					<div class="flex flex-col items-center justify-center space-y-4">
 						<span id="online1v1_right_name" class="text-2xl font-medium"></span>
 						<div id="online1v1_right_point" class="text-5xl flex"></div>
 					</div>

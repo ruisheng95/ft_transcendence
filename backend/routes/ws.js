@@ -223,8 +223,8 @@ const root = async function (fastify) {
         4, // 4 players for 2v2
         request,
 		get_username_from_email(fastify.get_email_by_session(request)),
-		{//add this empty object
-		},//
+    {//add this empty object
+    },//
 		'pong'
       );
 

@@ -130,12 +130,35 @@ export class OnlineTournament {
         if (playerInfo.tournament_id) {
             const tournament = this.#tournaments.get(playerInfo.tournament_id);
             if (tournament) {
-                // implement later
-            }
+            	// implement later
+				///////////////////////////////////////////////////
+				//UPDATE DATABASE HERE (PREFERABILY PINALIZE THE DCED PLAYER)
+				//////////////////////////////////////////////////////////
+
+				const dced_msg = {
+					type: "player_dced",
+					tournament_id: tournament.id,
+					disconnected_player: playerInfo.username,
+					match_id: tournament.current_match ? tournament.current_match.id : null,
+					round: tournament.current_round
+				};
+
+				tournament.players.forEach(player => {
+					if (player.connection.readyState === 1 && player.session !== playerInfo.session)
+					{
+						player.connection.send(JSON.stringify(dced_msg));
+
+						//remove these if u want the tournament to continue;
+						player.connection.close();
+						player.tournament_id = null;
+						this.#tournaments.delete(tournament.id);
+					}
+
+				});				
+			}
         }
     }
 
-    // TESTING
     getTournament(tournament_id) {
         return this.#tournaments.get(tournament_id);
     }
@@ -350,8 +373,11 @@ export class OnlineTournament {
         };
 
         tournament.players.forEach(player => {
-            if (player.connection.readyState === 1)
+            if (player.connection.readyState === 1) {
                 player.connection.send(JSON.stringify(completeMsg));
+                // clear tournament_id after tournament ends
+                player.tournament_id = null;
+            }
         });
 
         this.#updateTournamentStats(tournament);

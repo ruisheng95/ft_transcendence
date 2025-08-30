@@ -27,7 +27,12 @@ export function online_tour_game_setup()
 
 const onlineTour_matchmaking_popup = html`
 	<div id="onlineTour_matchmaking_popup" class="bg-gray-950 flex h-screen p-20 justify-center hidden fixed inset-0 text-white inter-font">
-		<div id="onlineTour_matchmaking_popup_screen" class="w-full h-[80vh] flex flex-col justify-between items-center">
+		<div id="onlineTour_matchmaking_popup_screen" class="w-full h-[80vh] flex flex-col justify-between items-center relative">
+
+			<!-- Leave Tournament X Button -->
+			<button id="onlineTour_exit_matchmaking" class="absolute top-4 right-4 w-6 h-6 bg-yellow-400 rounded flex items-center justify-center hover:bg-yellow-300">
+				<i class="fas fa-times text-black text-xl"></i>
+			</button>
 
 			<div id="onlineTour_matchmaking_header" class="text-center mb-6">
 				<h1 id="onlineTour_mm_title" class="text-5xl font-bold">Online Tournament Bracket</h1>
@@ -133,7 +138,6 @@ const onlineTour_matchmaking_popup = html`
 			
 			<!-- buttons -->
 			<button id="onlineTour_open_game" class="button-primary hidden">Start Battle</button>
-			<button id="onlineTour_exit_matchmaking" class="button-primary">Leave Tournament</button>
 			<button id="onlineTour_close_finalwinner_popup" class="hidden button-primary">Back to Menu</button>
 		</div>
 	</div>

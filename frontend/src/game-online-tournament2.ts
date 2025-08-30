@@ -1,38 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { online_1v1_play } from "./game-online-1v1";
-import { add_history } from "./spa-navigation";
 import { translate_text } from "./language";
+import { add_history } from "./spa-navigation";
+
+// global flag to prevent multiple tournament managers
+let tournamentManagerActive = false;
 
 export function online_tour_manager()
 {
-    // check if tournament exists
-    // make sure players return back to tournament bracket after a match
-	const tournamentContext = localStorage.getItem("tournament_context");
-	const preservedState = (window as any).tournamentState;
-
-	if (tournamentContext && preservedState && preservedState.socket) {		
-		// restore the preserved tournament state (tournament bracket page)
-		const onlineTour_matchmaking_popup = preservedState.popup;
-		
-		// clean up temporary storage
-		localStorage.removeItem("tournament_context");
-		delete (window as any).tournamentState;
-		
-		// show the tournament popup again
-		if (onlineTour_matchmaking_popup) {
-			onlineTour_matchmaking_popup.classList.remove("hidden");
-		}
+	if (tournamentManagerActive)
 		return;
+
+	tournamentManagerActive = true;
+	
+    // clear old tournament context
+	localStorage.removeItem("tournament_context");
+	if ((window as any).tournamentState) {
+		delete (window as any).tournamentState;
 	}
 	
 	let isReturningFromGame = false;
 	let savedTournamentId = "";
 	
-	if (tournamentContext) {
-		isReturningFromGame = true;
-		const context = JSON.parse(tournamentContext);
-		savedTournamentId = context.tournament_id; // onlyremove context after reconnecting
+	// rejoin only after a match (ongoing tournament)
+	const urlParams = new URLSearchParams(window.location.search);
+	const fromGame = urlParams.get('from_game');
+	
+	if (fromGame === 'true') {
+		const tournamentContext = localStorage.getItem("tournament_context");
+		if (tournamentContext) {
+			isReturningFromGame = true;
+			const context = JSON.parse(tournamentContext);
+			savedTournamentId = context.tournament_id;
+		}
 	}
 
 	// Add unique ID to test using the same browser
@@ -68,9 +69,8 @@ export function online_tour_manager()
 
 	socket.addEventListener("message", process_msg_from_socket);
 	socket.addEventListener("open", () => {
-		// rejoin existing tournament after a match
+		// rejoin existing tournament after a match (only if returning from game)
 		if (isReturningFromGame && savedTournamentId) {
-			console.log(`Attempting to rejoin tournament ${savedTournamentId}`);
 			socket.send(JSON.stringify({
 				type: "rejoin_tournament",
 				tournament_id: savedTournamentId
@@ -80,16 +80,24 @@ export function online_tour_manager()
 
 	socket.addEventListener("close", () => {
 		console.log("Disconnected from online tournament server");
+		tournamentManagerActive = false;
 	});
 
 	exit_tournament_button.addEventListener("click", () => {
 		socket.close();
 		onlineTour_matchmaking_popup.classList.add("hidden");
+		// reset tournament manager and remove tournament context
+		tournamentManagerActive = false;
+		localStorage.removeItem("tournament_context");
+		if ((window as any).tournamentState) {
+			delete (window as any).tournamentState;
+		}
 	});
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
 		const msg_obj = JSON.parse(message.data);
+		// console.log("RECVED FROM TOUR SOCKET: ", msg_obj);
 			
 		if(msg_obj.type === "tournament_status") {
 			update_matchmaking_status(msg_obj);
@@ -116,12 +124,31 @@ export function online_tour_manager()
 			Tournament_state.current_players = msg_obj.players;
 			Tournament_state.current_round = msg_obj.round;
 			show_current_battle(msg_obj.players);
+			
+			// auto start the match 
+			const myEmail = localStorage.getItem("session") || "";
+			const isInMatch = Tournament_state.player_emails.some((email, index) => {
+				const isMyEmail = email === myEmail;
+				const playerName = Tournament_state.players[index];
+				const isInCurrentMatch = msg_obj.players.includes(playerName);
+				return isMyEmail && isInCurrentMatch;
+			});
+			
+			if (isInMatch) {
+				setTimeout(() => {
+					request_game_start();
+				}, 3000);
+			}
 		}
 		else if(msg_obj.type === "match_result") {
 			handle_match_end(msg_obj);
 		}
 		else if(msg_obj.type === "tournament_complete") {
 			Tournament_state.final_ranking = msg_obj.final_ranking;
+			localStorage.removeItem("tournament_context");
+			if ((window as any).tournamentState) {
+				delete (window as any).tournamentState;
+			}
 			make_final_ranking();
 		}
 		else if(msg_obj.type === "redirect_to_game") {
@@ -130,7 +157,16 @@ export function online_tour_manager()
 		}
 		else if(msg_obj.type === "rejoin_failed") {
 			localStorage.removeItem("tournament_context");
+			if ((window as any).tournamentState) {
+				delete (window as any).tournamentState;
+			}
 			isReturningFromGame = false;
+			savedTournamentId = "";
+		}
+		else if(msg_obj.type === "player_dced") {
+			////////////////////////////////
+			//HANDLE THEM STUFFS HEREEE
+			///////////////////////////////////
 		}
 	}
 
@@ -191,8 +227,9 @@ export function online_tour_manager()
 	{		
 		const p1_name_display = document.querySelector<HTMLDivElement>("#onlineTour_p1_matchmaking_name");
 		const p2_name_display = document.querySelector<HTMLDivElement>("#onlineTour_p2_matchmaking_name");
+		const currentbattle_div = document.querySelector<HTMLDivElement>("#onlineTour_matchmaking_currentbattle");
 		
-		if(!p1_name_display || !p2_name_display)
+		if(!p1_name_display || !p2_name_display || !currentbattle_div)
 			return;
 
 		p1_name_display.innerHTML = players[0];
@@ -200,7 +237,7 @@ export function online_tour_manager()
 
 		const myEmail = localStorage.getItem("session") || "";
 		
-        // only battling player will see start button
+        // check if current user is in this match
 		const isInMatch = Tournament_state.player_emails.some((email, index) => {
 			const isMyEmail = email === myEmail;
 			const playerName = Tournament_state.players[index];
@@ -208,62 +245,22 @@ export function online_tour_manager()
 			return isMyEmail && isInCurrentMatch;
 		});
 
-		handleStartBattleButton(isInMatch);
-	}
-
-	function handleStartBattleButton(shouldShow: boolean) {
-		const startBattleButton = document.querySelector<HTMLButtonElement>("#onlineTour_open_game");
-		if (!startBattleButton)
-			return;
-
-		// TESTING: clean up any existing test buttons first
-		const parentNode = startBattleButton.parentNode;
-		if (parentNode) {
-			const existingTestButtons = parentNode.querySelectorAll('button[class*="ml-"]');
-			existingTestButtons.forEach(button => {
-				if (button.textContent?.includes('Test:')) {
-					button.remove();
-				}
-			});
-		}
-		
-		if (shouldShow) {
-			startBattleButton.classList.remove("hidden");
-			
-			// Clear any existing event listeners by cloning
-			const newButton = startBattleButton.cloneNode(true) as HTMLButtonElement;
-			startBattleButton.parentNode?.replaceChild(newButton, startBattleButton);
-			
-			newButton.addEventListener("click", () => {
-				request_game_start();
-			});
-
-			// TESTING: add test buttons
-			const testWinButton = document.createElement('button');
-			testWinButton.textContent = 'Test: I Win!';
-			testWinButton.className = 'button-primary ml-4';
-			testWinButton.addEventListener('click', () => {
-				console.log('Test: User clicked I Win button');
-				if (socket.readyState === WebSocket.OPEN) {
-					socket.send(JSON.stringify({ type: "test_game_result" }));
-				}
-			});
-			
-			const testLoseButton = document.createElement('button');
-			testLoseButton.textContent = 'Test: I Lose!';
-			testLoseButton.className = 'button-secondary ml-2';
-			testLoseButton.addEventListener('click', () => {
-				console.log('Test: User clicked I Lose button');
-				if (socket.readyState === WebSocket.OPEN) {
-					socket.send(JSON.stringify({ type: "test_game_result_lose" }));
-				}
-			});
-			
-			newButton.parentNode?.appendChild(testWinButton);
-			newButton.parentNode?.appendChild(testLoseButton);
-
+		// highlight if current player is in this match
+		if (isInMatch) {
+			currentbattle_div.classList.add("ring-4", "ring-yellow-400", "ring-opacity-75", "bg-yellow-400/10");
 		} else {
-			startBattleButton.classList.add("hidden");
+			currentbattle_div.classList.remove("ring-4", "ring-yellow-400", "ring-opacity-75", "bg-yellow-400/10");
+		}
+
+		const startBattleButton = document.querySelector<HTMLButtonElement>("#onlineTour_open_game");
+		if (startBattleButton) {
+			if (isInMatch) {
+				startBattleButton.textContent = translate_text("Starting match automatically...");
+				startBattleButton.disabled = true;
+				startBattleButton.classList.remove("hidden");
+			} else {
+				startBattleButton.classList.add("hidden");
+			}
 		}
 	}
 
@@ -283,18 +280,16 @@ export function online_tour_manager()
 		if(onlineTour_matchmaking_popup)
 			onlineTour_matchmaking_popup.classList.add("hidden");
 		
-		// Get the current match players and their emails
 		const player1_name = Tournament_state.current_players[0];
 		const player2_name = Tournament_state.current_players[1];
 		
-		// Find their emails in the player_emails array based on their names
 		const player1_index = Tournament_state.players.indexOf(player1_name);
 		const player2_index = Tournament_state.players.indexOf(player2_name);
 		
 		const player1_email = Tournament_state.player_emails[player1_index];
 		const player2_email = Tournament_state.player_emails[player2_index];
 		
-		// Store tournament context AND the original socket reference
+		// store tournament context and original socket reference
 		localStorage.setItem("tournament_context", JSON.stringify({
 			tournament_id: Tournament_state.tournament_id,
 			current_match_id: Tournament_state.current_match_id,
@@ -309,10 +304,10 @@ export function online_tour_manager()
 					email: player2_email
 				}
 			},
-			preserve_tournament_connection: true // Flag to indicate we should preserve the connection
+			preserve_tournament_connection: true // flag to indicate we should preserve the connection
 		}));
 		
-		// Store a reference to the current tournament state and socket in a global variable
+		// store a reference to the current tournament state and socket in a global variable
 		// so we can restore it when coming back from the game
 		(window as any).tournamentState = {
 			socket: socket,
@@ -320,8 +315,8 @@ export function online_tour_manager()
 			popup: onlineTour_matchmaking_popup
 		};
 		
-		// Use the existing online 1v1 game but with tournament context
-		online_1v1_play(); // Start the online 1v1 game
+		// use the existing online 1v1 game but with tournament context
+		online_1v1_play();
 	}
 
 	function handle_match_end(msg_obj: any)
@@ -329,6 +324,12 @@ export function online_tour_manager()
 		const winner = msg_obj.winner;
 		const loser = msg_obj.loser;
 		const round = msg_obj.round;
+
+		// remove highlight
+		const currentbattle_div = document.querySelector<HTMLDivElement>("#onlineTour_matchmaking_currentbattle");
+		if (currentbattle_div) {
+			currentbattle_div.classList.remove("ring-4", "ring-yellow-400", "ring-opacity-75", "bg-yellow-400/10");
+		}
 
 		if(round === 1) {
 			Tournament_state.match_winners[0] = winner;
@@ -431,6 +432,14 @@ export function online_tour_manager()
 		finalwinner_div.classList.add("hidden");
 		open_game_button.classList.add("hidden");
 		close_finalwinner_button.classList.add("hidden");
+		
+		if (exit_tournament_button) {
+			exit_tournament_button.classList.remove("hidden");
+		}
+		
+		if (currentbattle_div) {
+			currentbattle_div.classList.remove("ring-4", "ring-yellow-400", "ring-opacity-75", "bg-yellow-400/10");
+		}
 	}
 
 	function make_final_ranking()
@@ -460,6 +469,11 @@ export function online_tour_manager()
 			if(onlineTour_matchmaking_popup)
 				onlineTour_matchmaking_popup.classList.add("hidden");
 			socket.close();
+			tournamentManagerActive = false;
+			localStorage.removeItem("tournament_context");
+			if ((window as any).tournamentState) {
+				delete (window as any).tournamentState;
+			}
 			add_history("");
 		});
 
@@ -469,14 +483,6 @@ export function online_tour_manager()
 
 		// hide start battle button
 		current_open_game_button.classList.add("hidden");
-
-		// TESTING: clean up test buttons
-		const existingTestButtons = current_open_game_button.parentNode?.querySelectorAll('button[class*="ml-"]');
-		existingTestButtons?.forEach(button => {
-			if (button.textContent?.includes('Test:')) {
-				button.remove();
-			}
-		});
 		
         // hide leave tournament button
 		if (exit_tournament_button) {

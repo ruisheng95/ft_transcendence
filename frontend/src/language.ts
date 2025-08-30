@@ -251,9 +251,9 @@ const bm_texts = {
 	"None": "Tiada",
 	"Exit": "Keluar",
 
-	//online tour strings
-	"Waiting for players": "Menunggu pemain",
-	"Tournament starting! Preparing bracket...": "Kejohanan bermula! Menyediakan kurungan...",
+	//onlinetour strings
+	"Starting match automatically...": "Memulakan perlawanan secara automatik...",
+	"Returning to tournament...": "Kembali ke kejohanan...",
 
 	//xox strings
 	"Matches": "Perlawanan",
@@ -713,10 +713,10 @@ const cn_texts = {
 	"Players": "玩家",
 	"None": "无",
 	"Exit": "退出",
-	
-	//online tour strings
-	"Waiting for players": "等待玩家中",
-	"Tournament starting! Preparing bracket...": "锦标赛开始！准备对阵表中...",
+
+	//onlinetour strings
+	"Starting match automatically...": "自动开始比赛...",
+	"Returning to tournament...": "正在返回锦标赛...",
 
 	//xox strings
 	"Matches": "比赛数",
