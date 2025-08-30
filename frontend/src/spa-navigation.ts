@@ -19,6 +19,8 @@ import { online_1v1_play } from "./game-online-1v1";
 import { WS } from "./class/WS";
 import { open_xox_modes } from "./xox_dashboard";
 import { xox_online_play } from "./game-online-xox";
+import { online_2v2_play } from "./game-online-2v2";
+import { online_tour_manager } from "./game-online-tournament2";
 
 export function add_history(path : string)
 {
@@ -72,10 +74,20 @@ window.addEventListener("popstate", (event) => {
 	socket?.close();
 	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 
+	//cleanup ws-online-2v2 socket
+	const socket_2v2 = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-2v2`);
+	socket_2v2?.close();
+	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-2v2`);
+
 	//cleanup ws-online-xox socket
 	const socket_xox = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-xox`);
 	socket_xox?.close();
 	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-xox`);
+
+	//cleanup ws-online-tournament socket
+	const socket_tournament = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`);
+	socket_tournament?.close();
+	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`);
 
 	display_other_pages(event.state.page);
 });
@@ -98,9 +110,15 @@ function rmv_all_pgs_except_index()
 	const registration_tournament = document.querySelector<HTMLDivElement>("#localTour_registration");
 	const localTour_matchmaking_popup = document.querySelector<HTMLDivElement>("#localTour_matchmaking_popup");
 
+	const onlineTour_registration = document.querySelector<HTMLDivElement>("#onlineTour_registration");
+	const onlineTour_matchmaking_popup = document.querySelector<HTMLDivElement>("#onlineTour_matchmaking_popup");
+
 	const online1v1_winner_popup = document.querySelector<HTMLDivElement>("#online_1v1_winner_popup");
 	const online_game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 	const online1v1_matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
+
+	const online2v2_winner_popup = document.querySelector<HTMLDivElement>("#online_2v2_winner_popup");
+	const online2v2_matchmaking_popup = document.querySelector<HTMLDivElement>("#online2v2_matchmaking_popup");
 
 	const xox_popup  = document.querySelector<HTMLButtonElement>("#xox_dashboard_popup");
 	const xox_game_popup = document.querySelector<HTMLDivElement>("#xox_game_popup");
@@ -113,9 +131,11 @@ function rmv_all_pgs_except_index()
 	if(!pong_modes_popup || !registration_1v1 || !local1v1_winner_popup || !friends_popup
 		|| !registration_2v2 || !local2v2_winner_popup
 		|| !registration_tournament || !localTour_matchmaking_popup
+		|| !onlineTour_registration || !onlineTour_matchmaking_popup
 		|| !vs_AI_winner_popup
 		|| !playerstats_popup || !settings_popup
 		|| !online1v1_winner_popup || !online_game_popup || !online1v1_matchmaking_popup || !exit_mm
+		|| !online2v2_winner_popup || !online2v2_matchmaking_popup
 		|| !xox_popup || !xox_game_popup || !registration_xox || !xox_matchmaking_popup)
 		throw new Error("remove all pages elements not found");
 
@@ -132,12 +152,18 @@ function rmv_all_pgs_except_index()
 	registration_tournament.classList.add("hidden");
 	localTour_matchmaking_popup.classList.add("hidden");
 	
+	onlineTour_registration.classList.add("hidden");
+	onlineTour_matchmaking_popup.classList.add("hidden");
+	
 	exported_stop_game_ft();
 	vs_AI_winner_popup.classList.add("hidden");
 	friends_popup.classList.add("hidden");
 
 	online1v1_winner_popup.classList.add("hidden");
 	online1v1_matchmaking_popup.classList.add("hidden");
+
+	online2v2_winner_popup.classList.add("hidden");
+	online2v2_matchmaking_popup.classList.add("hidden");
 
 	xox_popup.classList.add("hidden");
 	xox_game_popup.classList.add("hidden");
@@ -178,6 +204,10 @@ function display_other_pages(path : string)
 			open_pong_modes(); break;
 		case "/pong/online1v1":
 			online_1v1_play(); break;
+		case "/pong/online2v2":
+			online_2v2_play(); break;
+		case "/pong/online-tournament":
+			online_tour_manager(); break;
 		case "/friends":
 			open_friend_page(); break;
 		case "/tic_tac_toe":

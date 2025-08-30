@@ -3,6 +3,8 @@ import { disable_back_navigation, enable_back_navigation} from "./spa-navigation
 import { translate_text } from "./language";
 import { handle_language_change } from "./language";
 import { start_game_countdown } from "./game-online-1v1";
+import { click_pong_modes_button } from "./pong_modes";
+import { removeAllEventListenersFromButton } from "./gameindex";
 
 import "./gamestyle.css";
 // let first_call_flag = false;
@@ -353,10 +355,12 @@ export function online_2v2_play()
 			</div>
 			` 
 
-			exit_mm.addEventListener("click", () => {
+			const cleanedExitButton = removeAllEventListenersFromButton(exit_mm);
+			cleanedExitButton.addEventListener("click", () => {
 				matchmaking_popup.classList.add("hidden");
 				socket.close();
 				cleanup_2v2_ui();
+				click_pong_modes_button();
 			});
 
 			let team1_html = "";
@@ -529,8 +533,10 @@ export function online_2v2_play()
 		socket.close();
 		cleanup_2v2_ui();
 
-		close_online_2v2_winner_popup_button.addEventListener("click", () => {
+		const cleanedCloseButton = removeAllEventListenersFromButton(close_online_2v2_winner_popup_button);
+		cleanedCloseButton.addEventListener("click", () => {
 			online2v2_winner_popup.classList.add("hidden");
+			click_pong_modes_button();
 		})
 	}
 }
