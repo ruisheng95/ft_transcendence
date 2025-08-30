@@ -157,7 +157,6 @@ const bm_texts = {
     onlineTour_playersjoined_text: "Pemain telah menyertai:",
     onlineTour_mm_finalrankings_text: "🏆 Kedudukan Akhir 🏆",
     onlineTour_open_game: "Mulakan Pertempuran",
-    onlineTour_exit_matchmaking: "Tinggalkan Kejohanan",
     onlineTour_close_finalwinner_popup: "Kembali ke Menu",
     onlineTour_title: "Sertai Kejohanan Dalam Talian",
     onlineTour_p1: "Bersedia untuk bersaing dalam kejohanan dalam talian?",
@@ -254,6 +253,7 @@ const bm_texts = {
 	//onlinetour strings
 	"Starting match automatically...": "Memulakan perlawanan secara automatik...",
 	"Returning to tournament...": "Kembali ke kejohanan...",
+	"Waiting for players": "Menunggu pemain",
 
 	//xox strings
 	"Matches": "Perlawanan",
@@ -423,7 +423,6 @@ const en_texts = {
     onlineTour_playersjoined_text: "Players joined:",
     onlineTour_mm_finalrankings_text: "🏆 Final Rankings 🏆",
     onlineTour_open_game: "Start Battle",
-    onlineTour_exit_matchmaking: "Leave Tournament",
     onlineTour_close_finalwinner_popup: "Back to Menu",
     onlineTour_title: "Join Online Tournament",
     onlineTour_p1: "Ready to compete in the online tournament?",
@@ -620,7 +619,6 @@ const cn_texts = {
     onlineTour_playersjoined_text: "已加入玩家：",
     onlineTour_mm_finalrankings_text: "🏆 最终排名 🏆",
     onlineTour_open_game: "开始战斗",
-    onlineTour_exit_matchmaking: "离开锦标赛",
     onlineTour_close_finalwinner_popup: "返回菜单",
     onlineTour_title: "参加在线锦标赛",
     onlineTour_p1: "准备好参加在线锦标赛了吗？",
@@ -717,6 +715,7 @@ const cn_texts = {
 	//onlinetour strings
 	"Starting match automatically...": "自动开始比赛...",
 	"Returning to tournament...": "正在返回锦标赛...",
+	"Waiting for players": "等待玩家中",
 
 	//xox strings
 	"Matches": "比赛数",
