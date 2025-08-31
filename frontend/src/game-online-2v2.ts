@@ -545,6 +545,15 @@ export function online_2v2_play()
 			click_pong_modes_button();
 		})
 	}
+
+	//window popstate close socket lol
+	window.removeEventListener("popstate", online2v2_window_popstate);
+	window.addEventListener("popstate", online2v2_window_popstate);
+
+	function online2v2_window_popstate()
+	{
+		socket.close();
+	}
 }
 
 

@@ -135,7 +135,7 @@ function rmv_all_pgs_except_index()
 		|| !vs_AI_winner_popup
 		|| !playerstats_popup || !settings_popup
 		|| !online1v1_winner_popup || !online_game_popup || !online1v1_matchmaking_popup || !exit_mm
-		|| !online2v2_winner_popup || !online2v2_matchmaking_popup
+		// || !online2v2_winner_popup || !online2v2_matchmaking_popup
 		|| !xox_popup || !xox_game_popup || !registration_xox || !xox_matchmaking_popup)
 		throw new Error("remove all pages elements not found");
 
@@ -162,8 +162,9 @@ function rmv_all_pgs_except_index()
 	online1v1_winner_popup.classList.add("hidden");
 	online1v1_matchmaking_popup.classList.add("hidden");
 
-	online2v2_winner_popup.classList.add("hidden");
-	online2v2_matchmaking_popup.classList.add("hidden");
+	//online 2v2 popups are not neccessarily there in the DOM!!!
+	online2v2_winner_popup?.classList.add("hidden");
+	online2v2_matchmaking_popup?.classList.add("hidden");
 
 	xox_popup.classList.add("hidden");
 	xox_game_popup.classList.add("hidden");
