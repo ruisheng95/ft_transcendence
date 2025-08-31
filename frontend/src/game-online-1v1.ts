@@ -330,7 +330,6 @@ export function online_1v1_play()
 		if(playing == false)
 				return;
 
-		enable_back_navigation();
 
 		online1v1_left_name.innerText = p1_name;
 		online1v1_right_name.innerText = p2_name;
@@ -338,6 +337,9 @@ export function online_1v1_play()
 		// check if in tournament first to determine point display
 		const tournament_context = localStorage.getItem("tournament_context");
 		console.log("TOURNAMENT CONTEXT: ", tournament_context);
+
+		if(!tournament_context)
+			enable_back_navigation();
 		
 		if(gameover_obj.winner == "leftplayer") {
 			online1v1_left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
