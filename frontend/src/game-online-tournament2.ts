@@ -30,6 +30,7 @@ export function online_tour_manager()
 	const fromGame = urlParams.get('from_game');
 	
 	if (fromGame === 'true') {
+		console.log("ENTERED FROMGAME TRUE");
 		const tournamentContext = localStorage.getItem("tournament_context");
 		if (tournamentContext) {
 			isReturningFromGame = true;

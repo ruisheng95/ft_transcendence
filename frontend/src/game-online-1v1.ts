@@ -6,6 +6,7 @@ import "./gamestyle.css";
 import { removeAllEventListenersFromButton } from "./gameindex.ts";
 import { translate_text } from "./language.ts";
 import { click_pong_modes_button } from "./pong_modes.ts";
+import { add_history } from "./spa-navigation";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -325,6 +326,7 @@ export function online_1v1_play()
 
 		// check if in tournament first to determine point display
 		const tournament_context = localStorage.getItem("tournament_context");
+		console.log("TOURNAMENT CONTEXT: ", tournament_context);
 		
 		if(gameover_obj.winner == "leftplayer") {
 			online1v1_left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
@@ -364,7 +366,9 @@ export function online_1v1_play()
 		online1v1_winner_popup.classList.remove("hidden");
 		game_popup.classList.add("hidden");
 		
-		if (tournament_context) {
+		if (tournament_context)
+		{
+			console.log("ENTERED HERE BECAUSE TOURNEMENT HAS CONTEXT");
 			const context = JSON.parse(tournament_context);
 			const tournament_socket = WS.getInstance(context.socket_url);
 			
@@ -415,10 +419,14 @@ export function online_1v1_play()
 			//auto return to tournament after result page
 			setTimeout(() => {
 				online1v1_winner_popup?.classList.add("hidden");
-				// add_history("/onlinegame?from_game=true");
+				add_history("/onlinegame?from_game=true");
 			}, 3000);
-		} else {
+		}
+		else
+		{
 			// normal 1v1 - manual exit button
+			close_online_1v1_winner_popup_button.disabled = false;
+			close_online_1v1_winner_popup_button.textContent = translate_text("Exit");
 			close_online_1v1_winner_popup_button.removeEventListener("click", close_online1v1_winner_popup_ft);
 			close_online_1v1_winner_popup_button.addEventListener("click", close_online1v1_winner_popup_ft);
 		}
