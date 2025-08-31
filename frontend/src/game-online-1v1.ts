@@ -6,7 +6,7 @@ import "./gamestyle.css";
 import { removeAllEventListenersFromButton } from "./gameindex.ts";
 import { translate_text } from "./language.ts";
 import { click_pong_modes_button } from "./pong_modes.ts";
-import { add_history } from "./spa-navigation";
+// import { add_history } from "./spa-navigation";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -419,7 +419,7 @@ export function online_1v1_play()
 			//auto return to tournament after result page
 			setTimeout(() => {
 				online1v1_winner_popup?.classList.add("hidden");
-				add_history("/onlinegame?from_game=true");
+				// add_history("/onlinegame?from_game=true");
 			}, 3000);
 		}
 		else
