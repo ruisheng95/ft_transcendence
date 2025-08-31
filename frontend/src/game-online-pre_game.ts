@@ -1,7 +1,7 @@
 import "./gamestyle.css";
 import { online_1v1_play } from "./game-online-1v1";
 import { online_2v2_play } from "./game-online-2v2";
-import { online_tour_game_setup } from "./game-online-tournament";
+import { onlineTour_play } from "./game-online-tournament";
 import { add_history } from "./spa-navigation";
 
 // online_play_menus	
@@ -12,7 +12,6 @@ export function online_play_menus_setup()
 	const online_2v2_button = document.querySelector<HTMLButtonElement>("#online_2v2_button");
 	const online_tournament_button = document.querySelector<HTMLButtonElement>("#online_tournament_button");
 	const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
-	const onlineTour_regist_page = document.querySelector<HTMLDivElement>("#onlineTour_registration");
 
 	if (!online_1v1_button || !online_2v2_button || !online_tournament_button || !online_play_menus_popup)
 		throw new Error("online play menus stuff not found");
@@ -30,11 +29,8 @@ export function online_play_menus_setup()
 	});
 
 	online_tournament_button.addEventListener("click", () => {
-		online_play_menus_popup.classList.add("hidden");
-		if (onlineTour_regist_page) {
-			onlineTour_regist_page.classList.remove("hidden");
-			online_tour_game_setup();
-		}
+		add_history("/pong/online-tournament");
+		onlineTour_play();
 	});
 }
 

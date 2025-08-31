@@ -1,5 +1,6 @@
 import "./gamestyle.css";
 import { online_tour_manager } from "./game-online-tournament2.ts";
+import { click_pong_modes_button } from "./pong_modes.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -22,7 +23,20 @@ export function online_tour_game_setup()
 
 	online_tour_close_button.addEventListener("click", () => {
 		onlineTour_regist_page.classList.add("hidden");
+		click_pong_modes_button();
 	});
+}
+
+export function onlineTour_play()
+{
+	const onlineTour_regist_page = document.querySelector<HTMLDivElement>("#onlineTour_registration");
+	const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
+	if(online_play_menus_popup)
+		online_play_menus_popup.classList.add("hidden");
+	if (onlineTour_regist_page) {
+		onlineTour_regist_page.classList.remove("hidden");
+		online_tour_game_setup();
+	}
 }
 
 const onlineTour_matchmaking_popup = html`

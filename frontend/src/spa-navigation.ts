@@ -20,7 +20,7 @@ import { WS } from "./class/WS";
 import { open_xox_modes } from "./xox_dashboard";
 import { xox_online_play } from "./game-online-xox";
 import { online_2v2_play } from "./game-online-2v2";
-import { online_tour_manager } from "./game-online-tournament2";
+import { onlineTour_play } from "./game-online-tournament";
 
 export function add_history(path : string)
 {
@@ -208,7 +208,7 @@ function display_other_pages(path : string)
 		case "/pong/online2v2":
 			online_2v2_play(); break;
 		case "/pong/online-tournament":
-			online_tour_manager(); break;
+			onlineTour_play(); break;
 		case "/friends":
 			open_friend_page(); break;
 		case "/tic_tac_toe":

@@ -2,10 +2,12 @@
 
 import { online_1v1_play } from "./game-online-1v1";
 import { translate_text } from "./language";
-import { add_history } from "./spa-navigation";
+import { click_pong_modes_button } from "./pong_modes";
+import { disable_back_navigation, enable_back_navigation } from "./spa-navigation";
 
 // global flag to prevent multiple tournament managers
 let tournamentManagerActive = false;
+let onlineTour_back_nav_disabled = false;
 
 export function online_tour_manager()
 {
@@ -92,12 +94,13 @@ export function online_tour_manager()
 		if ((window as any).tournamentState) {
 			delete (window as any).tournamentState;
 		}
+		click_pong_modes_button();
 	});
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
 		const msg_obj = JSON.parse(message.data);
-		// console.log("RECVED FROM TOUR SOCKET: ", msg_obj);
+		console.log("RECVED FROM TOUR SOCKET: ", msg_obj);
 			
 		if(msg_obj.type === "tournament_status") {
 			update_matchmaking_status(msg_obj);
@@ -118,6 +121,8 @@ export function online_tour_manager()
 			Tournament_state.tournament_id = msg_obj.tournament_id;
 			update_bracket_display();
 			hide_status_show_bracket();
+			disable_back_navigation();
+			onlineTour_back_nav_disabled = true;
 		}
 		else if(msg_obj.type === "match_ready") {
 			Tournament_state.current_match_id = msg_obj.match_id;
@@ -474,7 +479,7 @@ export function online_tour_manager()
 			if ((window as any).tournamentState) {
 				delete (window as any).tournamentState;
 			}
-			add_history("");
+			click_pong_modes_button();
 		});
 
 		status_section.classList.add("hidden");
@@ -495,5 +500,25 @@ export function online_tour_manager()
 		ranking_2nd.innerText = Tournament_state.final_ranking[1];
 		ranking_3rd.innerText = Tournament_state.final_ranking[2];
 		ranking_4th.innerText = Tournament_state.final_ranking[3];
+
+		enable_back_navigation();
+		onlineTour_back_nav_disabled = false;
+
+	}
+
+	window.removeEventListener("popstate", onlineTour_window_popstate);
+	window.addEventListener("popstate", onlineTour_window_popstate);
+
+	function onlineTour_window_popstate()
+	{
+		if(onlineTour_back_nav_disabled === true)
+			return;
+
+		socket.close();
+		tournamentManagerActive = false;
+		localStorage.removeItem("tournament_context");
+		if ((window as any).tournamentState) {
+			delete (window as any).tournamentState;
+		}
 	}
 }

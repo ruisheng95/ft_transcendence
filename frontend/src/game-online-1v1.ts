@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { disable_back_navigation, enable_back_navigation, add_history } from "./spa-navigation";
+import { disable_back_navigation, enable_back_navigation} from "./spa-navigation";
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
@@ -415,7 +415,7 @@ export function online_1v1_play()
 			//auto return to tournament after result page
 			setTimeout(() => {
 				online1v1_winner_popup?.classList.add("hidden");
-				add_history("/onlinegame?from_game=true");
+				// add_history("/onlinegame?from_game=true");
 			}, 3000);
 		} else {
 			// normal 1v1 - manual exit button
