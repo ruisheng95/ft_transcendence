@@ -127,22 +127,26 @@ export class OnlineTournament {
         }
 
         // handle disconnect during active tournament
-        if (playerInfo.tournament_id) {
+        if (playerInfo.tournament_id)
+		{
             const tournament = this.#tournaments.get(playerInfo.tournament_id);
             if (tournament) {
-            	// implement later
-				///////////////////////////////////////////////////
-				//UPDATE DATABASE HERE (PREFERABILY PINALIZE THE DCED PLAYER)
-				//////////////////////////////////////////////////////////
+
+				//update database for dced player
+				this.#fastify.betterSqlite3
+                .prepare("UPDATE USER SET RATING = CASE WHEN RATING > 10 THEN RATING - 10 ELSE 0 END WHERE EMAIL = ?")
+                .run(playerInfo.email);
 
 				const dced_msg = {
 					type: "player_dced",
 					tournament_id: tournament.id,
 					disconnected_player: playerInfo.username,
 					match_id: tournament.current_match ? tournament.current_match.id : null,
-					round: tournament.current_round
+					round: tournament.current_round,
+					final_ranking: ["-", "-", "-", "-"]
 				};
 
+				const remaining_players = [];
 				tournament.players.forEach(player => {
 					if (player.connection.readyState === 1 && player.session !== playerInfo.session)
 					{
@@ -152,9 +156,29 @@ export class OnlineTournament {
 						player.connection.close();
 						player.tournament_id = null;
 						this.#tournaments.delete(tournament.id);
-					}
 
-				});				
+						//update database for players left
+						this.#fastify.betterSqlite3
+						.prepare("UPDATE USER SET RATING = RATING + 5 WHERE EMAIL = ?")
+						.run(player.email);
+
+						remaining_players.push(player.email);
+					}
+				});
+				
+				//update PONG RESULTS table
+				const curr_date = new Date().toLocaleDateString();
+
+				this.#fastify.betterSqlite3
+                .prepare("INSERT INTO PONG_MATCH (date, match_type, user1_email, user1_result, user2_email, user2_result, user3_email, user3_result, user4_email, user4_result) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                .run(
+                curr_date, 
+                "Tournament", 
+                remaining_players[0], -1, 
+                remaining_players[1], -1, 
+                remaining_players[2], -1, 
+                playerInfo.email, -2
+                );
 			}
         }
     }
@@ -292,7 +316,6 @@ export class OnlineTournament {
         tournament.players.forEach(player => {
             if (player.connection.readyState === 1)
                 player.connection.send(JSON.stringify(matchMsg));
-
         });
     }
 

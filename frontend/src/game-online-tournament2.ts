@@ -100,6 +100,10 @@ export function online_tour_manager()
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
+		const optional_msg_div = document.querySelector<HTMLDivElement>("#onlineTour_rankings_optional_msg");
+
+		if(!optional_msg_div) throw new Error("onlinTour process msg socket elements not found");
+
 		const msg_obj = JSON.parse(message.data);
 		console.log("RECVED FROM TOUR SOCKET: ", msg_obj);
 			
@@ -155,6 +159,7 @@ export function online_tour_manager()
 			if ((window as any).tournamentState) {
 				delete (window as any).tournamentState;
 			}
+			optional_msg_div.innerHTML = "";
 			make_final_ranking();
 		}
 		else if(msg_obj.type === "redirect_to_game") {
@@ -170,9 +175,13 @@ export function online_tour_manager()
 			savedTournamentId = "";
 		}
 		else if(msg_obj.type === "player_dced") {
-			////////////////////////////////
-			//HANDLE THEM STUFFS HEREEE
-			///////////////////////////////////
+			Tournament_state.final_ranking = msg_obj.final_ranking;
+			localStorage.removeItem("tournament_context");
+			if ((window as any).tournamentState) {
+				delete (window as any).tournamentState;
+			}
+			optional_msg_div.innerHTML = translate_text("Tournament ended: player disconnected (rating changes: +5 all, -10 leaver)");
+			make_final_ranking();
 		}
 	}
 
@@ -504,7 +513,6 @@ export function online_tour_manager()
 
 		enable_back_navigation();
 		onlineTour_back_nav_disabled = false;
-
 	}
 
 	window.removeEventListener("popstate", onlineTour_window_popstate);

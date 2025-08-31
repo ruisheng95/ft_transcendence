@@ -19,6 +19,7 @@ export class GameInstance {
   #emailsArray = []; //ck added
   #fastify = null; //ck added
   #clean_disconnect_flag = false; //ck added
+  #tournament_context = null; //ck added
   #connectionArray = [];
   #boardHeight = 0;
   #boardWidth = 0;
@@ -251,6 +252,7 @@ export class GameInstance {
   }
 
   startGame(data) {
+
     if (this.#connectionArray.length != 2) {
       console.warn("Failed to start game", this.#connectionArray.length);
       return;
@@ -310,6 +312,7 @@ export class GameInstance {
 	if(this.#clean_disconnect_flag === true)
 		return;
 
+
 	const playerIndex = this.#connectionArray.indexOf(disconnectedConnection);
 		if (playerIndex === -1) return;
 		
@@ -319,7 +322,8 @@ export class GameInstance {
 		console.log(`Player ${disconnectedEmail} disconnected`);
 		
 		//update playerstats where the loser is the dced player
-		this.#update_playerstats_aftergame(otherEmail, disconnectedEmail);
+		if(this.#tournament_context === null)
+			this.#update_playerstats_aftergame(otherEmail, disconnectedEmail);
 
 		this.#sendJson({type: "player_dced", winner: playerIndex === 0 ? "rightplayer" : "leftplayer"});
 		this.stopGame();
@@ -338,7 +342,17 @@ export class GameInstance {
 
   //functions ck coded:
 
+  store_tournament_context(message_obj){
+	this.#tournament_context = message_obj.tournament_context;
+	console.log("STORING TOURNAMENT CONTEXT: ", message_obj.tournament_context);
+  }
+
   #update_playerstats_aftergame(winner_email, loser_email) {
+
+	console.log("TOURNAMENT CONTEXT IN UPDATE PLAYERSTATS: ", this.#tournament_context);
+	if(this.#tournament_context !== null)
+		return;
+
     //update winner
     this.#fastify.betterSqlite3
       .prepare(

@@ -85,7 +85,8 @@ export function online_1v1_play()
 	{	
 		//send the init JSON to backend
 		if (socket.readyState === WebSocket.OPEN)
-			socket.send(JSON.stringify({type: "game_start"}));
+			socket.send(JSON.stringify({type: "game_start", tournament_context: tournament_context}));
+		console.log("TOURNAMENT CONTEXT: ", tournament_context);
 	}
 
 	function process_msg_from_socket(message: MessageEvent)
@@ -95,7 +96,7 @@ export function online_1v1_play()
 
 		if(!optional_msg_div || !matchmaking_popup) throw new Error("process msg socket elements not found");
 
-		console.log("JSON recv to frontend: ", message.data);
+		// console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
 			
 		if(msg_obj.type === "matchmaking_status")
@@ -117,10 +118,14 @@ export function online_1v1_play()
 			handle_game_end(msg_obj);
 		}
 		else if(msg_obj.type === "player_dced")
-		{		
+		{
 			optional_msg_div.innerHTML = translate_text("Match terminated because a player has disconnected");
 			player_dced_flag = true;
 			matchmaking_popup.classList.add("hidden");
+
+			const onlineTour_mm_popup = document.querySelector("#onlineTour_matchmaking_popup");
+			if(tournament_context)
+				onlineTour_mm_popup?.classList.remove("hidden");
 			handle_game_end(msg_obj);
 		}
 	}
@@ -250,6 +255,9 @@ export function online_1v1_play()
 
 		let countdown = 3;
 
+		//send tournament context
+		socket.send(JSON.stringify({type: "tournament_context", tournament_context: tournament_context}));
+
 		//show initial countdown cuz setinterval starts one sec late
 		mm_status_div.innerHTML = `
 			<div class="flex flex-col items-center">
@@ -288,6 +296,9 @@ export function online_1v1_play()
 				}, 4000);
 
 				//moved this down abit to ensure the DOM is loaded and the names can be put inside
+				// console.log("Player1: ", p1_name, " Player2: ", p2_name, " INSERTING INTO DOM NOW!!!!");
+				p1_name_div.classList.remove("hidden");
+				p2_name_div.classList.remove("hidden");
 				p1_name_div.innerHTML = p1_name;
 				p2_name_div.innerHTML = p2_name;
 				start_game_countdown(game_countdown_div);
@@ -368,7 +379,6 @@ export function online_1v1_play()
 		
 		if (tournament_context)
 		{
-			console.log("ENTERED HERE BECAUSE TOURNEMENT HAS CONTEXT");
 			const context = JSON.parse(tournament_context);
 			const tournament_socket = WS.getInstance(context.socket_url);
 			

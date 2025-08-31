@@ -157,6 +157,7 @@ const root = async function (fastify) {
     (connection, request) => {
       const tournamentId = request.query.tournament;
       const matchId = request.query.match;
+	//   console.log("TESTING: TOURNEMENT ID: ", tournamentId, " matchid: ", matchId);
 
       onlineMatchmaking.registerPlayer(
         fastify.get_email_by_session(request),
@@ -188,6 +189,8 @@ const root = async function (fastify) {
             connection
           );
         }
+		else if (message_obj.type === "tournament_context")
+			player.gameInstance?.store_tournament_context(message_obj);
       });
 
       connection.on("close", () => {

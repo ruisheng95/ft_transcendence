@@ -94,6 +94,7 @@ function cleanup_2v2_ui() {
 	const team1_display = document.querySelector("#online2v2_team1_name_display");
 	const team2_display = document.querySelector("#online2v2_team2_name_display");
 	
+	//i would suggest if u removed them completely instead of using .add hidden cuz ure generating one set everytime onlin2v2 is started
 	if (player_names_container) player_names_container.classList.add("hidden");
 	if (team1_display) team1_display.classList.add("hidden");
 	if (team2_display) team2_display.classList.add("hidden");
@@ -215,7 +216,7 @@ export function online_2v2_play()
 
 		if(!matchmaking_popup || !optional_msg_div) throw new Error("process msg socket elements not found");
 
-		console.log("JSON recv to frontend: ", message.data);
+		// console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
 			
 		if(msg_obj.type === "matchmaking_status") {

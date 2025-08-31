@@ -21,7 +21,7 @@ const root = async function (fastify) {
       function recv_msg(message) {
         const message_obj = JSON.parse(message.toString());
         if (Object.keys(message_obj).length !== 0) {
-          request.log.info(message_obj, "Received:");
+        //   request.log.info(message_obj, "Received:");
         }
 
         if (message_obj.type === "get_player_profile") send_player_profile();

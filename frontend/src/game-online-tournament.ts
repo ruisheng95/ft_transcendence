@@ -148,6 +148,8 @@ const onlineTour_matchmaking_popup = html`
 					</div>
 					</div>
 				</div>
+
+				<div id="onlineTour_rankings_optional_msg" class="mb-2"></div>
 			</div>
 			
 			<!-- buttons -->

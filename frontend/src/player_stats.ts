@@ -55,7 +55,7 @@ function insert_playerstats_and_history_main()
 			const winstreak = msg_obj.winning_streak;
 			const total_wins = msg_obj.total_win;
 			const total_loss = msg_obj.total_lose;
-			const total_matches = total_wins + total_loss;
+			const total_matches = msg_obj.history.length;
 			const winrate = total_matches != 0 ? Math.round((total_wins / total_matches) * 100) : 0;
 			
 			function getOrdinalSuffix(num: number): string {
@@ -78,6 +78,8 @@ function insert_playerstats_and_history_main()
 					case 2: return "text-gray-300";
 					case 3: return "text-orange-400";
 					case 4: return "text-blue-400";
+					case -1: return "text-gray-400";
+					case -2: return "text-red-400";
 					default: return "text-gray-400";
 				}
 			}
@@ -127,8 +129,16 @@ function insert_playerstats_and_history_main()
 					{
 						if(isTournament) {
 							const placement = entry.user1_result;
-							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
-							result_color = getPlacementColor(placement);
+							if(placement != -1 && placement != -2)
+							{
+								user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+								result_color = getPlacementColor(placement);
+							}
+							else
+							{
+								user_result = placement === -1 ? "invalid" : "disconnected";
+								result_color = getPlacementColor(placement);
+							}
 						} else {
 							user_result = entry.user1_result == 1 ? "Win" : "Loss";
 							result_color = entry.user1_result == 1 ? "text-green-500" : "text-red-500";
@@ -139,8 +149,16 @@ function insert_playerstats_and_history_main()
 					{
 						if(isTournament) {
 							const placement = entry.user2_result;
-							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
-							result_color = getPlacementColor(placement);
+							if(placement != -1 && placement != -2)
+							{
+								user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+								result_color = getPlacementColor(placement);
+							}
+							else
+							{
+								user_result = placement === -1 ? "invalid" : "disconnected";
+								result_color = getPlacementColor(placement);
+							}
 						} else {
 							user_result = entry.user2_result == 1 ? "Win" : "Loss";
 							result_color = entry.user2_result == 1 ? "text-green-500" : "text-red-500";
@@ -151,8 +169,16 @@ function insert_playerstats_and_history_main()
 					{
 						if(isTournament) {
 							const placement = entry.user3_result;
-							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
-							result_color = getPlacementColor(placement);
+							if(placement != -1 && placement != -2)
+							{
+								user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+								result_color = getPlacementColor(placement);
+							}
+							else
+							{
+								user_result = placement === -1 ? "invalid" : "disconnected";
+								result_color = getPlacementColor(placement);
+							}
 						} else {
 							user_result = entry.user3_result == 1 ? "Win" : "Loss";
 							result_color = entry.user3_result == 1 ? "text-green-500" : "text-red-500";
@@ -163,8 +189,16 @@ function insert_playerstats_and_history_main()
 					{
 						if(isTournament) {
 							const placement = entry.user4_result;
-							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
-							result_color = getPlacementColor(placement);
+							if(placement != -1 && placement != -2)
+							{
+								user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+								result_color = getPlacementColor(placement);
+							}
+							else
+							{
+								user_result = placement === -1 ? "invalid" : "disconnected";
+								result_color = getPlacementColor(placement);
+							}
 						} else {
 							user_result = entry.user4_result == 1 ? "Win" : "Loss";
 							result_color = entry.user4_result == 1 ? "text-green-500" : "text-red-500";
