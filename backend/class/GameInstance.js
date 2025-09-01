@@ -19,7 +19,7 @@ export class GameInstance {
   #emailsArray = []; //ck added
   #fastify = null; //ck added
   #clean_disconnect_flag = false; //ck added
-  #tournament_context = null; //ck added
+//   #tournament_context = null; //ck added
   #connectionArray = [];
   #boardHeight = 0;
   #boardWidth = 0;
@@ -322,7 +322,7 @@ export class GameInstance {
 		console.log(`Player ${disconnectedEmail} disconnected`);
 		
 		//update playerstats where the loser is the dced player
-		if(this.#tournament_context === null)
+		if(!this.#isTournamentGame)
 			this.#update_playerstats_aftergame(otherEmail, disconnectedEmail);
 
 		this.#sendJson({type: "player_dced", winner: playerIndex === 0 ? "rightplayer" : "leftplayer"});
@@ -342,15 +342,15 @@ export class GameInstance {
 
   //functions ck coded:
 
-  store_tournament_context(message_obj){
-	this.#tournament_context = message_obj.tournament_context;
-	console.log("STORING TOURNAMENT CONTEXT: ", message_obj.tournament_context);
-  }
+//   store_tournament_context(message_obj){
+// 	this.#tournament_context = message_obj.tournament_context;
+// 	console.log("STORING TOURNAMENT CONTEXT: ", message_obj.tournament_context);
+//   }
 
   #update_playerstats_aftergame(winner_email, loser_email) {
 
-	console.log("TOURNAMENT CONTEXT IN UPDATE PLAYERSTATS: ", this.#tournament_context);
-	if(this.#tournament_context !== null)
+	// console.log("TOURNAMENT CONTEXT IN UPDATE PLAYERSTATS: ", this.#tournament_context);
+	if(this.#isTournamentGame)
 		return;
 
     //update winner
@@ -422,11 +422,18 @@ export class OnlineMatchmaking {
       (player) => !player.gameInstance
     );
     
-    const playersWaitingForSameMode = nonPlayingPlayers.filter(
-      (player) => player.gameNoOfPlayers === gameNoOfPlayers && player.gameType === gameType
-    );
-    
-    const pendingPlayerLobby = playersWaitingForSameMode;
+	
+	const hasTournamentContext = tournamentContext && (tournamentContext.isTournamentGame === true || tournamentContext.tournament_id);
+
+	const playersWaitingForSameMode = nonPlayingPlayers.filter((player) => {
+	const playerHasTournamentContext = player.tournamentContext && (player.tournamentContext.isTournamentGame === true || player.tournamentContext.tournament_id);
+
+	return (player.gameNoOfPlayers === gameNoOfPlayers && 
+				player.gameType === gameType && 
+				playerHasTournamentContext === hasTournamentContext)
+	});
+
+	const pendingPlayerLobby = playersWaitingForSameMode;
     const gameLobbySize = gameNoOfPlayers;
     
     if (pendingPlayerLobby.length === gameLobbySize) {   

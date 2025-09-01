@@ -13,10 +13,27 @@ const html = (strings: TemplateStringsArray, ...values: unknown[]) =>
 
 export function online_1v1_play()
 {
-	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 	let player_dced_flag = false;
 	const tournament_context = localStorage.getItem("tournament_context");
 	const gameMode = tournament_context ? "Tournament" : "1 vs 1";
+
+	//socket
+	let parsedContext = null;
+	if (tournament_context) {
+		try {
+			parsedContext = JSON.parse(tournament_context);
+			// console.log("[DEBUG] Parsed tournament context:", parsedContext);
+		} catch (error) {
+			console.error("[ERROR] Failed to parse tournament context:", error);
+		}
+	}
+	let socketUrl = `${import.meta.env.VITE_SOCKET_URL}/ws-online`;
+	if (parsedContext && parsedContext.tournament_id && parsedContext.current_match_id) {
+		socketUrl += `?tournament=${parsedContext.tournament_id}&match=${parsedContext.current_match_id}`;
+		// console.log("[DEBUG] Tournament parameters added to WebSocket URL");
+	}
+	
+	const socket = WS.getInstance(socketUrl);
 
 	const game_obj = document.querySelector<HTMLDivElement>("#online_game_board_area");
 	
@@ -85,8 +102,7 @@ export function online_1v1_play()
 	{	
 		//send the init JSON to backend
 		if (socket.readyState === WebSocket.OPEN)
-			socket.send(JSON.stringify({type: "game_start", tournament_context: tournament_context}));
-		console.log("TOURNAMENT CONTEXT: ", tournament_context);
+			socket.send(JSON.stringify({type: "game_start"}));
 	}
 
 	function process_msg_from_socket(message: MessageEvent)
@@ -254,9 +270,6 @@ export function online_1v1_play()
 		if(!game_countdown_div || !game_popup || !matchmaking_popup || !p1_name_div || !p2_name_div || !map_input) throw new Error("start match countdown elements not found");
 
 		let countdown = 3;
-
-		//send tournament context
-		socket.send(JSON.stringify({type: "tournament_context", tournament_context: tournament_context}));
 
 		//show initial countdown cuz setinterval starts one sec late
 		mm_status_div.innerHTML = `

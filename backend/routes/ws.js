@@ -189,8 +189,6 @@ const root = async function (fastify) {
             connection
           );
         }
-		else if (message_obj.type === "tournament_context")
-			player.gameInstance?.store_tournament_context(message_obj);
       });
 
       connection.on("close", () => {
