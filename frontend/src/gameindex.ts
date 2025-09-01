@@ -206,7 +206,7 @@ export function index_init()
 			${online_tour_game_popup}
 				
 			${game_popup}
-			${online_game_popup()}
+			${online_game_popup}
 			${onlinexox_popups}
 			</div>
 		`);

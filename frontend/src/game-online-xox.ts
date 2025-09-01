@@ -113,7 +113,7 @@ export function xox_online_play()
 		mm_status_div.innerHTML = `
 			<div class="flex flex-col items-center">
 				<div>${translate_text("Match found!")}</div>
-				<div>${translate_text("Match starting in")} ${countdown}<</div>
+				<div>${translate_text("Match starting in")} ${countdown}</div>
 			</div>
 			`;
 		countdown--;
@@ -279,16 +279,20 @@ export function xox_online_play()
 	function handlePlayerDisconnected(msg_obj : any)
 	{
 		const xox_game_message_div = document.querySelector<HTMLDivElement>("#xox_game_message");
+		const left_name_top = document.querySelector<HTMLDivElement>('#xoxleft_name_top');
+		const right_name_top = document.querySelector<HTMLDivElement>('#xoxright_name_top');
 
-		if(!xox_game_message_div) throw new Error("handleIdleTimeout elements not found");
+		if(!xox_game_message_div || !left_name_top || !right_name_top) throw new Error("handleIdleTimeout elements not found");
 
+		left_name_top.innerText = p1_name || "Player 1";
+		right_name_top.innerText = p2_name || "Player 2";
 		xoxWinner_popup(msg_obj.playerIndex === 0 ? 'O' : 'X'); //send the symbol opposite to the person who dced as the winner
 		xox_game_message_div.innerHTML = `${translate_text("Game ended because player has disconnected")}`;
 	}
 
 	function xoxUpdateTurn(gameState: any)
 	{
-		console.log("SUPPOSINGLY RECEIVEd: ", gameState);
+		// console.log("SUPPOSINGLY RECEIVEd: ", gameState);
 		const left_name_top = document.querySelector<HTMLDivElement>('#xoxleft_name_top');
 		const right_name_top = document.querySelector<HTMLDivElement>('#xoxright_name_top');
 		
@@ -349,8 +353,11 @@ export function xox_online_play()
 		instruction.classList.add("hidden");
 		disableCells(true);
 
-		socket.close();
-		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-xox`);
+		if(socket.readyState === WebSocket.OPEN)
+		{
+			socket.close();
+			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-xox`);
+		}
 	}
 }
 

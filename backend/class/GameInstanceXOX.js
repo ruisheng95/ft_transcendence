@@ -14,7 +14,7 @@ export class GameInstanceXOX
 	];
 
 	#whosTurn = false;
-	#gameStatus = "";
+	#gameStatus = "playing";
 	#clickCounter = 0;
 	#player1Name = "";
 	#player2Name = "";
@@ -244,6 +244,10 @@ export class GameInstanceXOX
 	}
 
 	handlePlayerDisconnected(disconnectedConnection) {
+		
+		if (this.#idleTimer)
+			clearTimeout(this.#idleTimer);
+
 		const playerIndex = this.#connectionArray.indexOf(disconnectedConnection);
 		if (playerIndex === -1) return;
 		

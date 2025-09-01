@@ -20,7 +20,7 @@ import { WS } from "./class/WS";
 import { open_xox_modes } from "./xox_dashboard";
 import { xox_online_play } from "./game-online-xox";
 import { online_2v2_play } from "./game-online-2v2";
-import { online_tour_manager } from "./game-online-tournament2";
+import { onlineTour_play } from "./game-online-tournament";
 
 export function add_history(path : string)
 {
@@ -135,7 +135,7 @@ function rmv_all_pgs_except_index()
 		|| !vs_AI_winner_popup
 		|| !playerstats_popup || !settings_popup
 		|| !online1v1_winner_popup || !online_game_popup || !online1v1_matchmaking_popup || !exit_mm
-		|| !online2v2_winner_popup || !online2v2_matchmaking_popup
+		// || !online2v2_winner_popup || !online2v2_matchmaking_popup
 		|| !xox_popup || !xox_game_popup || !registration_xox || !xox_matchmaking_popup)
 		throw new Error("remove all pages elements not found");
 
@@ -162,8 +162,9 @@ function rmv_all_pgs_except_index()
 	online1v1_winner_popup.classList.add("hidden");
 	online1v1_matchmaking_popup.classList.add("hidden");
 
-	online2v2_winner_popup.classList.add("hidden");
-	online2v2_matchmaking_popup.classList.add("hidden");
+	//online 2v2 popups are not neccessarily there in the DOM!!!
+	online2v2_winner_popup?.classList.add("hidden");
+	online2v2_matchmaking_popup?.classList.add("hidden");
 
 	xox_popup.classList.add("hidden");
 	xox_game_popup.classList.add("hidden");
@@ -207,7 +208,7 @@ function display_other_pages(path : string)
 		case "/pong/online2v2":
 			online_2v2_play(); break;
 		case "/pong/online-tournament":
-			online_tour_manager(); break;
+			onlineTour_play(); break;
 		case "/friends":
 			open_friend_page(); break;
 		case "/tic_tac_toe":

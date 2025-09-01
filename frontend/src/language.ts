@@ -150,6 +150,22 @@ const bm_texts = {
 	online2v2_winner_popup_title: "Keputusan Perlawanan",
 	close_online2v2_winner_popup: "Keluar",
 
+	//online tour
+	onlineTour_mm_title: "Kurungan Kejohanan Dalam Talian",
+    onlineTour_tournamentstatus_text: "Status Kejohanan",
+    onlineTour_mm_status: "Menunggu pemain...",
+    onlineTour_playersjoined_text: "Pemain telah menyertai:",
+    onlineTour_mm_finalrankings_text: "🏆 Kedudukan Akhir 🏆",
+    onlineTour_open_game: "Mulakan Pertempuran",
+    onlineTour_close_finalwinner_popup: "Kembali ke Menu",
+    onlineTour_title: "Sertai Kejohanan Dalam Talian",
+    onlineTour_p1: "Bersedia untuk bersaing dalam kejohanan dalam talian?",
+    onlineTour_p2: "Anda akan dipadankan dengan 3 pemain lain",
+    onlineTour_main_start_button: "Sertai Kejohanan",
+    onlineTour_main_close_button: "Batal",
+	onlineTour_losersbracket_text: "Kurungan Penerima Kekalahan",
+	onlineTour_currentbattle_text: "Pertempuran Semasa",
+
 	//online xox
 	onlinexox_title: "Lobi Dalam Talian",
 	onlinexox_gameinfo_text1: "Dalam Talian",
@@ -219,6 +235,8 @@ const bm_texts = {
 	"Match starting in": "Permainan bermula dalam",
 	"match ongoing": "perlawanan sedang berlangsung",
 	"Match terminated because a player has disconnected": "Perlawanan ditamatkan kerana pemain telah terputus sambungan",
+	"1 vs 1": "1 lawan 1",
+	"Tournament": "Kejohanan",
 
 	//online2v2 strings
 	"Waiting...": "Menunggu...",
@@ -235,6 +253,7 @@ const bm_texts = {
 	//onlinetour strings
 	"Starting match automatically...": "Memulakan perlawanan secara automatik...",
 	"Returning to tournament...": "Kembali ke kejohanan...",
+	"Waiting for players": "Menunggu pemain",
 
 	//xox strings
 	"Matches": "Perlawanan",
@@ -396,6 +415,22 @@ const en_texts = {
 	online2v2_team2_text: "Team 2",
 	online2v2_winner_popup_title: "Match Result",
 	close_online2v2_winner_popup: "Exit",
+
+	//online tour
+	onlineTour_mm_title: "Online Tournament Bracket",
+    onlineTour_tournamentstatus_text: "Tournament Status",
+    onlineTour_mm_status: "Waiting for players...",
+    onlineTour_playersjoined_text: "Players joined:",
+    onlineTour_mm_finalrankings_text: "🏆 Final Rankings 🏆",
+    onlineTour_open_game: "Start Battle",
+    onlineTour_close_finalwinner_popup: "Back to Menu",
+    onlineTour_title: "Join Online Tournament",
+    onlineTour_p1: "Ready to compete in the online tournament?",
+    onlineTour_p2: "You will be matched against 3 other players",
+    onlineTour_main_start_button: "Join Tournament",
+    onlineTour_main_close_button: "Cancel",
+	onlineTour_losersbracket_text: "Loser's Bracket",
+	onlineTour_currentbattle_text: "Current Battle",
 
 	//online xox
 	onlinexox_title: "Online Lobby",
@@ -577,6 +612,22 @@ const cn_texts = {
 	online2v2_winner_popup_title: "比赛结果",
 	close_online2v2_winner_popup: "退出",
 
+	//online tour
+	onlineTour_mm_title: "在线锦标赛对阵表",
+    onlineTour_tournamentstatus_text: "锦标赛状态",
+    onlineTour_mm_status: "等待玩家中...",
+    onlineTour_playersjoined_text: "已加入玩家：",
+    onlineTour_mm_finalrankings_text: "🏆 最终排名 🏆",
+    onlineTour_open_game: "开始战斗",
+    onlineTour_close_finalwinner_popup: "返回菜单",
+    onlineTour_title: "参加在线锦标赛",
+    onlineTour_p1: "准备好参加在线锦标赛了吗？",
+    onlineTour_p2: "您将与另外3名玩家匹配对战",
+    onlineTour_main_start_button: "参加锦标赛",
+    onlineTour_main_close_button: "取消",
+	onlineTour_losersbracket_text: "败者组",
+	onlineTour_currentbattle_text: "当前对战",
+
 	//online xox
 	onlinexox_title: "在线大厅",
 	onlinexox_gameinfo_text1: "在线",
@@ -646,6 +697,8 @@ const cn_texts = {
 	"Match starting in": "比赛将在",
 	"match ongoing": "比赛进行中",
 	"Match terminated because a player has disconnected": "比赛已终止，因为玩家已断开连接",
+	"1 vs 1": "1对1",
+	"Tournament": "锦标赛",
 
 	//online2v2 strings
 	"Waiting...": "等待中...",
@@ -662,6 +715,7 @@ const cn_texts = {
 	//onlinetour strings
 	"Starting match automatically...": "自动开始比赛...",
 	"Returning to tournament...": "正在返回锦标赛...",
+	"Waiting for players": "等待玩家中",
 
 	//xox strings
 	"Matches": "比赛数",

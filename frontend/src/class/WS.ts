@@ -6,7 +6,9 @@ export class WS {
   >();
 
   static getInstance(url: string) {
-    url = `${url}?session=${localStorage.getItem("session") || ""}`;
+    // Check if URL already has query parameters
+    const separator = url.includes('?') ? '&' : '?';
+    url = `${url}${separator}session=${localStorage.getItem("session") || ""}`;
     let socket = WS.#websocketInstances.get(url);
     if (!socket) {
       socket = new WebSocket(url);

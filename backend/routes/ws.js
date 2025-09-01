@@ -157,6 +157,7 @@ const root = async function (fastify) {
     (connection, request) => {
       const tournamentId = request.query.tournament;
       const matchId = request.query.match;
+	//   console.log("TESTING: TOURNEMENT ID: ", tournamentId, " matchid: ", matchId);
 
       onlineMatchmaking.registerPlayer(
         fastify.get_email_by_session(request),
@@ -252,6 +253,17 @@ const root = async function (fastify) {
           player.gameInstance = null;
         }
         onlineMatchmaking.removePlayerByConnection(connection);
+
+		//send JSON to all players in the lobby that a player has left
+		const remainingPlayers = onlineMatchmaking.getWaitingPlayers(4, 'pong');
+   		 remainingPlayers.forEach(player => {
+			player.connection.send(JSON.stringify({
+				type: MsgType.MATCHMAKING_STATUS,
+				status: "Waiting for players",
+				gameType: 'pong',
+				players: JSON.stringify(remainingPlayers.map(player => player.username)),
+      	}))});
+
         request.log.info("Socket disconnect: " + player.email);
       });
 

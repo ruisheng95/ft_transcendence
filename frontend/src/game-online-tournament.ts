@@ -1,5 +1,6 @@
 import "./gamestyle.css";
 import { online_tour_manager } from "./game-online-tournament2.ts";
+import { click_pong_modes_button } from "./pong_modes.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -22,7 +23,20 @@ export function online_tour_game_setup()
 
 	online_tour_close_button.addEventListener("click", () => {
 		onlineTour_regist_page.classList.add("hidden");
+		click_pong_modes_button();
 	});
+}
+
+export function onlineTour_play()
+{
+	const onlineTour_regist_page = document.querySelector<HTMLDivElement>("#onlineTour_registration");
+	const online_play_menus_popup = document.querySelector<HTMLDivElement>("#online_play_menus_popup");
+	if(online_play_menus_popup)
+		online_play_menus_popup.classList.add("hidden");
+	if (onlineTour_regist_page) {
+		onlineTour_regist_page.classList.remove("hidden");
+		online_tour_game_setup();
+	}
 }
 
 const onlineTour_matchmaking_popup = html`
@@ -35,7 +49,7 @@ const onlineTour_matchmaking_popup = html`
 			</button>
 
 			<div id="onlineTour_matchmaking_header" class="text-center mb-6">
-				<h1 class="text-5xl font-bold">Online Tournament Bracket</h1>
+				<h1 id="onlineTour_mm_title" class="text-5xl font-bold">Online Tournament Bracket</h1>
 			</div>
 
 			<div class="flex justify-center w-full mb-8">
@@ -77,7 +91,7 @@ const onlineTour_matchmaking_popup = html`
 				<!-- loser bracket -->
 				<div class="h-30 border mx-6"></div>
 				<div class="flex flex-col items-center relative">
-					<div class="absolute text-xl -top-10">Loser's Bracket</div>
+					<div id="onlineTour_losersbracket_text" class="absolute text-xl -top-10">Loser's Bracket</div>
 						<div class="flex items-center">
 							<div class="flex flex-col space-y-8">
 								<div id="onlineTour_loser1_bracket" class="border rounded-lg w-40 py-2 text-center">?</div>
@@ -94,16 +108,16 @@ const onlineTour_matchmaking_popup = html`
 
 			<!-- Tournament status -->
 			<div id="onlineTour_status_section" class="text-center bg-white/20 w-2/3 rounded-xl pt-6 pb-12">
-				<h1 class="text-2xl font-bold mb-4">Tournament Status</h1>
+				<h1 id="onlineTour_tournamentstatus_text" class="text-2xl font-bold mb-4">Tournament Status</h1>
 				<div id="onlineTour_mm_status" class="text-xl mb-4">Waiting for players...</div>
 				<div id="onlineTour_player_list" class="text-lg">
-					<div>Players joined: <span id="onlineTour_player_count">0/4</span></div>
+					<div><div id="onlineTour_playersjoined_text">Players joined:</div> <span id="onlineTour_player_count">0/4</span></div>
 				</div>
 			</div>
 
 			<!-- current battle -->
 			<div id="onlineTour_matchmaking_currentbattle" class="text-center bg-white/20 w-2/3 rounded-xl pt-6 pb-12 hidden">
-				<h1 class="text-2xl font-bold mb-10">Current Battle</h1>
+				<h1 id="onlineTour_currentbattle_text" class="text-2xl font-bold mb-10">Current Battle</h1>
 				<section class="flex items-center justify-center">
 					<div id="onlineTour_p1_matchmaking_name" class="text-5xl font-bold"></div>
 					<div class="w-1/4 pixel-font text-5xl text-yellow-400">VS</div>
@@ -113,7 +127,7 @@ const onlineTour_matchmaking_popup = html`
 
 			<!-- rankings display -->
 			<div id="onlineTour_matchmaking_rankingdiv" class="hidden">
-				<h1 class="text-2xl border-b-2 pb-2">🏆 Final Rankings 🏆</h1>
+				<h1 id="onlineTour_mm_finalrankings_text" class="text-2xl border-b-2 pb-2">🏆 Final Rankings 🏆</h1>
 				<div class="flex flex-col items-center my-8">
 					<div>
 					<div class="flex items-center gap-5 py-2">
@@ -134,6 +148,8 @@ const onlineTour_matchmaking_popup = html`
 					</div>
 					</div>
 				</div>
+
+				<div id="onlineTour_rankings_optional_msg" class="mb-2"></div>
 			</div>
 			
 			<!-- buttons -->
@@ -146,11 +162,11 @@ const onlineTour_matchmaking_popup = html`
 export const online_tour_game_popup = `
 	<div id="onlineTour_registration" class="bg-gray-950 flex h-screen p-20 justify-center hidden fixed inset-0 text-white inter-font">
 		<div class="w-full h-[80vh] flex flex-col justify-center items-center">
-			<h1 class="text-5xl font-bold mb-8">Join Online Tournament</h1>
+			<h1 id="onlineTour_title" class="text-5xl font-bold mb-8">Join Online Tournament</h1>
 			
 			<div class="text-center mb-8 bg-white/20 rounded-xl p-8">
-				<p class="text-xl mb-4">Ready to compete in the online tournament?</p>
-				<p class="text-lg mb-4">You will be matched against 3 other players</p>
+				<p id="onlineTour_p1" class="text-xl mb-4">Ready to compete in the online tournament?</p>
+				<p id="onlineTour_p2" class="text-lg mb-4">You will be matched against 3 other players</p>
 			</div>
 
 			<div class="flex gap-4">

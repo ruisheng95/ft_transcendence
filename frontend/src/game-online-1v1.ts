@@ -1,21 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { disable_back_navigation, enable_back_navigation, add_history } from "./spa-navigation";
+import { disable_back_navigation, enable_back_navigation} from "./spa-navigation";
 import { WS } from "./class/WS.ts";
 import { MsgType } from "./class/MessageType.ts";
 import "./gamestyle.css";
 import { removeAllEventListenersFromButton } from "./gameindex.ts";
 import { translate_text } from "./language.ts";
 import { click_pong_modes_button } from "./pong_modes.ts";
+// import { add_history } from "./spa-navigation";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
 
 export function online_1v1_play()
 {
-	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-
+	let player_dced_flag = false;
 	const tournament_context = localStorage.getItem("tournament_context");
 	const gameMode = tournament_context ? "Tournament" : "1 vs 1";
+
+	//socket
+	let parsedContext = null;
+	if (tournament_context) {
+		try {
+			parsedContext = JSON.parse(tournament_context);
+			// console.log("[DEBUG] Parsed tournament context:", parsedContext);
+		} catch (error) {
+			console.error("[ERROR] Failed to parse tournament context:", error);
+		}
+	}
+	let socketUrl = `${import.meta.env.VITE_SOCKET_URL}/ws-online`;
+	if (parsedContext && parsedContext.tournament_id && parsedContext.current_match_id) {
+		socketUrl += `?tournament=${parsedContext.tournament_id}&match=${parsedContext.current_match_id}`;
+		// console.log("[DEBUG] Tournament parameters added to WebSocket URL");
+	}
+	
+	const socket = WS.getInstance(socketUrl);
 
 	const game_obj = document.querySelector<HTMLDivElement>("#online_game_board_area");
 	
@@ -90,10 +108,11 @@ export function online_1v1_play()
 	function process_msg_from_socket(message: MessageEvent)
 	{
 		const optional_msg_div = document.querySelector<HTMLDivElement>("#online1v1_optional_msg");
+		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
 
-		if(!optional_msg_div) throw new Error("process msg socket elements not found");
+		if(!optional_msg_div || !matchmaking_popup) throw new Error("process msg socket elements not found");
 
-		console.log("JSON recv to frontend: ", message.data);
+		// console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
 			
 		if(msg_obj.type === "matchmaking_status")
@@ -115,8 +134,14 @@ export function online_1v1_play()
 			handle_game_end(msg_obj);
 		}
 		else if(msg_obj.type === "player_dced")
-		{		
+		{
 			optional_msg_div.innerHTML = translate_text("Match terminated because a player has disconnected");
+			player_dced_flag = true;
+			matchmaking_popup.classList.add("hidden");
+
+			const onlineTour_mm_popup = document.querySelector("#onlineTour_matchmaking_popup");
+			if(tournament_context)
+				onlineTour_mm_popup?.classList.remove("hidden");
 			handle_game_end(msg_obj);
 		}
 	}
@@ -187,9 +212,9 @@ export function online_1v1_play()
 
 		if(!exit_mm || !mm_status_div || !matchmaking_popup || !p1_name_div || !p2_name_div) throw new Error("Display matchmaking popup elements not found");
 
-		const gameModeSpan = matchmaking_popup.querySelector('section span:nth-child(2)');
+		const gameModeSpan = document.querySelector('#online1v1_gameinfo_text2');
 		if (gameModeSpan) {
-			gameModeSpan.textContent = gameMode;
+			gameModeSpan.textContent = translate_text(gameMode);
 		}
 
 		const players = JSON.parse(msg_obj.players);
@@ -268,11 +293,11 @@ export function online_1v1_play()
 			if (countdown < 0)
 			{
 				clearInterval(interval);
+				if(player_dced_flag === true)
+					return; 
 				game_popup.classList.remove("hidden");
 				game_popup.style.backgroundImage = map_input.value;
 				matchmaking_popup.classList.add("hidden");
-				p1_name_div.innerHTML = p1_name;
-				p2_name_div.innerHTML = p2_name;
 				init_positions();
 				render_positions();
 
@@ -283,6 +308,12 @@ export function online_1v1_play()
 						start_the_fkin_game();
 				}, 4000);
 
+				//moved this down abit to ensure the DOM is loaded and the names can be put inside
+				// console.log("Player1: ", p1_name, " Player2: ", p2_name, " INSERTING INTO DOM NOW!!!!");
+				p1_name_div.classList.remove("hidden");
+				p2_name_div.classList.remove("hidden");
+				p1_name_div.innerHTML = p1_name;
+				p2_name_div.innerHTML = p2_name;
 				start_game_countdown(game_countdown_div);
 			}
 		}, 1000);
@@ -312,13 +343,16 @@ export function online_1v1_play()
 		if(playing == false)
 				return;
 
-		enable_back_navigation();
 
 		online1v1_left_name.innerText = p1_name;
 		online1v1_right_name.innerText = p2_name;
 
 		// check if in tournament first to determine point display
 		const tournament_context = localStorage.getItem("tournament_context");
+		console.log("TOURNAMENT CONTEXT: ", tournament_context);
+
+		if(!tournament_context)
+			enable_back_navigation();
 		
 		if(gameover_obj.winner == "leftplayer") {
 			online1v1_left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
@@ -358,7 +392,8 @@ export function online_1v1_play()
 		online1v1_winner_popup.classList.remove("hidden");
 		game_popup.classList.add("hidden");
 		
-		if (tournament_context) {
+		if (tournament_context)
+		{
 			const context = JSON.parse(tournament_context);
 			const tournament_socket = WS.getInstance(context.socket_url);
 			
@@ -409,10 +444,14 @@ export function online_1v1_play()
 			//auto return to tournament after result page
 			setTimeout(() => {
 				online1v1_winner_popup?.classList.add("hidden");
-				add_history("/onlinegame?from_game=true");
+				// add_history("/onlinegame?from_game=true");
 			}, 3000);
-		} else {
+		}
+		else
+		{
 			// normal 1v1 - manual exit button
+			close_online_1v1_winner_popup_button.disabled = false;
+			close_online_1v1_winner_popup_button.textContent = translate_text("Exit");
 			close_online_1v1_winner_popup_button.removeEventListener("click", close_online1v1_winner_popup_ft);
 			close_online_1v1_winner_popup_button.addEventListener("click", close_online1v1_winner_popup_ft);
 		}
@@ -492,7 +531,7 @@ export function start_game_countdown(game_countdown_div: HTMLDivElement)
 	// 	})
 }
 
-const online1v1_matchmaking_popup = (gameMode: string) => html`
+const online1v1_matchmaking_popup = html`
 		<div id="online1v1_matchmaking_popup" class="h-full px-48 space-y-6 flex flex-col justify-center hidden fixed bg-gray-950 inset-0 text-white inter-font">
 		
 		<!--Title -->
@@ -500,9 +539,9 @@ const online1v1_matchmaking_popup = (gameMode: string) => html`
 
 		<!-- Game Information -->
 		<section class="flex items-center justify-center space-x-4 mb-10">
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">${gameMode}</span>
-			<span class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
+			<span id="online1v1_gameinfo_text1" class="bg-white/20 px-6 py-1 font-medium rounded-full">Online</span>
+			<span id="online1v1_gameinfo_text2" class="bg-white/20 px-6 py-1 font-medium rounded-full">1 vs 1</span>
+			<span id="online1v1_gameinfo_text3" class="bg-white/20 px-6 py-1 font-medium rounded-full">2 Players</span>
 		</section>
 		
 		<!-- Game Setting Header -->
@@ -582,9 +621,9 @@ const online_1v1_winner_popup = html`
 	</div>
 `;
 
-export const online_game_popup = (gameMode = "1 vs 1") => html `
+export const online_game_popup = html `
 
-	${online1v1_matchmaking_popup(gameMode)}
+	${online1v1_matchmaking_popup}
 	<div id="online_game_popup" class="hidden bg-gray-950 bg-cover bg-center fixed inset-0">
 		<div class="bg-black/70 h-full flex flex-col justify-center items-center">
 			<div class="flex flex-col items-center bg-transparent text-white">

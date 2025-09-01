@@ -10,7 +10,7 @@
   "scripts": {
     "test": "node --test test/**/*.test.js",
     "start": "fastify start --options -l info app.js",
-    "dev": "fastify start --options -w --ignore-watch='data.db' -l info app.js"
+    "dev": "fastify start --options -w --ignore-watch='data.db' -l error app.js"
   },
   "keywords": [],
   "author": "",
