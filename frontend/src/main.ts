@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import "./style.css";
 
-import { setupCounter } from "./counter.ts";
 import { about_popup } from "./about.ts";
 import { init_language } from "./language.ts";
 
@@ -29,10 +28,6 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 		<button type="button" id="open_about_button" class="py-2 rounded-full text-center font-semibold text-lg bg-yellow-400 text-black hover:bg-yellow-300 hover:-translate-y-1 transition duration-200">
 			About
 		</button>
-
-		<button id="counter" type="button" class="py-2 rounded-full text-center font-semibold text-lg bg-yellow-400 text-black hover:bg-yellow-300 hover:-translate-y-1 transition duration-200">
-			About
-		</button>
 		
 	</div>
 </div>
@@ -58,10 +53,6 @@ document.querySelector<HTMLButtonElement>("#close_about_button")?.addEventListen
 
 //     <h1 class="text-white text-[35px] font-bold text-center mb-[20px]">ft_transcendence login</h1>
 
-//         <button id="counter" type="button" class="w-[60%] bg-blue-500 text-white py-2 px-4">
-//             Counter Button
-//         </button>
-
 //         <div id="google_sign_in" class="w-[60%]">
 //         </div>
 
@@ -70,5 +61,3 @@ document.querySelector<HTMLButtonElement>("#close_about_button")?.addEventListen
 //     </div>
 // </div>
 // `;
-
-setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);

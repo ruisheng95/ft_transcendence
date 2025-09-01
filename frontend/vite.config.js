@@ -17,8 +17,6 @@ export default defineConfig(() => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, "index.html"),
-          gameonline: path.resolve(__dirname, "game-online/index.html"),
-          gameindex: path.resolve(__dirname, "gameindex.html"),
         },
       },
     },

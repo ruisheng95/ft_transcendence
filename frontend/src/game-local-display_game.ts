@@ -15,7 +15,7 @@ const html = (strings: TemplateStringsArray, ...values: unknown[]) =>
 export function display_game(handle_game_end : (msg_obj : object) => void, AI_flag = false)
 {
 	console.log("DISPLAY GAME CALLED");
-	const socket = new WebSocket("ws://localhost:3000/ws"); //care this
+	const socket = new WebSocket(`${import.meta.env.VITE_SOCKET_URL}/ws`); //care this
 
 
 	const game_obj = document.querySelector<HTMLDivElement>("#game_board_area");

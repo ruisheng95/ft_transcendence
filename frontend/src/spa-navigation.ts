@@ -70,23 +70,15 @@ window.addEventListener("popstate", (event) => {
 	}
 
 	//cleanup ws-online socket
-	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
-	socket?.close();
 	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 
 	//cleanup ws-online-2v2 socket
-	const socket_2v2 = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-2v2`);
-	socket_2v2?.close();
 	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-2v2`);
 
 	//cleanup ws-online-xox socket
-	const socket_xox = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-xox`);
-	socket_xox?.close();
 	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-xox`);
 
 	//cleanup ws-online-tournament socket
-	const socket_tournament = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`);
-	socket_tournament?.close();
 	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`);
 
 	display_other_pages(event.state.page);

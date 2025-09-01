@@ -8,6 +8,7 @@ import { WS } from "./class/WS.ts";
 import { hide_all_main_pages } from "./pong_modes.ts";
 import { add_history } from "./spa-navigation.ts";
 import { translate_text } from "./language.ts";
+import DOMPurify from 'dompurify';
 
 
 //friends page
@@ -140,7 +141,7 @@ function display_friends_list(msg_obj : any)
 
     for(const friend of msg_obj.friends) {
         const statusColor = friend.status === 'online' ? 'bg-green-500' : 'bg-gray-500';
-        const profileImage = friend.pfp ? friend.pfp : "/src/defaultpfp.png";
+        const profileImage = friend.pfp ? friend.pfp : "/defaultpfp.png";
 
         friendsHTML += `
             <div class="flex items-center justify-between py-2">
@@ -159,7 +160,7 @@ function display_friends_list(msg_obj : any)
         `;
     }
 
-    player_friends_list_div.innerHTML = friendsHTML;
+    player_friends_list_div.innerHTML = DOMPurify.sanitize(friendsHTML);
 
     const removeButtons = document.querySelectorAll('.remove_friend_btn');
     for(const button of removeButtons) {

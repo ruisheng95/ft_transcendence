@@ -18,10 +18,16 @@ export const options = {
 async function app(fastify, opts) {
   // Place here your custom code!
   fastify.register(cors, {
-    origin: ["http://localhost:3001", "http://127.0.0.1:3001"],
+    origin: [
+      "http://localhost:3001",
+      "http://127.0.0.1:3001",
+      "https://localhost:3001",
+      "https://127.0.0.1:3001",
+      "https://ft.ruisheng.me:8443",
+    ],
   });
 
-  await fastify.register(websocket); 
+  await fastify.register(websocket);
   // Do not touch the following lines
 
   // This loads all plugins defined in plugins

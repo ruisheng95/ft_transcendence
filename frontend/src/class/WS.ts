@@ -7,7 +7,7 @@ export class WS {
 
   static getInstance(url: string) {
     // Check if URL already has query parameters
-    const separator = url.includes('?') ? '&' : '?';
+    const separator = url.includes("?") ? "&" : "?";
     url = `${url}${separator}session=${localStorage.getItem("session") || ""}`;
     let socket = WS.#websocketInstances.get(url);
     if (!socket) {
@@ -18,7 +18,15 @@ export class WS {
   }
 
   static removeInstance(url: string) {
-    url = `${url}?session=${localStorage.getItem("session") || ""}`;
+    // Check if URL already has query parameters
+    const separator = url.includes("?") ? "&" : "?";
+    url = `${url}${separator}session=${localStorage.getItem("session") || ""}`;
+
+    // Close connection if exist
+    const socket = WS.#websocketInstances.get(url);
+    if (socket) {
+      socket.close();
+    }
     WS.#websocketInstances.delete(url);
   }
 }

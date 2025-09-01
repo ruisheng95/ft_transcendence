@@ -6,7 +6,6 @@ if (!google_sign_in) throw new Error("board element not found");
 
 //setup stuffs
 const client_id = import.meta.env.VITE_GOOGLE_SIGN_IN_API; //the client id is like to tell google wat is using the google sign-in feature (in this case my ft_transcendence project in google cloud)
-const uri = "http://localhost" // redirect link after auth
 
 
 //div id = g_id_onload is for the google gsi script to determine where can it get the data-* infos for the login stuffs
@@ -14,7 +13,6 @@ const uri = "http://localhost" // redirect link after auth
 google_sign_in.innerHTML = `
 <div id="g_id_onload"
 	data-client_id="${client_id}"
-	data-login_uri="${uri}"
 	data-callback="handle_credential_response">
 </div>
 <div class="g_id_signin px-12 py-2 rounded-full font-semibold text-lg flex items-center space-x-3 border-2 border-yellow-400 hover:bg-yellow-400/20 hover:-translate-y-1 transition duration-200" data-type="standard"></div>`
