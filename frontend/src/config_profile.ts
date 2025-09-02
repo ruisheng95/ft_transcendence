@@ -166,7 +166,7 @@ export const pf_config_popup = html`
 
 				<!-- Diplay Image -->
 				<input type="file" id="input_pfp" accept="image/*" class="hidden">
-				<img id="pfp_img" class="w-32 h-32 border-2 rounded-full object-cover" src="/src/defaultpfp.png" alt="avatar">
+				<img id="pfp_img" class="w-32 h-32 border-2 rounded-full object-cover" src="/defaultpfp.png" alt="avatar">
 				
 				<!-- Button to change Avatar -->
 				<button id="pfp_preview" type="button" 

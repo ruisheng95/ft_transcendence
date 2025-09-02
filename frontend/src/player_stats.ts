@@ -212,21 +212,21 @@ function insert_playerstats_and_history_main()
 							<span>${entry.match_type}</span>
 							<div class="flex space-x-1 relative">
 								<div class="relative group">
-									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user1_avatar ? entry.user1_avatar : "/src/defaultpfp.png"}" alt="player">
+									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user1_avatar ? entry.user1_avatar : "/defaultpfp.png"}" alt="player">
 									<span class="tooltip-2">${entry.user1_name}</span>
 								</div>
 								<div class="relative group">
-									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user2_avatar ? entry.user2_avatar : "/src/defaultpfp.png"}" alt="player">
+									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user2_avatar ? entry.user2_avatar : "/defaultpfp.png"}" alt="player">
 									<span class="tooltip-2">${entry.user2_name}</span>
 								</div>
 								${entry.user3_name ? `
 								<div class="relative group">
-									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user3_avatar ? entry.user3_avatar : "/src/defaultpfp.png"}" alt="player">
+									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user3_avatar ? entry.user3_avatar : "/defaultpfp.png"}" alt="player">
 									<span class="tooltip-2">${entry.user3_name}</span>
 								</div>` : ""}
 								${entry.user3_name ? `
 								<div class="relative group">
-									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user4_avatar ? entry.user4_avatar : "/src/defaultpfp.png"}" alt="player">
+									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user4_avatar ? entry.user4_avatar : "/defaultpfp.png"}" alt="player">
 									<span class="tooltip-2">${entry.user4_name}</span>
 								</div>` : ""}
 							</div>

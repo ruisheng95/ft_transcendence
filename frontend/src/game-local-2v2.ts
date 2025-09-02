@@ -160,7 +160,7 @@ function verify_name_input(event : Event)
 
 function local_2v2_game_init()
 {
-	const socket = new WebSocket("ws://localhost:3000/ws_2v2");
+	const socket = new WebSocket(`${import.meta.env.VITE_SOCKET_URL}/ws_2v2`);
 
 	const game_obj = document.querySelector<HTMLDivElement>("#local_2v2_game_board_area");
 

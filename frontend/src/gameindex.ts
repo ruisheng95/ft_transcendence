@@ -130,7 +130,7 @@ export function index_init()
 			
 			<!-- User Profile Section -->
 			<div class="flex space-x-4 items-center">
-				<img id="header_img" src="${player.pfp ? player.pfp : "/src/defaultpfp.png"}" 
+				<img id="header_img" src="${player.pfp ? player.pfp : "/defaultpfp.png"}" 
 					class="w-14 h-14 object-cover rounded-full border-2 border-white">
 				<span id="header_name" class="text-xl font-semibold">${player.username}</span>
 			</div>
@@ -251,7 +251,7 @@ export function index_init()
 	// 	const friend_html = `
 	// 			<div class="flex items-center text-white text-[14px] w-full h-[35px] px-[5px] py-[2px]">
 	// 				<img src="${
-	// 		friend.pfp ? friend.pfp : "/src/defaultpfp.png"
+	// 		friend.pfp ? friend.pfp : "/defaultpfp.png"
 	// 		}" class="w-[20px] h-[20px]">
 	// 				<h1 class="text-white ml-[5px]">${display_name}</h1>
 	// 				<div class="ml-auto w-[8px] h-[8px] rounded-full ${
