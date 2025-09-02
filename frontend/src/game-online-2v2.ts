@@ -108,7 +108,6 @@ function cleanup_2v2_ui() {
 export function online_2v2_play()
 {
 	add_2v2_popups_to_dom();
-	handle_language_change(localStorage.getItem("current_language") || "english");
 
 	// Add unique ID to test using the same browser
 	const sessionParam = localStorage.getItem("session") || "";
@@ -132,7 +131,7 @@ export function online_2v2_play()
 	<div class="flex items-center">
 		<!-- Left side controls -->
 		<div class="flex flex-col space-y-4 mr-4">
-			<div class="text-white text-center mb-2">Team 1</div>
+			<div id="online2v2_leftcontrols_text" class="text-white text-center mb-2">Team 1</div>
 			<div class="flex flex-col space-y-2">
 				<div class="bg-red-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-red-500 text-white">W / ↑</div>
 				<div class="bg-red-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-red-500 text-white">S / ↓</div>
@@ -155,7 +154,7 @@ export function online_2v2_play()
 
 		<!-- Right side controls -->
 		<div class="flex flex-col space-y-4 ml-4">
-			<div class="text-white text-center mb-2">Team 2</div>
+			<div id="online2v2_rightcontrols_text" class="text-white text-center mb-2">Team 2</div>
 			<div class="flex flex-col space-y-2">
 				<div class="bg-blue-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-blue-500 text-white">W / ↑</div>
 				<div class="bg-blue-500/30 w-12 h-8 flex items-center justify-center font-bold text-sm rounded border border-blue-500 text-white">S / ↓</div>
@@ -167,6 +166,8 @@ export function online_2v2_play()
 		</div>
 	</div>
 	`;
+
+	handle_language_change(localStorage.getItem("current_language") || "english");
 
 	const board = document.querySelector<HTMLDivElement>("#online2v2_game_board");
 	const leftplayer1 = document.querySelector<HTMLDivElement>("#online2v2_leftplayer1");
@@ -182,7 +183,7 @@ export function online_2v2_play()
 
 	//vars
 	let ball_len = 0, ballX = 0, ballY = 0, boardHeight = 0, block_height = 0,
-    leftplayer1Y = 0, leftplayer2Y = 0, rightplayer1Y = 0, rightplayer2Y = 0, player_indent = 0;
+    leftplayer1Y = 0, leftplayer2Y = 0, rightplayer1Y = 0, rightplayer2Y = 0, player_indent = 0, board_border_width = 0;
 
 	//playing status
 	let playing = true;
@@ -261,14 +262,15 @@ export function online_2v2_play()
 			ballX = board.clientWidth / 2 - ball_len / 2;
 			ballY = board.clientHeight / 2 - ball_len / 2;
 			boardHeight = board.clientHeight;
+			const quarterHeight = boardHeight / 4;
+			board_border_width = parseInt(getComputedStyle(board).borderLeftWidth);
 
 			block_height = leftplayer1.clientHeight;
 			player_indent = 20;
-			const quarterHeight = boardHeight / 4;
-			leftplayer1Y = quarterHeight - block_height / 2;
-			leftplayer2Y = 3 * quarterHeight - block_height / 2;
-			rightplayer1Y = 3 * quarterHeight - block_height / 2; 
-			rightplayer2Y = quarterHeight - block_height / 2;
+			leftplayer1Y = quarterHeight - block_height / 2 + (board_border_width / 2);
+			leftplayer2Y = 3 * quarterHeight - block_height / 2 + ((3 / 2) * board_border_width);
+			rightplayer1Y = 3 * quarterHeight - block_height / 2 + ((3 / 2) *board_border_width); 
+			rightplayer2Y = quarterHeight - block_height / 2 + (board_border_width / 2);
 		}
 	}
 

@@ -149,6 +149,8 @@ const bm_texts = {
 	online2v2_team2_text: "Kumpulan 2",
 	online2v2_winner_popup_title: "Keputusan Perlawanan",
 	close_online2v2_winner_popup: "Keluar",
+	online2v2_leftcontrols_text: "Kumpulan 1",
+	online2v2_rightcontrols_text: "Kumpulan 2",
 
 	//online tour
 	onlineTour_mm_title: "Kurungan Kejohanan Dalam Talian",
@@ -415,6 +417,8 @@ const en_texts = {
 	online2v2_team2_text: "Team 2",
 	online2v2_winner_popup_title: "Match Result",
 	close_online2v2_winner_popup: "Exit",
+	online2v2_leftcontrols_text: "Team 1",
+	online2v2_rightcontrols_text: "Team 2",
 
 	//online tour
 	onlineTour_mm_title: "Online Tournament Bracket",
@@ -611,6 +615,8 @@ const cn_texts = {
 	online2v2_team2_text: "第2组",
 	online2v2_winner_popup_title: "比赛结果",
 	close_online2v2_winner_popup: "退出",
+	online2v2_leftcontrols_text: "第1组",
+	online2v2_rightcontrols_text: "第2组",
 
 	//online tour
 	onlineTour_mm_title: "在线锦标赛对阵表",
