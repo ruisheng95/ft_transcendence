@@ -3,7 +3,7 @@ import { WS } from "./class/WS";
 
 import { translate_text } from "./language";
 import { removeAllEventListenersFromButton } from "./gameindex";
-import { add_history } from "./spa-navigation";
+import { add_history, enable_back_navigation } from "./spa-navigation";
 import { disable_back_navigation } from "./spa-navigation";
 import { fetch_data } from "./xox_dashboard"; 
 
@@ -152,7 +152,12 @@ export function xox_online_play()
 
 		//remove any event listeners to add new ones
 		cells.forEach(cell => {
-			cell = removeAllEventListenersFromButton(cell);			
+			//cleanup cells
+			cell = removeAllEventListenersFromButton(cell);
+			cell.innerHTML = "";
+			cell.classList.remove("font-bold", "bg-white/20");
+			cell.disabled = false;
+
 			cell.addEventListener("click", () => {
 
 				if (cell.disabled)
@@ -199,7 +204,6 @@ export function xox_online_play()
 		const right_result = document.querySelector<HTMLDivElement>('#xoxright_result');
 		const instruction = document.querySelector<HTMLDivElement>('#xox_instruction');
 		const close_button = document.querySelector<HTMLButtonElement>('#xox_close_button');
-		const cells = document.querySelectorAll<HTMLButtonElement>('[data-row][data-col]');
 		const xox_game_message_div = document.querySelector<HTMLDivElement>("#xox_game_message");
 
 		if (!left_name_top || !right_name_top || !left_name_mid || !right_name_mid || 
@@ -208,13 +212,6 @@ export function xox_online_play()
 
 		left_name_top.innerText = p1_name || "Player 1";
 		right_name_top.innerText = p2_name || "Player 2";
-
-		//clear board
-		cells.forEach((cell) => {
-			cell.innerHTML = "";
-			cell.classList.remove("font-bold", "bg-white/20");
-			cell.disabled = false;
-		});
 
 		left_name_mid.innerText = "";
 		left_result.innerHTML = "";
@@ -248,6 +245,8 @@ export function xox_online_play()
 		//handle finished game
 		if (gameState.gameStatus === "finished" && gameResult)
 		{
+			enable_back_navigation();
+			
 			if (gameResult.type === 'winner')
 			{
 				// Highlight winning pattern
@@ -334,18 +333,18 @@ export function xox_online_play()
 		// Show results
 		if (symbol === "X")
 		{
-			left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
-			right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
+			right_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 		}
 		else if (symbol === "O")
 		{
-			right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
-			left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+			right_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
+			left_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 		}
 		else //tie
 		{
-			right_result.innerHTML = `<h2 class="match-tie">Tie</h2>`;
-			left_result.innerHTML = `<h2 class="match-tie">Tie</h2>`;
+			right_result.innerHTML = `<h2 class="match-tie">${translate_text("Tie")}</h2>`;
+			left_result.innerHTML = `<h2 class="match-tie">${translate_text("Tie")}</h2>`;
 		}
 
 		//show close button

@@ -75,6 +75,9 @@ window.addEventListener("popstate", (event) => {
 	//cleanup ws_2v2 socket
 	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_2v2`);
 
+	//cleanup ws_xox socket
+	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_xox`);
+
 	//cleanup ws-online socket
 	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 
