@@ -117,11 +117,11 @@ function verify_name_input(event : Event)
 
 		if(input.length > 20)
 		{
-			local1v1_error_msg_div.innerText = "Input too long";
+			local1v1_error_msg_div.innerText = translate_text("Input too long");
 			clean_input = clean_input.substring(0, 20);
 		}
 		else if (invalid_char == true)
-			local1v1_error_msg_div.innerText = "Numbers, alphabets and '_' only";
+			local1v1_error_msg_div.innerText = translate_text("Numbers, alphabets and '_' only");
 		else
 			local1v1_error_msg_div.innerText = "";
 

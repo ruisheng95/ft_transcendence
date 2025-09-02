@@ -140,8 +140,10 @@ export function online_1v1_play()
 			matchmaking_popup.classList.add("hidden");
 
 			const onlineTour_mm_popup = document.querySelector("#onlineTour_matchmaking_popup");
+
 			if(tournament_context)
 				onlineTour_mm_popup?.classList.remove("hidden");
+			
 			handle_game_end(msg_obj);
 		}
 	}
@@ -389,7 +391,9 @@ export function online_1v1_play()
 			}
 		}
 
-		online1v1_winner_popup.classList.remove("hidden");
+		if(!(tournament_context && player_dced_flag === true))
+			online1v1_winner_popup.classList.remove("hidden");
+		
 		game_popup.classList.add("hidden");
 		
 		if (tournament_context)

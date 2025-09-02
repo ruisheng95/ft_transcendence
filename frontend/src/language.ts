@@ -125,6 +125,7 @@ const bm_texts = {
 	localxox_name2_input: "Nama Pemain",
 	localxox_startmatch_text: "Mula Perlawanan",
 	xox_instructions: "Gunakan butang tetikus kiri",
+	localxox_exit_text: "Keluar",
 
 	// Online 1v1 Game
 	online1v1_title: "Lobi Atas Talian",
@@ -149,6 +150,8 @@ const bm_texts = {
 	online2v2_team2_text: "Kumpulan 2",
 	online2v2_winner_popup_title: "Keputusan Perlawanan",
 	close_online2v2_winner_popup: "Keluar",
+	online2v2_leftcontrols_text: "Kumpulan 1",
+	online2v2_rightcontrols_text: "Kumpulan 2",
 
 	//online tour
 	onlineTour_mm_title: "Kurungan Kejohanan Dalam Talian",
@@ -215,6 +218,8 @@ const bm_texts = {
 	"Database error occurred": "Ralat pangkalan data berlaku",
 	"input name too long": "name terlalu panjang",
 	"Error: Please choose an image file only": "Ralat: Sila pilih fail imej sahaja",
+	"Input too long": "Input terlalu panjang",
+	"Numbers, alphabets and '_' only": "Nombor, abjad dan '_' sahaja",
 
 	//history strings
 	"No match history yet": "Belum ada sejarah perlawanan",
@@ -254,6 +259,7 @@ const bm_texts = {
 	"Starting match automatically...": "Memulakan perlawanan secara automatik...",
 	"Returning to tournament...": "Kembali ke kejohanan...",
 	"Waiting for players": "Menunggu pemain",
+	"Tournament ended: player disconnected (rating changes: +5 all, -10 leaver)": "Kejohanan tamat: pemain terputus (perubahan penarafan: +5 semua, -10 pemain yang keluar)",
 
 	//xox strings
 	"Matches": "Perlawanan",
@@ -388,6 +394,7 @@ const en_texts = {
 	localxox_name2_input: "Player Name",
 	localxox_startmatch_text: "Start Match",
 	xox_instructions: "Use left mouse button",
+	localxox_exit_text: "Exit",
 
 	//vsAI
 	close_vs_AI_winner_popup: "Exit",
@@ -415,6 +422,8 @@ const en_texts = {
 	online2v2_team2_text: "Team 2",
 	online2v2_winner_popup_title: "Match Result",
 	close_online2v2_winner_popup: "Exit",
+	online2v2_leftcontrols_text: "Team 1",
+	online2v2_rightcontrols_text: "Team 2",
 
 	//online tour
 	onlineTour_mm_title: "Online Tournament Bracket",
@@ -587,6 +596,7 @@ const cn_texts = {
 	localxox_name2_input: "玩家名称",
 	localxox_startmatch_text: "开始比赛",
 	xox_instructions: "使用鼠标左键",
+	localxox_exit_text: "退出",
 
 	// Online 1v1 Game
 	online1v1_title: "在线大厅",
@@ -611,6 +621,8 @@ const cn_texts = {
 	online2v2_team2_text: "第2组",
 	online2v2_winner_popup_title: "比赛结果",
 	close_online2v2_winner_popup: "退出",
+	online2v2_leftcontrols_text: "第1组",
+	online2v2_rightcontrols_text: "第2组",
 
 	//online tour
 	onlineTour_mm_title: "在线锦标赛对阵表",
@@ -677,6 +689,8 @@ const cn_texts = {
 	"Database error occurred": "数据库错误",
 	"input name too long": "名称太长",
 	"Error: Please choose an image file only": "错误：请只选择图像文件",
+	"Input too long": "输入过长",
+	"Numbers, alphabets and '_' only": "仅限数字、字母和 '_'",
 
 	//history strings
 	"No match history yet": "暂无比赛历史",
@@ -716,6 +730,7 @@ const cn_texts = {
 	"Starting match automatically...": "自动开始比赛...",
 	"Returning to tournament...": "正在返回锦标赛...",
 	"Waiting for players": "等待玩家中",
+	"Tournament ended: player disconnected (rating changes: +5 all, -10 leaver)": "锦标赛结束：玩家断线（评分变化：+5 所有玩家，-10 离开)",
 
 	//xox strings
 	"Matches": "比赛数",

@@ -79,7 +79,7 @@ export class GameInstance2v2 {
     // Left team player 2
     if (this.#player_movement["leftplayer2_down"] == true) {
       if (
-        this.#leftplayer2Y + this.#block_height + this.#board_border_width <=
+        this.#leftplayer2Y + this.#block_height + 2 * this.#board_border_width <=
         this.#boardHeight
       )
         this.#leftplayer2Y += this.#player_speed;
@@ -92,7 +92,7 @@ export class GameInstance2v2 {
     // Right team player 1
     if (this.#player_movement["rightplayer1_down"] == true) {
       if (
-        this.#rightplayer1Y + this.#block_height + this.#board_border_width <=
+        this.#rightplayer1Y + this.#block_height + 2 * this.#board_border_width <=
         this.#boardHeight
       )
         this.#rightplayer1Y += this.#player_speed;
@@ -187,7 +187,7 @@ export class GameInstance2v2 {
       }
 
       // Check collision with horizontal walls
-      if (this.#ballY + this.#ball_len >= this.#boardHeight || this.#ballY <= 0)
+      if (this.#ballY + this.#ball_len >= this.#boardHeight - this.#board_border_width || this.#ballY <= 0)
         this.#dy = -this.#dy;
 
       this.#ballX += this.#dx;

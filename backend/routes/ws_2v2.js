@@ -34,7 +34,7 @@ const root = async function (fastify) {
 	function change_player_pos()
 	{
 		if (player_movement["player1_down"] == true) {
-			if (player1Y + block_height + board_border_width <= boardHeight)
+			if (player1Y + block_height + 2 * board_border_width <= boardHeight)
 			player1Y += player_speed;
 		}
 		if (player_movement["player1_up"] == true) {
@@ -42,7 +42,7 @@ const root = async function (fastify) {
 		}
 
 		if (player_movement["player2_down"] == true) {
-			if (player2Y + block_height + board_border_width <= boardHeight)
+			if (player2Y + block_height + 2 * board_border_width <= boardHeight)
 			player2Y += player_speed;
 		}
 		if (player_movement["player2_up"] == true) {
@@ -50,7 +50,7 @@ const root = async function (fastify) {
 		}
 		
 		if (player_movement["player3_down"] == true) {
-			if (player3Y + block_height + board_border_width <= boardHeight)
+			if (player3Y + block_height + 2 * board_border_width <= boardHeight)
 			player3Y += player_speed;
 		}
 		if (player_movement["player3_up"] == true) {
@@ -58,7 +58,7 @@ const root = async function (fastify) {
 		}
 
 		if (player_movement["player4_down"] == true) {
-			if (player4Y + block_height + board_border_width <= boardHeight)
+			if (player4Y + block_height + 2 * board_border_width <= boardHeight)
 			player4Y += player_speed;
 		}
 		if (player_movement["player4_up"] == true) {
@@ -112,7 +112,7 @@ const root = async function (fastify) {
 			dx *= 1.1;
 
 			//control max speed
-			const MAXSPEED = 16;
+			const MAXSPEED = 10;
 			dx = dx < MAXSPEED ? dx : MAXSPEED;
 			console.log("speed: ", dx);
 
@@ -125,7 +125,7 @@ const root = async function (fastify) {
 		  }
 
 		  //check collision wif horizontal walls
-		  if (ballY + ball_len >= boardHeight || ballY <= 0) dy = -dy;
+		  if (ballY + ball_len >= boardHeight - board_border_width || ballY <= 0) dy = -dy;
 
 		  ballX += dx;
 		  ballY += dy;

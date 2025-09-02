@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { display_game } from "./game-local-display_game";
+import { removeAllEventListenersFromButton } from "./gameindex";
 import { click_pong_modes_button } from "./pong_modes";
 
 
@@ -23,7 +24,7 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 
 	const game_popup = document.querySelector<HTMLDivElement>("#game_popup");
 	const localTour_matchmaking_popup = document.querySelector<HTMLDivElement>("#localTour_matchmaking_popup");
-	const open_game_button = document.querySelector<HTMLButtonElement>("#localTour_open_game");
+	let open_game_button = document.querySelector<HTMLButtonElement>("#localTour_open_game");
 	const close_finalwinner_button = document.querySelector<HTMLButtonElement>("#localTour_close_finalwinner_popup");
 
 	cleanup_previous_tournament();
@@ -64,6 +65,8 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 
 	function handle_game_end(msg_obj : any)
 	{
+		console.log("FINISHED GAME: ", Tournament_state.matches_done);
+
 		let winner = "";
 		let loser = "";
 
@@ -149,6 +152,7 @@ export function local_tour_manager(p1_name: string, p2_name : string, p3_name : 
 
 		localTour_matchmaking_popup.classList.remove("hidden");
 
+		open_game_button = removeAllEventListenersFromButton(open_game_button);
 		open_game_button.addEventListener("click", () => {
 			p1_name_display_ingame.innerHTML = Tournament_state.current_players[0];
 			p2_name_display_ingame.innerHTML = Tournament_state.current_players[1];

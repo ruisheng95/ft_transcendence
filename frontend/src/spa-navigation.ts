@@ -69,6 +69,15 @@ window.addEventListener("popstate", (event) => {
 		return;
 	}
 
+	//cleanup ws socket
+	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws`);
+
+	//cleanup ws_2v2 socket
+	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_2v2`);
+
+	//cleanup ws_xox socket
+	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_xox`);
+
 	//cleanup ws-online socket
 	WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 
@@ -98,6 +107,7 @@ function rmv_all_pgs_except_index()
 
 	const registration_2v2 = document.querySelector<HTMLDivElement>("#local2v2_registration");
 	const local2v2_winner_popup = document.querySelector<HTMLDivElement>("#local2v2_winner_popup");
+	const local_2v2_game_popup = document.querySelector<HTMLDivElement>("#local_2v2_game_popup");
 
 	const registration_tournament = document.querySelector<HTMLDivElement>("#localTour_registration");
 	const localTour_matchmaking_popup = document.querySelector<HTMLDivElement>("#localTour_matchmaking_popup");
@@ -121,7 +131,7 @@ function rmv_all_pgs_except_index()
 	const exit_mm = document.querySelector<HTMLButtonElement>("#online1v1_exit_matchmaking");
 
 	if(!pong_modes_popup || !registration_1v1 || !local1v1_winner_popup || !friends_popup
-		|| !registration_2v2 || !local2v2_winner_popup
+		|| !registration_2v2 || !local2v2_winner_popup || !local_2v2_game_popup
 		|| !registration_tournament || !localTour_matchmaking_popup
 		|| !onlineTour_registration || !onlineTour_matchmaking_popup
 		|| !vs_AI_winner_popup
@@ -140,6 +150,7 @@ function rmv_all_pgs_except_index()
 
 	registration_2v2.classList.add("hidden");
 	local2v2_winner_popup.classList.add("hidden");
+	local_2v2_game_popup.classList.add("hidden");
 
 	registration_tournament.classList.add("hidden");
 	localTour_matchmaking_popup.classList.add("hidden");

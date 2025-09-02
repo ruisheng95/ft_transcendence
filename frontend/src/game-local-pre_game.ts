@@ -124,11 +124,14 @@ export function open_local1v1()
 	const registration_1v1 = document.querySelector<HTMLDivElement>("#local1v1_registration");
 	const p1_name_input = document.querySelector<HTMLInputElement>("#local1v1_p1_name_input");
 	const p2_name_input = document.querySelector<HTMLInputElement>("#local1v1_p2_name_input");
+	const local1v1_error_msg_div = document.querySelector<HTMLDivElement>("#local1v1_error_msg");
 
-	if(!registration_1v1 || !p1_name_input || !p2_name_input) throw new Error("open local1v1 elements not found");
+	if(!local1v1_error_msg_div || !registration_1v1 || !p1_name_input || !p2_name_input) throw new Error("open local1v1 elements not found");
 	registration_1v1.classList.remove("hidden");
 	p1_name_input.value = "";
 	p2_name_input.value = "";
+	local1v1_error_msg_div.innerHTML = "";
+	
 	const el = document.querySelector<HTMLDivElement>('[data-game="local1v1"]');
 	el?.click();
 }
@@ -140,10 +143,12 @@ export function open_local2v2()
 	const p2_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p2_name_input");
 	const p3_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p3_name_input");
 	const p4_name_input_2v2 = document.querySelector<HTMLInputElement>("#local2v2_p4_name_input");
+	const local2v2_error_msg_div = document.querySelector<HTMLDivElement>("#local2v2_error_msg");
 
-	if(!registration_2v2 || !p1_name_input_2v2 || !p2_name_input_2v2 || !p3_name_input_2v2 || !p4_name_input_2v2) throw new Error("open local2v2 elements not found");
+	if(!local2v2_error_msg_div || !registration_2v2 || !p1_name_input_2v2 || !p2_name_input_2v2 || !p3_name_input_2v2 || !p4_name_input_2v2) throw new Error("open local2v2 elements not found");
 	
 	registration_2v2.classList.remove("hidden");
+	local2v2_error_msg_div.innerHTML = "";
 	p1_name_input_2v2.value = "";
 	p2_name_input_2v2.value = "";
 	p3_name_input_2v2.value = "";
@@ -159,10 +164,12 @@ export function open_localTour()
 	const p2_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p2_name_input");
 	const p3_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p3_name_input");
 	const p4_name_input_tour = document.querySelector<HTMLInputElement>("#localTour_p4_name_input");
+	const localTour_error_msg_div = document.querySelector<HTMLDivElement>("#localTour_error_msg");
 
-	if(!registration_tournament || !p1_name_input_tour || !p2_name_input_tour || !p3_name_input_tour || !p4_name_input_tour) throw new Error("open localTour elements not found");
+	if(!localTour_error_msg_div || !registration_tournament || !p1_name_input_tour || !p2_name_input_tour || !p3_name_input_tour || !p4_name_input_tour) throw new Error("open localTour elements not found");
 
 	registration_tournament.classList.remove("hidden");
+	localTour_error_msg_div.innerHTML = "";
 	p1_name_input_tour.value = "";
 	p2_name_input_tour.value = "";
 	p3_name_input_tour.value = "";
@@ -176,10 +183,12 @@ export function open_localxox()
 	const p1_name_xox = document.querySelector<HTMLInputElement>("#localxox_name1_input");
 	const p2_name_xox = document.querySelector<HTMLInputElement>("#localxox_name2_input");
 	const registration_xox = document.querySelector<HTMLDivElement>("#localxox_registration");
+	const localxox_error_msg_div = document.querySelector<HTMLDivElement>("#localxox_error_msg");
 
-	if(!p1_name_xox || !p2_name_xox || !registration_xox)
+	if(!localxox_error_msg_div || !p1_name_xox || !p2_name_xox || !registration_xox)
 		throw new Error("open localxox elements not found");
 
+	localxox_error_msg_div.innerHTML = "";
 	p1_name_xox.value = "";
 	p2_name_xox.value = "";
 	registration_xox.classList.remove("hidden");
