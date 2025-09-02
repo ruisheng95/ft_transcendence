@@ -98,7 +98,7 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		throw new Error("Required game elements not found 2");
 
 	//playing status
-	let playing = true;
+	let playing = false;
 	
 	render_positions();
 	socket.addEventListener("message", process_msg_from_socket);
@@ -166,6 +166,8 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		//send the init JSON to backend
 		if (socket.readyState === WebSocket.OPEN)
 			socket.send(JSON.stringify(config_obj));
+
+		playing = true;
 	}
 
 	function process_msg_from_socket(message: MessageEvent)
@@ -255,12 +257,13 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	{
 		let predicted_y = boardHeight / 2;
 		let last_key_press = "";
+		let frame_counter = 0;
 		
 		//predict pos every sec
 		setInterval(() => {
 			if (playing == false)
 				return;
-			predicted_y = predict_ball_landing_spot() + Math.floor(Math.random() * 41) - 20; // ±20px to simulate prediction error
+			predicted_y = predict_ball_landing_spot();
 		}, 1000); //this function sets in ms so 1000ms = 1s (as requested by the subj)
 
 		//move towards predicted target
@@ -268,7 +271,10 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 			if (playing == false)
 				return;
 			
-			if(Math.random() < 0.92) //simulate human distractions lol and slow reaction
+			frame_counter++;
+			const distraction = Math.min(0.98, 0.80 + (frame_counter * 0.0002));
+			// console.log(distraction);
+			if(Math.random() < distraction) //simulate human distractions lol and slow reaction
 				return;
 
 			const paddle_center = rightplayerY + block_height / 2;

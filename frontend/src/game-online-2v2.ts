@@ -115,6 +115,7 @@ export function online_2v2_play()
 	const socketUrl = `${import.meta.env.VITE_SOCKET_URL}/ws-online-2v2?session=${sessionParam}&uid=${uniqueId}`;
 	const socket = new WebSocket(socketUrl);
 	let player_dced_flag = false;
+	let disable_back_navigation_flag = false;
 
 	const game_obj = document.querySelector<HTMLDivElement>("#online_game_board_area");
 	
@@ -390,6 +391,7 @@ export function online_2v2_play()
 		else if(msg_obj.status === "Lobby full")
 		{
 			disable_back_navigation();
+			disable_back_navigation_flag = true;
 			start_matchmaking_countdown(mm_status_div);
 			
 			team1_player1_name = players[0];
@@ -505,6 +507,7 @@ export function online_2v2_play()
 
 		playing = false;
 		enable_back_navigation();
+		disable_back_navigation_flag = true;
 
 		online2v2_left_name1.innerText = team1_player1_name;
 		online2v2_left_name2.innerText = team1_player2_name;
@@ -555,6 +558,9 @@ export function online_2v2_play()
 
 	function online2v2_window_popstate()
 	{
+		if(disable_back_navigation_flag === true)
+			return;
+
 		socket.close();
 	}
 }

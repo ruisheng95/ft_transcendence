@@ -244,9 +244,7 @@ export function xox_online_play()
 
 		//handle finished game
 		if (gameState.gameStatus === "finished" && gameResult)
-		{
-			enable_back_navigation();
-			
+		{	
 			if (gameResult.type === 'winner')
 			{
 				// Highlight winning pattern
@@ -330,6 +328,8 @@ export function xox_online_play()
 		left_name_mid.innerHTML = p1_name || "Player 1";
 		right_name_mid.innerHTML = p2_name || "Player 2";
 
+		enable_back_navigation();
+		
 		// Show results
 		if (symbol === "X")
 		{
