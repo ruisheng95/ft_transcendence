@@ -1,6 +1,7 @@
 
 import "./gamestyle.css";
 import { local_tour_manager } from "./game-local-tournament2.ts";
+import { translate_text } from "./language.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -203,13 +204,13 @@ function verify_name_input(event : Event)
 
 		}
 
-		if(input.length > 9)
+		if(input.length > 12)
 		{
-			localTour_error_msg_div.innerText = "Input too long";
-			clean_input = clean_input.substring(0, 9);
+			localTour_error_msg_div.innerText = translate_text("Input too long");
+			clean_input = clean_input.substring(0, 12);
 		}
 		else if (invalid_char == true)
-			localTour_error_msg_div.innerText = "Numbers, alphabets and '_' only";
+			localTour_error_msg_div.innerText = translate_text("Numbers, alphabets and '_' only");
 		else
 			localTour_error_msg_div.innerText = "";
 

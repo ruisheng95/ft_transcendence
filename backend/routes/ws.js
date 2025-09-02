@@ -38,14 +38,14 @@ const root = async function (fastify) {
 
     function change_player_pos() {
       if (player_movement["rightplayer_down"] == true) {
-        if (rightplayerY + block_height + board_border_width <= boardHeight)
+        if (rightplayerY + block_height + 2 * board_border_width <= boardHeight)
           rightplayerY += player_speed;
       }
       if (player_movement["rightplayer_up"] == true) {
         if (rightplayerY - board_border_width > 0) rightplayerY -= player_speed;
       }
       if (player_movement["leftplayer_down"] == true) {
-        if (leftplayerY + block_height + board_border_width <= boardHeight)
+        if (leftplayerY + block_height + 2 * board_border_width <= boardHeight)
           leftplayerY += player_speed;
       }
       if (player_movement["leftplayer_up"] == true) {
@@ -100,7 +100,7 @@ const root = async function (fastify) {
           }
 
           //check collision wif horizontal walls
-          if (ballY + ball_len >= boardHeight || ballY <= 0) dy = -dy;
+          if (ballY + ball_len >= boardHeight - board_border_width || ballY <= 0) dy = -dy;
 
           ballX += dx;
           ballY += dy;

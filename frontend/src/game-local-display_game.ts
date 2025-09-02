@@ -4,6 +4,7 @@
 // import { add_prev_url_to_history } from "./spa-navigation";
 import { translate_text } from "./language";
 import { click_pong_modes_button } from "./pong_modes";
+import { WS } from "./class/WS";
 
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -14,9 +15,7 @@ const html = (strings: TemplateStringsArray, ...values: unknown[]) =>
 
 export function display_game(handle_game_end : (msg_obj : object) => void, AI_flag = false)
 {
-	console.log("DISPLAY GAME CALLED");
-	const socket = new WebSocket(`${import.meta.env.VITE_SOCKET_URL}/ws`); //care this
-
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws`); //care this
 
 	const game_obj = document.querySelector<HTMLDivElement>("#game_board_area");
 
@@ -112,6 +111,10 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		playing = false;
 		// add_prev_url_to_history();
 		click_pong_modes_button();
+
+		//close socket
+		socket.close();
+		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws`);
 		});
 
 	// AI STUFF
@@ -123,6 +126,10 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 	const stop_game = () => {
 		game_popup.classList.add("hidden");
 		playing = false;
+
+		//close socket
+		socket.close();
+		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws`);
 	};
 	stop_game_ft = stop_game;
 
@@ -181,11 +188,18 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 		else if(msg_obj.type == "game_over")
 		{
 			console.log("recv game end, playing status: ", playing);
+
 			if(playing == false)
 				return ;
+
 			if (start_game_button)
 				start_game_button.style.display = "block";
 			playing = false;
+
+			//close socket
+			socket.close();
+			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws`);
+			
 			handle_game_end(msg_obj);
 		}
 	}

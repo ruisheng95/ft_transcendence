@@ -3,6 +3,7 @@ import "./gamestyle.css";
 // import { add_prev_url_to_history } from "./spa-navigation";
 import { translate_text } from "./language";
 import { click_pong_modes_button } from "./pong_modes";
+import { WS } from "./class/WS";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -145,12 +146,12 @@ function verify_name_input(event : Event)
 
 		if(input.length > 20)
 		{
-			local2v2_error_msg_div.innerText = "Input too long";
+			local2v2_error_msg_div.innerText = translate_text("Input too long");
 			clean_input = clean_input.substring(0, 20);
 		}
 		else if (invalid_char == true)
 
-			local2v2_error_msg_div.innerText = "Numbers, alphabets and '_' only";
+			local2v2_error_msg_div.innerText = translate_text("Numbers, alphabets and '_' only");
 		else
 			local2v2_error_msg_div.innerText = ""
 
@@ -160,7 +161,7 @@ function verify_name_input(event : Event)
 
 function local_2v2_game_init()
 {
-	const socket = new WebSocket(`${import.meta.env.VITE_SOCKET_URL}/ws_2v2`);
+	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_2v2`);
 
 	const game_obj = document.querySelector<HTMLDivElement>("#local_2v2_game_board_area");
 
@@ -276,6 +277,11 @@ function local_2v2_game_init()
 		playing = false;
 		local_2v2_game_popup.classList.add("hidden");
 		// add_prev_url_to_history();
+		
+		//socket cleanup
+		socket.close();
+		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_2v2`);
+
 		click_pong_modes_button();
 	});
 
@@ -335,6 +341,11 @@ function local_2v2_game_init()
 			playing = false;
 			if (start_game_button)
 				start_game_button.classList.remove("hidden");
+
+			//socket cleanup
+			socket.close();
+			WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_2v2`);
+			
 			local2v2_display_winner(msg_obj);
 		}
 	}

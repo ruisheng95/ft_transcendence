@@ -68,7 +68,7 @@ export class GameInstance {
   #change_player_pos2() {
     if (this.#player_movement["rightplayer_down"] == true) {
       if (
-        this.#rightplayerY + this.#block_height + this.#board_border_width <=
+        this.#rightplayerY + this.#block_height + 2 * this.#board_border_width <=
         this.#boardHeight
       )
         this.#rightplayerY += this.#player_speed;
@@ -79,7 +79,7 @@ export class GameInstance {
     }
     if (this.#player_movement["leftplayer_down"] == true) {
       if (
-        this.#leftplayerY + this.#block_height + this.#board_border_width <=
+        this.#leftplayerY + this.#block_height + 2 * this.#board_border_width <=
         this.#boardHeight
       )
         this.#leftplayerY += this.#player_speed;
@@ -218,7 +218,7 @@ export class GameInstance {
       }
 
       //check collision wif horizontal walls
-      if (this.#ballY + this.#ball_len >= this.#boardHeight || this.#ballY <= 0)
+      if (this.#ballY + this.#ball_len >= this.#boardHeight - this.#board_border_width || this.#ballY <= 0)
         this.#dy = -this.#dy;
 
       this.#ballX += this.#dx;

@@ -3,6 +3,7 @@ import "./gamestyle.css";
 import { WS } from "./class/WS";
 import { removeAllEventListenersFromButton } from "./gameindex";
 import { click_xox_modes_button } from "./xox_dashboard";
+import { translate_text } from "./language";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -219,11 +220,11 @@ function verify_name_input(event: Event)
 
 	if (input.length > 20)
 	{
-		localxox_error_msg_div.innerText = "Input too long";
+		localxox_error_msg_div.innerText = translate_text("Input too long");
 		clean_input = clean_input.substring(0, 20);
 	}
 	else if (invalid_char)
-		localxox_error_msg_div.innerText = "Numbers, alphabets and '_' only";
+		localxox_error_msg_div.innerText = translate_text("Numbers, alphabets and '_' only");
 	else
 		localxox_error_msg_div.innerText = "";
 
@@ -255,18 +256,18 @@ function xoxWinner_popup(symbol: string)
 
 	if (symbol === "X")
 	{
-		left_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
-		right_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+		left_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
+		right_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 	}
 	else if (symbol === "O")
 	{
-		right_result.innerHTML = `<h2 class="match-win">Winner</h2>`;
-		left_result.innerHTML = `<h2 class="match-lose">Loser</h2>`;
+		right_result.innerHTML = `<h2 class="match-win">${translate_text("Winner")}</h2>`;
+		left_result.innerHTML = `<h2 class="match-lose">${translate_text("Loser")}</h2>`;
 	}
 	else // tie
 	{
-		right_result.innerHTML = `<h2 class="match-tie">Tie</h2>`;
-		left_result.innerHTML = `<h2 class="match-tie">Tie</h2>`;
+		right_result.innerHTML = `<h2 class="match-tie">${translate_text("Tie")}</h2>`;
+		left_result.innerHTML = `<h2 class="match-tie">${translate_text("Tie")}</h2>`;
 	}
 
 	close_button.classList.remove("hidden");
@@ -345,7 +346,7 @@ export const xox_game_popup = html`
 			
 			<!-- Exit Button -->
 			<div id="xox_close_button" class="h-20 flex items-center hidden">
-				<button class="button-primary">Exit</button>
+				<button id="localxox_exit_text" class="button-primary">Exit</button>
 			</div>
 
 			<div id="xox_game_message"></div>
