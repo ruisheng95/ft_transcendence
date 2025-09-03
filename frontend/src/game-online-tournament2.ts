@@ -290,7 +290,11 @@ export function online_tour_manager()
 				type: "start_match",
 				match_id: Tournament_state.current_match_id,
 				tournament_id: Tournament_state.tournament_id
-			}));
+			}
+			console.log("Sending start match message:", startMessage);
+			socket.send(JSON.stringify(startMessage));
+		} else {
+			console.log("Socket not open, current state:", socket.readyState);
 		}
 	}
 
