@@ -38,19 +38,25 @@ export function open_playerstats_page()
 	insert_playerstats_and_history_main();
 }
 
+let added_listener_flag = false;
 function insert_playerstats_and_history_main()
 {
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
 
 	if(socket.readyState === WebSocket.OPEN)
 		socket.send(JSON.stringify( {type: "get_playerstats" }));
+	else
+		socket.addEventListener("open", () => { socket.send(JSON.stringify( {type: "get_playerstats" })) }, { once: true });
 
+	if(added_listener_flag === true)
+		return;
+
+	added_listener_flag = true;
 	socket.addEventListener("message", (event) => {
 		const msg_obj = JSON.parse(event.data);
 
 		if(msg_obj.type === "playerstats_info")
 		{
-			console.log(msg_obj);
 			const rating = msg_obj.rating;
 			const winstreak = msg_obj.winning_streak;
 			const total_wins = msg_obj.total_win;
