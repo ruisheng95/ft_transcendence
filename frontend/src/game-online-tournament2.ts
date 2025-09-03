@@ -4,6 +4,7 @@ import { online_1v1_play } from "./game-online-1v1";
 import { translate_text } from "./language";
 import { click_pong_modes_button } from "./pong_modes";
 import { disable_back_navigation, enable_back_navigation } from "./spa-navigation";
+import { WS } from "./class/WS.ts";
 
 // global flag to prevent multiple tournament managers
 let tournamentManagerActive = false;
@@ -15,6 +16,12 @@ export function online_tour_manager()
 		return;
 
 	tournamentManagerActive = true;
+	
+	// Check if we have any existing tournament context
+	const existingContext = localStorage.getItem("tournament_context");
+	if (existingContext) {
+		console.log(`[DEBUG] Found existing tournament context:`, JSON.parse(existingContext));
+	}
 	
     // clear old tournament context
 	localStorage.removeItem("tournament_context");
@@ -39,11 +46,8 @@ export function online_tour_manager()
 	// 	}
 	// }
 
-	// Add unique ID to test using the same browser
-	const sessionParam = localStorage.getItem("session") || "";
-	const uniqueId = Date.now() + Math.random(); 
-	const socketUrl = `${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament?session=${sessionParam}&uid=${uniqueId}`;
-	const socket = new WebSocket(socketUrl);
+	const socketBase = `${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`;
+	const socket = WS.getInstance(socketBase);
 	
 	const Tournament_state = {
 		players : ["", "", "", ""],
@@ -94,9 +98,6 @@ export function online_tour_manager()
 		// reset tournament manager and remove tournament context
 		tournamentManagerActive = false;
 		localStorage.removeItem("tournament_context");
-		// if ((window as any).tournamentState) {
-		// 	delete (window as any).tournamentState;
-		// }
 		click_pong_modes_button();
 	});
 
@@ -313,10 +314,12 @@ export function online_tour_manager()
 		const player2_session = Tournament_state.player_sessions[player2_index];
 		
 		// store tournament context and original socket reference
+		// const stored_socket_url = `${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`;
+		// console.log(`Storing tournament context with URL: ${stored_socket_url}`);
 		localStorage.setItem("tournament_context", JSON.stringify({
 			tournament_id: Tournament_state.tournament_id,
 			current_match_id: Tournament_state.current_match_id,
-			socket_url: `${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`,
+			socket_url: socketBase,
 			current_players: {
 				player1: {
 					name: player1_name,
@@ -507,9 +510,6 @@ export function online_tour_manager()
 			console.log(`called here 2`);
 			tournamentManagerActive = false;
 			localStorage.removeItem("tournament_context");
-			// if ((window as any).tournamentState) {
-			// 	delete (window as any).tournamentState;
-			// }
 			click_pong_modes_button();
 		});
 
@@ -548,8 +548,5 @@ export function online_tour_manager()
 		socket.close();
 		tournamentManagerActive = false;
 		localStorage.removeItem("tournament_context");
-		// if ((window as any).tournamentState) {
-		// 	delete (window as any).tournamentState;
-		// }
 	}
 }
