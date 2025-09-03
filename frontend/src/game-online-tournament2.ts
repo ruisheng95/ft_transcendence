@@ -18,26 +18,26 @@ export function online_tour_manager()
 	
     // clear old tournament context
 	localStorage.removeItem("tournament_context");
-	if ((window as any).tournamentState) {
-		delete (window as any).tournamentState;
-	}
+	// if ((window as any).tournamentState) {
+	// 	delete (window as any).tournamentState;
+	// }
 	
-	let isReturningFromGame = false;
-	let savedTournamentId = "";
+	// let isReturningFromGame = false;
+	// let savedTournamentId = "";
 	
-	// rejoin only after a match (ongoing tournament)
-	const urlParams = new URLSearchParams(window.location.search);
-	const fromGame = urlParams.get('from_game');
+	// // rejoin only after a match (ongoing tournament)
+	// const urlParams = new URLSearchParams(window.location.search);
+	// const fromGame = urlParams.get('from_game');
 	
-	if (fromGame === 'true') {
-		console.log("ENTERED FROMGAME TRUE");
-		const tournamentContext = localStorage.getItem("tournament_context");
-		if (tournamentContext) {
-			isReturningFromGame = true;
-			const context = JSON.parse(tournamentContext);
-			savedTournamentId = context.tournament_id;
-		}
-	}
+	// if (fromGame === 'true') {
+	// 	console.log("ENTERED FROMGAME TRUE");
+	// 	const tournamentContext = localStorage.getItem("tournament_context");
+	// 	if (tournamentContext) {
+	// 		isReturningFromGame = true;
+	// 		const context = JSON.parse(tournamentContext);
+	// 		savedTournamentId = context.tournament_id;
+	// 	}
+	// }
 
 	// Add unique ID to test using the same browser
 	const sessionParam = localStorage.getItem("session") || "";
@@ -47,7 +47,7 @@ export function online_tour_manager()
 	
 	const Tournament_state = {
 		players : ["", "", "", ""],
-		player_emails: ["", "", "", ""],
+		player_sessions: ["", "", "", ""],
 		match_winners: ["", ""],
 		match_losers: ["", ""],
 		current_round: 0,
@@ -73,12 +73,13 @@ export function online_tour_manager()
 	socket.addEventListener("message", process_msg_from_socket);
 	socket.addEventListener("open", () => {
 		// rejoin existing tournament after a match (only if returning from game)
-		if (isReturningFromGame && savedTournamentId) {
-			socket.send(JSON.stringify({
-				type: "rejoin_tournament",
-				tournament_id: savedTournamentId
-			}));
-		}
+		// if (isReturningFromGame && savedTournamentId) {
+		// 	socket.send(JSON.stringify({
+		// 		type: "rejoin_tournament",
+		// 		tournament_id: savedTournamentId
+		// 	}));
+		// }
+		console.log(`Connection established`);
 	});
 
 	socket.addEventListener("close", () => {
@@ -88,13 +89,14 @@ export function online_tour_manager()
 
 	exit_tournament_button.addEventListener("click", () => {
 		socket.close();
+		console.log(`called here 1`);
 		onlineTour_matchmaking_popup.classList.add("hidden");
 		// reset tournament manager and remove tournament context
 		tournamentManagerActive = false;
 		localStorage.removeItem("tournament_context");
-		if ((window as any).tournamentState) {
-			delete (window as any).tournamentState;
-		}
+		// if ((window as any).tournamentState) {
+		// 	delete (window as any).tournamentState;
+		// }
 		click_pong_modes_button();
 	});
 
@@ -115,15 +117,16 @@ export function online_tour_manager()
 			Tournament_state.tournament_id = msg_obj.tournament_id;
 			
 			// if rejoining after a match - clean up the context
-			if (isReturningFromGame && savedTournamentId === msg_obj.tournament_id) {
-				localStorage.removeItem("tournament_context");
-				isReturningFromGame = false;
-			}
+			// if (isReturningFromGame && savedTournamentId === msg_obj.tournament_id) {
+			// 	localStorage.removeItem("tournament_context");
+			// 	isReturningFromGame = false;
+			// }
 		}
 		else if(msg_obj.type === "tournament_ready") {
 			Tournament_state.players = msg_obj.players;
-			Tournament_state.player_emails = msg_obj.player_emails;
+			Tournament_state.player_sessions = msg_obj.player_sessions;
 			Tournament_state.tournament_id = msg_obj.tournament_id;
+			console.log("Updated Tournament_state:", Tournament_state);
 			update_bracket_display();
 			hide_status_show_bracket();
 			disable_back_navigation();
@@ -136,12 +139,12 @@ export function online_tour_manager()
 			show_current_battle(msg_obj.players);
 			
 			// auto start the match 
-			const myEmail = localStorage.getItem("session") || "";
-			const isInMatch = Tournament_state.player_emails.some((email, index) => {
-				const isMyEmail = email === myEmail;
+			const mySession = localStorage.getItem("session") || "";
+			const isInMatch = Tournament_state.player_sessions.some((session, index) => {
+				const isMySession = session === mySession;
 				const playerName = Tournament_state.players[index];
 				const isInCurrentMatch = msg_obj.players.includes(playerName);
-				return isMyEmail && isInCurrentMatch;
+				return isMySession && isInCurrentMatch;
 			});
 			
 			if (isInMatch) {
@@ -156,9 +159,9 @@ export function online_tour_manager()
 		else if(msg_obj.type === "tournament_complete") {
 			Tournament_state.final_ranking = msg_obj.final_ranking;
 			localStorage.removeItem("tournament_context");
-			if ((window as any).tournamentState) {
-				delete (window as any).tournamentState;
-			}
+			// if ((window as any).tournamentState) {
+			// 	delete (window as any).tournamentState;
+			// }
 			optional_msg_div.innerHTML = "";
 			make_final_ranking();
 		}
@@ -166,20 +169,21 @@ export function online_tour_manager()
             // 1v1 match round
 			start_online_game();
 		}
-		else if(msg_obj.type === "rejoin_failed") {
-			localStorage.removeItem("tournament_context");
-			if ((window as any).tournamentState) {
-				delete (window as any).tournamentState;
-			}
-			isReturningFromGame = false;
-			savedTournamentId = "";
-		}
+		// else if(msg_obj.type === "rejoin_failed") {
+		// 	console.log(`rejoin failed`);
+		// 	// localStorage.removeItem("tournament_context");
+		// 	// if ((window as any).tournamentState) {
+		// 	// 	delete (window as any).tournamentState;
+		// 	// }
+		// 	// isReturningFromGame = false;
+		// 	// savedTournamentId = "";
+		// }
 		else if(msg_obj.type === "player_dced") {
 			Tournament_state.final_ranking = msg_obj.final_ranking;
-			localStorage.removeItem("tournament_context");
-			if ((window as any).tournamentState) {
-				delete (window as any).tournamentState;
-			}
+			// localStorage.removeItem("tournament_context");
+			// if ((window as any).tournamentState) {
+			// 	delete (window as any).tournamentState;
+			// }
 			optional_msg_div.innerHTML = translate_text("Tournament ended: player disconnected (rating changes: +5 all, -10 leaver)");
 			make_final_ranking();
 		}
@@ -250,14 +254,14 @@ export function online_tour_manager()
 		p1_name_display.innerHTML = players[0];
 		p2_name_display.innerHTML = players[1];
 
-		const myEmail = localStorage.getItem("session") || "";
+		const mySession = localStorage.getItem("session") || "";
 		
         // check if current user is in this match
-		const isInMatch = Tournament_state.player_emails.some((email, index) => {
-			const isMyEmail = email === myEmail;
+		const isInMatch = Tournament_state.player_sessions.some((session, index) => {
+			const isMySession = session === mySession;
 			const playerName = Tournament_state.players[index];
 			const isInCurrentMatch = players.includes(playerName);
-			return isMyEmail && isInCurrentMatch;
+			return isMySession && isInCurrentMatch;
 		});
 
 		// highlight if current player is in this match
@@ -282,7 +286,7 @@ export function online_tour_manager()
 	function request_game_start()
 	{
 		if (socket.readyState === WebSocket.OPEN) {
-			socket.send(JSON.stringify({
+			const startMessage = {
 				type: "start_match",
 				match_id: Tournament_state.current_match_id,
 				tournament_id: Tournament_state.tournament_id
@@ -301,8 +305,8 @@ export function online_tour_manager()
 		const player1_index = Tournament_state.players.indexOf(player1_name);
 		const player2_index = Tournament_state.players.indexOf(player2_name);
 		
-		const player1_email = Tournament_state.player_emails[player1_index];
-		const player2_email = Tournament_state.player_emails[player2_index];
+		const player1_session = Tournament_state.player_sessions[player1_index];
+		const player2_session = Tournament_state.player_sessions[player2_index];
 		
 		// store tournament context and original socket reference
 		localStorage.setItem("tournament_context", JSON.stringify({
@@ -312,23 +316,23 @@ export function online_tour_manager()
 			current_players: {
 				player1: {
 					name: player1_name,
-					email: player1_email
+					session: player1_session
 				},
 				player2: {
 					name: player2_name,
-					email: player2_email
+					session: player2_session
 				}
 			},
-			preserve_tournament_connection: true // flag to indicate we should preserve the connection
+			// preserve_tournament_connection: true // flag to indicate we should preserve the connection
 		}));
 		
 		// store a reference to the current tournament state and socket in a global variable
 		// so we can restore it when coming back from the game
-		(window as any).tournamentState = {
-			socket: socket,
-			state: Tournament_state,
-			popup: onlineTour_matchmaking_popup
-		};
+		// (window as any).tournamentState = {
+		// 	socket: socket,
+		// 	state: Tournament_state,
+		// 	popup: onlineTour_matchmaking_popup
+		// };
 		
 		// use the existing online 1v1 game but with tournament context
 		online_1v1_play();
@@ -431,7 +435,7 @@ export function online_tour_manager()
 		loser_final.innerHTML = "?";
 
 		Tournament_state.players = ["", "", "", ""];
-		Tournament_state.player_emails = ["", "", "", ""];
+		Tournament_state.player_sessions = ["", "", "", ""];
 		Tournament_state.match_winners = ["", ""];
 		Tournament_state.match_losers = ["", ""];
 		Tournament_state.current_round = 0;
@@ -473,22 +477,35 @@ export function online_tour_manager()
 		// get new reference to the current button (might have been replaced during match)
 		const current_open_game_button = document.querySelector<HTMLButtonElement>("#onlineTour_open_game");
 		
-		if(!current_open_game_button || !close_finalwinner_button || !finalwinner_name_display || !close_finalwinner_popup_button || !currentbattle_div || !finalwinner_div || !ranking_1st || !ranking_2nd || !ranking_3rd || !ranking_4th || !status_section)
+		if(!current_open_game_button || !finalwinner_name_display || !close_finalwinner_popup_button || !currentbattle_div || !finalwinner_div || !ranking_1st || !ranking_2nd || !ranking_3rd || !ranking_4th || !status_section)
 			throw new Error("onlineTour winnerpage elements not found");
 
 		// remove existing event listeners to avoid duplicates
-		const newCloseButton = close_finalwinner_popup_button.cloneNode(true) as HTMLButtonElement;
-		close_finalwinner_popup_button.parentNode?.replaceChild(newCloseButton, close_finalwinner_popup_button);
+		// const newCloseButton = close_finalwinner_popup_button.cloneNode(true) as HTMLButtonElement;
+		// close_finalwinner_popup_button.parentNode?.replaceChild(newCloseButton, close_finalwinner_popup_button);
 		
-		newCloseButton.addEventListener("click", () =>{
+		// newCloseButton.addEventListener("click", () =>{
+		// 	if(onlineTour_matchmaking_popup)
+		// 		onlineTour_matchmaking_popup.classList.add("hidden");
+		// 	socket.close();
+		// 	tournamentManagerActive = false;
+		// 	localStorage.removeItem("tournament_context");
+		// 	if ((window as any).tournamentState) {
+		// 		delete (window as any).tournamentState;
+		// 	}
+		// 	click_pong_modes_button();
+		// });
+
+		close_finalwinner_popup_button.addEventListener("click", () =>{
 			if(onlineTour_matchmaking_popup)
 				onlineTour_matchmaking_popup.classList.add("hidden");
 			socket.close();
+			console.log(`called here 2`);
 			tournamentManagerActive = false;
 			localStorage.removeItem("tournament_context");
-			if ((window as any).tournamentState) {
-				delete (window as any).tournamentState;
-			}
+			// if ((window as any).tournamentState) {
+			// 	delete (window as any).tournamentState;
+			// }
 			click_pong_modes_button();
 		});
 
@@ -503,7 +520,8 @@ export function online_tour_manager()
 		if (exit_tournament_button) {
 			exit_tournament_button.classList.add("hidden");
 		}
-		newCloseButton.classList.remove("hidden");
+		// newCloseButton.classList.remove("hidden");
+		close_finalwinner_popup_button?.classList.remove("hidden");
 
 		finalwinner_name_display.innerHTML = Tournament_state.final_ranking[0];
 		ranking_1st.innerText = Tournament_state.final_ranking[0];
@@ -526,8 +544,8 @@ export function online_tour_manager()
 		socket.close();
 		tournamentManagerActive = false;
 		localStorage.removeItem("tournament_context");
-		if ((window as any).tournamentState) {
-			delete (window as any).tournamentState;
-		}
+		// if ((window as any).tournamentState) {
+		// 	delete (window as any).tournamentState;
+		// }
 	}
 }
