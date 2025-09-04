@@ -595,6 +595,8 @@ export function online_tour_manager()
 			onlineTour_matchmaking_popup.classList.add("hidden");
 		console.log(`x status after: ${tournamentManagerActive}`);
 		click_pong_modes_button();
+		enable_back_navigation();
+		onlineTour_back_nav_disabled = false;
 	}
 
 	function backToMenu() {
@@ -603,8 +605,8 @@ export function online_tour_manager()
 			console.log(`backtomenu status before: ${tournamentManagerActive}`);
 			socket.close();
 			cleanupTournamentManager();
-			console.log(`called here 2`);
 			console.log(`backtomenu status after: ${tournamentManagerActive}`);
+			console.log(`Completed tournament. Disconnecting...`);
 			click_pong_modes_button();
 	}
 
