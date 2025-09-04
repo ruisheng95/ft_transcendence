@@ -9,15 +9,12 @@ const root = async function (fastify) {
 
     fastify.get("/ws-online-tournament", { websocket: true }, (connection, req) => {
         const session = req.query.session;
-        const uid = req.query.uid;
 
         let playerInfo = {
             connection: connection,
             session:session,
-            uid: uid,
             username: "", //get from db
-            tournament_id: null,
-            player_index: -1
+            tournament_id: null
         };
 
         let email;
