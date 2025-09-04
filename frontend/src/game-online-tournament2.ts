@@ -17,21 +17,7 @@ export function online_tour_manager()
 
 	if (tournamentManagerActive) {
         console.log(`tournament manager still active!!! status: ${tournamentManagerActive}`);
-        
-        // check if theres an active socket connection to online tournament
-        const socketBase = `${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`;
-        const existingSocket = WS.getInstance(socketBase);
-        
-        console.log(`Checking existing socket state:`, existingSocket.readyState);
-        
-        if (existingSocket.readyState === WebSocket.OPEN || existingSocket.readyState === WebSocket.CONNECTING) {
-            console.log(`Active socket connection found, preventing duplicate tournament manager`);
-            existingSocket.close();
-			WS.removeInstance(socketBase);
-        } else {
-            console.log(`No active socket connection (state: ${existingSocket.readyState}), allowing new tournament manager`);
-            tournamentManagerActive = false;
-        }
+        return;
     }
 
 	tournamentManagerActive = true;
@@ -79,7 +65,6 @@ export function online_tour_manager()
 		matches_done: 0,
 		final_ranking:["", "", "", ""],
 		current_players:["", ""],
-		my_player_index: -1,
 		tournament_id: "",
 		current_match_id: ""
 	}
@@ -139,16 +124,16 @@ export function online_tour_manager()
 		if(msg_obj.type === "tournament_status") {
 			update_matchmaking_status(msg_obj);
 		}
-		else if(msg_obj.type === "player_assigned") {
-			Tournament_state.my_player_index = msg_obj.player_index;
-			Tournament_state.tournament_id = msg_obj.tournament_id;
+		// else if(msg_obj.type === "player_assigned") {
+		// 	Tournament_state.my_player_index = msg_obj.player_index;
+		// 	Tournament_state.tournament_id = msg_obj.tournament_id;
 			
-			// if rejoining after a match - clean up the context
-			// if (isReturningFromGame && savedTournamentId === msg_obj.tournament_id) {
-			// 	localStorage.removeItem("tournament_context");
-			// 	isReturningFromGame = false;
-			// }
-		}
+		// 	// if rejoining after a match - clean up the context
+		// 	// if (isReturningFromGame && savedTournamentId === msg_obj.tournament_id) {
+		// 	// 	localStorage.removeItem("tournament_context");
+		// 	// 	isReturningFromGame = false;
+		// 	// }
+		// }
 		else if(msg_obj.type === "tournament_ready") {
 			Tournament_state.players = msg_obj.players;
 			Tournament_state.player_sessions = msg_obj.player_sessions;
@@ -213,6 +198,12 @@ export function online_tour_manager()
 			// }
 			optional_msg_div.innerHTML = translate_text("Tournament ended: player disconnected (rating changes: +5 all, -10 leaver)");
 			make_final_ranking();
+			if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+				socket.close();
+			}
+			WS.removeInstance(socketBase);
+			localStorage.removeItem("tournament_context");
+			tournamentManagerActive = false;
 		}
 	}
 
@@ -314,9 +305,9 @@ export function online_tour_manager()
 	{
 		if (socket.readyState === WebSocket.OPEN) {
 			const startMessage = {
-				type: "start_match",
-				match_id: Tournament_state.current_match_id,
-				tournament_id: Tournament_state.tournament_id
+				type: "start_match"
+				// match_id: Tournament_state.current_match_id,
+				// tournament_id: Tournament_state.tournament_id
 			}
 			console.log("Sending start match message:", startMessage);
 			socket.send(JSON.stringify(startMessage));
@@ -475,7 +466,6 @@ export function online_tour_manager()
 		Tournament_state.matches_done = 0;
 		Tournament_state.final_ranking = ["", "", "", ""];
 		Tournament_state.current_players = ["", ""];
-		Tournament_state.my_player_index = -1;
 		Tournament_state.tournament_id = "";
 		Tournament_state.current_match_id = "";
 

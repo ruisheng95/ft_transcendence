@@ -448,7 +448,6 @@ export function online_1v1_play()
 			//auto return to tournament after result page
 			setTimeout(() => {
 				online1v1_winner_popup?.classList.add("hidden");
-				// add_history("/onlinegame?from_game=true");
 			}, 3000);
 		}
 		else
@@ -519,20 +518,6 @@ export function start_game_countdown(game_countdown_div: HTMLDivElement)
 		
 		gameCountdown--;
 	}, 1000);
-
-	// close_online_1v1_winner_popup_button.addEventListener("click", () => {
-	// 		online1v1_winner_popup.classList.add("hidden");
-			
-	// 		// check if in tournament
-	// 		const tournament_context = localStorage.getItem("tournament_context");
-	// 		if (tournament_context) {
-	// 			// return to tournament bracket
-	// 			add_history("/onlinegame");
-	// 		} else {
-	// 			// return to index
-	// 			add_history("");
-	// 		}
-	// 	})
 }
 
 const online1v1_matchmaking_popup = html`
