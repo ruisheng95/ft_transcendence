@@ -5,6 +5,9 @@ import { click_pong_modes_button } from "./pong_modes.ts";
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
 
+// track if event listeners have been added to prevent duplicates
+let eventListenersAdded = false;
+
 // online_tour_game
 export function online_tour_game_setup()
 {
@@ -15,16 +18,20 @@ export function online_tour_game_setup()
 	if (!onlineTour_regist_page || !online_tour_start_button || !online_tour_close_button)
 		throw new Error("Error online_tour_game buttons not found");
 
-	online_tour_start_button.addEventListener("click", () => {
-		console.log("Starting online tournament...");
-		onlineTour_regist_page.classList.add("hidden");
-		online_tour_manager();
-	});
+	if (!eventListenersAdded) {
+		online_tour_start_button.addEventListener("click", () => {
+			console.log("Starting online tournament...");
+			onlineTour_regist_page.classList.add("hidden");
+			online_tour_manager();
+		});
 
-	online_tour_close_button.addEventListener("click", () => {
-		onlineTour_regist_page.classList.add("hidden");
-		click_pong_modes_button();
-	});
+		online_tour_close_button.addEventListener("click", () => {
+			onlineTour_regist_page.classList.add("hidden");
+			click_pong_modes_button();
+		});
+		
+		eventListenersAdded = true;
+	}
 }
 
 export function onlineTour_play()

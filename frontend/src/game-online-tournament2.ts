@@ -12,15 +12,19 @@ let onlineTour_back_nav_disabled = false;
 
 export function online_tour_manager()
 {
-	if (tournamentManagerActive)
+	console.log(`entered online tour manager`);
+	console.log(`tournament manager status: ${tournamentManagerActive}`);
+	if (tournamentManagerActive) {
+		console.log(`tournament manager still active!!! status: ${tournamentManagerActive}`);
 		return;
+	}
 
 	tournamentManagerActive = true;
 	
 	// Check if we have any existing tournament context
 	const existingContext = localStorage.getItem("tournament_context");
 	if (existingContext) {
-		console.log(`[DEBUG] Found existing tournament context:`, JSON.parse(existingContext));
+		console.log(`Found existing tournament context:`, JSON.parse(existingContext));
 	}
 	
     // clear old tournament context
@@ -48,6 +52,8 @@ export function online_tour_manager()
 
 	const socketBase = `${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`;
 	const socket = WS.getInstance(socketBase);
+	console.log(`Socket created:`, socket);
+	console.log(`Socket readyState:`, socket.readyState);
 	
 	const Tournament_state = {
 		players : ["", "", "", ""],
@@ -88,15 +94,17 @@ export function online_tour_manager()
 
 	socket.addEventListener("close", () => {
 		console.log("Disconnected from online tournament server");
-		tournamentManagerActive = false;
+		WS.removeInstance(socketBase);
 	});
 
 	exit_tournament_button.addEventListener("click", () => {
+		console.log(`x status before: ${tournamentManagerActive}`);
 		socket.close();
-		console.log(`called here 1`);
+		WS.removeInstance(socketBase);
 		onlineTour_matchmaking_popup.classList.add("hidden");
 		// reset tournament manager and remove tournament context
 		tournamentManagerActive = false;
+		console.log(`x status after: ${tournamentManagerActive}`);
 		localStorage.removeItem("tournament_context");
 		click_pong_modes_button();
 	});
@@ -506,9 +514,12 @@ export function online_tour_manager()
 		close_finalwinner_popup_button.addEventListener("click", () =>{
 			if(onlineTour_matchmaking_popup)
 				onlineTour_matchmaking_popup.classList.add("hidden");
+			console.log(`backtomenu status before: ${tournamentManagerActive}`);
 			socket.close();
+			WS.removeInstance(socketBase);
 			console.log(`called here 2`);
 			tournamentManagerActive = false;
+			console.log(`backtomenu status after: ${tournamentManagerActive}`);
 			localStorage.removeItem("tournament_context");
 			click_pong_modes_button();
 		});
@@ -544,9 +555,11 @@ export function online_tour_manager()
 	{
 		if(onlineTour_back_nav_disabled === true)
 			return;
-
+		console.log(`popstate status before: ${tournamentManagerActive}`);
 		socket.close();
+		WS.removeInstance(socketBase);
 		tournamentManagerActive = false;
 		localStorage.removeItem("tournament_context");
+		console.log(`popstate status after: ${tournamentManagerActive}`);
 	}
 }
