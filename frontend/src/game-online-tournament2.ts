@@ -14,10 +14,25 @@ export function online_tour_manager()
 {
 	console.log(`entered online tour manager`);
 	console.log(`tournament manager status: ${tournamentManagerActive}`);
+
 	if (tournamentManagerActive) {
-		console.log(`tournament manager still active!!! status: ${tournamentManagerActive}`);
-		return;
-	}
+        console.log(`tournament manager still active!!! status: ${tournamentManagerActive}`);
+        
+        // check if theres an active socket connection to online tournament
+        const socketBase = `${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`;
+        const existingSocket = WS.getInstance(socketBase);
+        
+        console.log(`Checking existing socket state:`, existingSocket.readyState);
+        
+        if (existingSocket.readyState === WebSocket.OPEN || existingSocket.readyState === WebSocket.CONNECTING) {
+            console.log(`Active socket connection found, preventing duplicate tournament manager`);
+            existingSocket.close();
+			WS.removeInstance(socketBase);
+        } else {
+            console.log(`No active socket connection (state: ${existingSocket.readyState}), allowing new tournament manager`);
+            tournamentManagerActive = false;
+        }
+    }
 
 	tournamentManagerActive = true;
 	
@@ -81,33 +96,36 @@ export function online_tour_manager()
 	show_matchmaking_popup();
 
 	socket.addEventListener("message", process_msg_from_socket);
-	socket.addEventListener("open", () => {
-		// rejoin existing tournament after a match (only if returning from game)
-		// if (isReturningFromGame && savedTournamentId) {
-		// 	socket.send(JSON.stringify({
-		// 		type: "rejoin_tournament",
-		// 		tournament_id: savedTournamentId
-		// 	}));
-		// }
-		console.log(`Connection established`);
-	});
+	// socket.addEventListener("open", () => {
+	// 	// rejoin existing tournament after a match (only if returning from game)
+	// 	// if (isReturningFromGame && savedTournamentId) {
+	// 	// 	socket.send(JSON.stringify({
+	// 	// 		type: "rejoin_tournament",
+	// 	// 		tournament_id: savedTournamentId
+	// 	// 	}));
+	// 	// }
+	// 	console.log(`Connection established`);
+	// });
 
-	socket.addEventListener("close", () => {
-		console.log("Disconnected from online tournament server");
-		WS.removeInstance(socketBase);
-	});
+	// socket.addEventListener("close", () => {
+	// 	console.log("Disconnected from online tournament server");
+	// 	WS.removeInstance(socketBase);
+	// });
 
-	exit_tournament_button.addEventListener("click", () => {
-		console.log(`x status before: ${tournamentManagerActive}`);
-		socket.close();
-		WS.removeInstance(socketBase);
-		onlineTour_matchmaking_popup.classList.add("hidden");
-		// reset tournament manager and remove tournament context
-		tournamentManagerActive = false;
-		console.log(`x status after: ${tournamentManagerActive}`);
-		localStorage.removeItem("tournament_context");
-		click_pong_modes_button();
-	});
+	socket.addEventListener("open", handleSocketOpen);
+	socket.addEventListener("close", handleSocketClose);
+
+	exit_tournament_button.removeEventListener("click", handleExitTournament);
+	exit_tournament_button.addEventListener("click", handleExitTournament);
+
+	// exit_tournament_button.addEventListener("click", () => {
+	// 	console.log(`x status before: ${tournamentManagerActive}`);
+	// 	socket.close();
+	// 	cleanupTournamentManager();
+	// 	onlineTour_matchmaking_popup.classList.add("hidden");
+	// 	console.log(`x status after: ${tournamentManagerActive}`);
+	// 	click_pong_modes_button();
+	// });
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
@@ -511,18 +529,19 @@ export function online_tour_manager()
 		// 	click_pong_modes_button();
 		// });
 
-		close_finalwinner_popup_button.addEventListener("click", () =>{
-			if(onlineTour_matchmaking_popup)
-				onlineTour_matchmaking_popup.classList.add("hidden");
-			console.log(`backtomenu status before: ${tournamentManagerActive}`);
-			socket.close();
-			WS.removeInstance(socketBase);
-			console.log(`called here 2`);
-			tournamentManagerActive = false;
-			console.log(`backtomenu status after: ${tournamentManagerActive}`);
-			localStorage.removeItem("tournament_context");
-			click_pong_modes_button();
-		});
+		close_finalwinner_popup_button.removeEventListener("click", backToMenu);
+		close_finalwinner_popup_button.addEventListener("click", backToMenu);
+
+		// close_finalwinner_popup_button.addEventListener("click", () =>{
+		// 	if(onlineTour_matchmaking_popup)
+		// 		onlineTour_matchmaking_popup.classList.add("hidden");
+		// 	console.log(`backtomenu status before: ${tournamentManagerActive}`);
+		// 	socket.close();
+		// 	cleanupTournamentManager();
+		// 	console.log(`called here 2`);
+		// 	console.log(`backtomenu status after: ${tournamentManagerActive}`);
+		// 	click_pong_modes_button();
+		// });
 
 		status_section.classList.add("hidden");
 		currentbattle_div.classList.add("hidden");
@@ -557,9 +576,55 @@ export function online_tour_manager()
 			return;
 		console.log(`popstate status before: ${tournamentManagerActive}`);
 		socket.close();
+		cleanupTournamentManager();
+		console.log(`popstate status after: ${tournamentManagerActive}`);
+	}
+
+	function handleSocketOpen() { console.log(`Connection established`); }
+
+	function handleSocketClose() {
+		console.log("Disconnected from online tournament server");
+		WS.removeInstance(socketBase);
+	}
+
+	function handleExitTournament() {
+		console.log(`x status before: ${tournamentManagerActive}`);
+		socket.close();
+		cleanupTournamentManager();
+		if (onlineTour_matchmaking_popup)
+			onlineTour_matchmaking_popup.classList.add("hidden");
+		console.log(`x status after: ${tournamentManagerActive}`);
+		click_pong_modes_button();
+	}
+
+	function backToMenu() {
+		if(onlineTour_matchmaking_popup)
+				onlineTour_matchmaking_popup.classList.add("hidden");
+			console.log(`backtomenu status before: ${tournamentManagerActive}`);
+			socket.close();
+			cleanupTournamentManager();
+			console.log(`called here 2`);
+			console.log(`backtomenu status after: ${tournamentManagerActive}`);
+			click_pong_modes_button();
+	}
+
+	function cleanupTournamentManager() {
+		const close_finalwinner_popup_button = document.querySelector<HTMLButtonElement>("#onlineTour_close_finalwinner_popup");
+
+		socket.removeEventListener("message", process_msg_from_socket);
+		socket.removeEventListener("open", handleSocketOpen);
+		socket.removeEventListener("close", handleSocketClose);
+
+		if (exit_tournament_button)
+			exit_tournament_button.removeEventListener("click", handleExitTournament);
+		
+		if (close_finalwinner_popup_button)
+			close_finalwinner_popup_button?.removeEventListener("click", backToMenu);
+
+		window.removeEventListener("popstate", onlineTour_window_popstate);
+
 		WS.removeInstance(socketBase);
 		tournamentManagerActive = false;
 		localStorage.removeItem("tournament_context");
-		console.log(`popstate status after: ${tournamentManagerActive}`);
 	}
 }

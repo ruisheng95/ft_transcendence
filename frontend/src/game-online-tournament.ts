@@ -5,10 +5,7 @@ import { click_pong_modes_button } from "./pong_modes.ts";
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
 
-// track if event listeners have been added to prevent duplicates
-let eventListenersAdded = false;
-
-// online_tour_game
+// online_tour_game (v2)
 export function online_tour_game_setup()
 {
 	const online_tour_start_button = document.querySelector<HTMLButtonElement>("#onlineTour_main_start_button");
@@ -18,20 +15,35 @@ export function online_tour_game_setup()
 	if (!onlineTour_regist_page || !online_tour_start_button || !online_tour_close_button)
 		throw new Error("Error online_tour_game buttons not found");
 
-	if (!eventListenersAdded) {
-		online_tour_start_button.addEventListener("click", () => {
-			console.log("Starting online tournament...");
-			onlineTour_regist_page.classList.add("hidden");
-			online_tour_manager();
-		});
+	// online_tour_start_button.addEventListener("click", () => {
+	// 	console.log("Starting online tournament...");
+	// 	onlineTour_regist_page.classList.add("hidden");
+	// 	online_tour_manager();
+	// });
 
-		online_tour_close_button.addEventListener("click", () => {
-			onlineTour_regist_page.classList.add("hidden");
-			click_pong_modes_button();
-		});
-		
-		eventListenersAdded = true;
-	}
+	// online_tour_close_button.addEventListener("click", () => {
+	// 	onlineTour_regist_page.classList.add("hidden");
+	// 	click_pong_modes_button();
+	// });
+	online_tour_start_button.removeEventListener("click", handleJoinButton);
+	online_tour_close_button.removeEventListener("click", handleCancelButton);
+
+	online_tour_start_button.addEventListener("click", handleJoinButton);
+	online_tour_close_button.addEventListener("click", handleCancelButton);
+}
+function handleJoinButton() {
+	console.log("Starting online tournament...");
+	const onlineTour_regist_page = document.querySelector<HTMLDivElement>("#onlineTour_registration");
+	if (onlineTour_regist_page)
+		onlineTour_regist_page.classList.add("hidden");
+	online_tour_manager();
+}
+
+function handleCancelButton() {
+	const onlineTour_regist_page = document.querySelector<HTMLDivElement>("#onlineTour_registration");
+	if (onlineTour_regist_page)
+		onlineTour_regist_page.classList.add("hidden");
+	click_pong_modes_button();
 }
 
 export function onlineTour_play()
