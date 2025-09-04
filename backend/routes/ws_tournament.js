@@ -9,15 +9,12 @@ const root = async function (fastify) {
 
     fastify.get("/ws-online-tournament", { websocket: true }, (connection, req) => {
         const session = req.query.session;
-        const uid = req.query.uid;
 
         let playerInfo = {
             connection: connection,
             session:session,
-            uid: uid,
             username: "", //get from db
-            tournament_id: null,
-            player_index: -1
+            tournament_id: null
         };
 
         let email;
@@ -56,17 +53,18 @@ const root = async function (fastify) {
             try {
                 const msg = JSON.parse(message.toString());
 
-                if (msg.type === "start_match")
+                if (msg.type === "start_match") {
                     tournamentManager.handleStartMatch(playerInfo);
-                else if (msg.type === "rejoin_tournament") {
-                    const rejoinResult = tournamentManager.rejoinTournament(msg.tournament_id, playerInfo);
-                    if (!rejoinResult) {
-                        connection.send(JSON.stringify({
-                            type: "rejoin_failed",
-                            message: "Tournament not found or cannot rejoin"
-                        }));
-                    }
                 }
+                // else if (msg.type === "rejoin_tournament") {
+                //     const rejoinResult = tournamentManager.rejoinTournament(msg.tournament_id, playerInfo);
+                //     if (!rejoinResult) {
+                //         connection.send(JSON.stringify({
+                //             type: "rejoin_failed",
+                //             message: "Tournament not found or cannot rejoin"
+                //         }));
+                //     }
+                // }
                 else if (msg.type === "game_result") {
                     tournamentManager.handleGameResult(
                         msg.tournament_id,

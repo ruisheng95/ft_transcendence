@@ -17,8 +17,6 @@ export function online_play_menus_setup()
 		throw new Error("online play menus stuff not found");
 
 	online_1v1_button.addEventListener("click", () => {
-		// clear tournament context for 1v1
-		localStorage.removeItem("tournament_context");
 		add_history("/pong/online1v1");
 		online_1v1_play();
 	});

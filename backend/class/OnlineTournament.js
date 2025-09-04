@@ -10,6 +10,7 @@ export class OnlineTournament {
     }
 
     addPlayer(playerInfo) {
+        console.log(`HEREEE ${playerInfo.username}`);
         const existingPlayer = this.#waitingPlayers.find(player => player.session === playerInfo.session);
         if (!existingPlayer) {
             this.#waitingPlayers.push(playerInfo);
@@ -21,20 +22,22 @@ export class OnlineTournament {
                 if (this.#waitingPlayers[index].connection.readyState === 1)
                     this.#waitingPlayers[index].connection.close();
             }
+            console.log(`already EXISTING player`);
             this.#waitingPlayers[index] = playerInfo;
+
         }
 
         // send tournament status to frontend (for UI updates)
         this.#sendTournamentStatus();
 
         // send player index in tournament
-        const playerIndex = this.#waitingPlayers.findIndex(player => player.session === playerInfo.session);
-        const assignPlayerMsg = {
-            type: "player_assigned",
-            player_index: playerIndex,
-            tournament_id: null
-        };
-        playerInfo.connection.send(JSON.stringify(assignPlayerMsg));
+        // const playerIndex = this.#waitingPlayers.findIndex(player => player.session === playerInfo.session);
+        // const assignPlayerMsg = {
+        //     type: "player_assigned",
+        //     player_index: playerIndex,
+        //     tournament_id: null
+        // };
+        // playerInfo.connection.send(JSON.stringify(assignPlayerMsg));
 
         // check if there are 4 players
         // if  4 players - start tournament
@@ -54,52 +57,52 @@ export class OnlineTournament {
         if (!isInMatch)
             return;
 
-        console.log(`Tournament: ${playerInfo.username} starting match ${current_tournament.current_match.type}`);
+        console.log(`Tournament: ${playerInfo.username} starting match round ${current_tournament.current_match.round}`);
 
         // redirect to 1v1
         playerInfo.connection.send(JSON.stringify({
-            type: "redirect_to_game",
-            game_url: `/game/1v1?tournament=${current_tournament.id}&match=${current_tournament.current_match.id}`
+            type: "redirect_to_game"
+            // game_url: `/game/1v1?tournament=${current_tournament.id}&match=${current_tournament.current_match.id}`
         }));
     }
 
-    rejoinTournament(tournament_id, playerInfo) {
-        const current_tournament = this.#tournaments.get(tournament_id);
-        if (!current_tournament)
-            return false;
+    // rejoinTournament(tournament_id, playerInfo) {
+    //     const current_tournament = this.#tournaments.get(tournament_id);
+    //     if (!current_tournament)
+    //         return false;
 
-        const existingPlayer = current_tournament.players.find(p => p.session === playerInfo.session);
-        if (!existingPlayer)
-            return false;
+    //     const existingPlayer = current_tournament.players.find(p => p.session === playerInfo.session);
+    //     if (!existingPlayer)
+    //         return false;
 
-        existingPlayer.connection = playerInfo.connection;
-        playerInfo.tournament_id = tournament_id;
+    //     existingPlayer.connection = playerInfo.connection;
+    //     playerInfo.tournament_id = tournament_id;
 
-        // send current player assignment
-        playerInfo.connection.send(JSON.stringify({
-            type: "player_assigned",
-            player_index: current_tournament.players.findIndex(p => p.session === playerInfo.session),
-            tournament_id: tournament_id
-        }));
+    //     // send current player assignment
+    //     playerInfo.connection.send(JSON.stringify({
+    //         type: "player_assigned",
+    //         player_index: current_tournament.players.findIndex(p => p.session === playerInfo.session),
+    //         tournament_id: tournament_id
+    //     }));
 
-        // send tournament state
-        playerInfo.connection.send(JSON.stringify({
-            type: "tournament_ready",
-            players: current_tournament.players.map(p => p.username),
-            player_emails: current_tournament.players.map(p => p.session)
-        }));
+    //     // send tournament state
+    //     playerInfo.connection.send(JSON.stringify({
+    //         type: "tournament_ready",
+    //         players: current_tournament.players.map(p => p.username),
+    //         player_sessions: current_tournament.players.map(p => p.session)
+    //     }));
 
-        if (current_tournament.current_match) {
-            playerInfo.connection.send(JSON.stringify({
-                type: "match_ready",
-                match_id: current_tournament.current_match.id,
-                players: current_tournament.current_match.players.map(p => p.username),
-                round: current_tournament.current_match.round
-            }));
-        }
+    //     if (current_tournament.current_match) {
+    //         playerInfo.connection.send(JSON.stringify({
+    //             type: "match_ready",
+    //             match_id: current_tournament.current_match.id,
+    //             players: current_tournament.current_match.players.map(p => p.username),
+    //             round: current_tournament.current_match.round
+    //         }));
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
     handleGameResult(tournament_id, match_id, winner_email, loser_email) {
         const current_tournament = this.#tournaments.get(tournament_id);
@@ -203,7 +206,9 @@ export class OnlineTournament {
     }
 
     #startTournament() {
+        console.log(`prev tournament count: ${this.#tournamentCounter}`);
         this.#tournamentCounter++;
+        console.log(`after tournament count: ${this.#tournamentCounter}`);
         const tournamentId = `tournament_${this.#tournamentCounter}`;
 
         // get the first 4 waiting players
@@ -240,7 +245,6 @@ export class OnlineTournament {
             },
             current_round: 1,
             current_match: null,
-            status: "active",
             final_ranking: ["", "", "", ""]
         }
 
@@ -255,7 +259,7 @@ export class OnlineTournament {
             type: "tournament_ready",
             tournament_id: tournamentId,
             players: tournamentPlayers.map(player => player.username),
-            player_emails: tournamentPlayers.map(player => player.session)
+            player_sessions: tournamentPlayers.map(player => player.session)
         };
 
         tournamentPlayers.forEach(player => {
@@ -270,7 +274,6 @@ export class OnlineTournament {
 
     #startRound(tournament, roundNumber) {
         let round;
-        let roundKey = `round${roundNumber}`;
 
         switch(roundNumber) {
             case 1:
@@ -298,7 +301,6 @@ export class OnlineTournament {
 
         tournament.current_round = roundNumber;
         tournament.current_match = {
-            type: roundKey,
             round: roundNumber,
             players: round.players,
             id: `${tournament.id}_round${roundNumber}_${Date.now()}`
@@ -307,7 +309,6 @@ export class OnlineTournament {
         const matchMsg = {
             type: "match_ready",
             match_id: tournament.current_match.id,
-            tournament_id: tournament.id,
             round: roundNumber,
             players: round.players.map(player => player.username)
         }
@@ -336,8 +337,8 @@ export class OnlineTournament {
 
         const resultMsg = {
             type: "match_result",
-            match_id: match.id,
-            tournament_id: tournament.id,
+            // match_id: match.id,
+            // tournament_id: tournament.id,
             round: roundNumber,
             winner: winner.username,
             loser: loser.username
@@ -391,7 +392,7 @@ export class OnlineTournament {
 
         const completeMsg = {
             type: "tournament_complete",
-            tournament_id: tournament.id,
+            // tournament_id: tournament.id,
             final_ranking: tournament.final_ranking
         };
 
