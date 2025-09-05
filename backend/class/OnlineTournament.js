@@ -30,15 +30,6 @@ export class OnlineTournament {
         // send tournament status to frontend (for UI updates)
         this.#sendTournamentStatus();
 
-        // send player index in tournament
-        // const playerIndex = this.#waitingPlayers.findIndex(player => player.session === playerInfo.session);
-        // const assignPlayerMsg = {
-        //     type: "player_assigned",
-        //     player_index: playerIndex,
-        //     tournament_id: null
-        // };
-        // playerInfo.connection.send(JSON.stringify(assignPlayerMsg));
-
         // check if there are 4 players
         // if  4 players - start tournament
         if (this.#waitingPlayers.length >= 4)
@@ -62,47 +53,8 @@ export class OnlineTournament {
         // redirect to 1v1
         playerInfo.connection.send(JSON.stringify({
             type: "redirect_to_game"
-            // game_url: `/game/1v1?tournament=${current_tournament.id}&match=${current_tournament.current_match.id}`
         }));
     }
-
-    // rejoinTournament(tournament_id, playerInfo) {
-    //     const current_tournament = this.#tournaments.get(tournament_id);
-    //     if (!current_tournament)
-    //         return false;
-
-    //     const existingPlayer = current_tournament.players.find(p => p.session === playerInfo.session);
-    //     if (!existingPlayer)
-    //         return false;
-
-    //     existingPlayer.connection = playerInfo.connection;
-    //     playerInfo.tournament_id = tournament_id;
-
-    //     // send current player assignment
-    //     playerInfo.connection.send(JSON.stringify({
-    //         type: "player_assigned",
-    //         player_index: current_tournament.players.findIndex(p => p.session === playerInfo.session),
-    //         tournament_id: tournament_id
-    //     }));
-
-    //     // send tournament state
-    //     playerInfo.connection.send(JSON.stringify({
-    //         type: "tournament_ready",
-    //         players: current_tournament.players.map(p => p.username),
-    //         player_sessions: current_tournament.players.map(p => p.session)
-    //     }));
-
-    //     if (current_tournament.current_match) {
-    //         playerInfo.connection.send(JSON.stringify({
-    //             type: "match_ready",
-    //             match_id: current_tournament.current_match.id,
-    //             players: current_tournament.current_match.players.map(p => p.username),
-    //             round: current_tournament.current_match.round
-    //         }));
-    //     }
-
-    //     return true;
-    // }
 
     handleGameResult(tournament_id, match_id, winner_email, loser_email) {
         const current_tournament = this.#tournaments.get(tournament_id);
@@ -337,8 +289,6 @@ export class OnlineTournament {
 
         const resultMsg = {
             type: "match_result",
-            // match_id: match.id,
-            // tournament_id: tournament.id,
             round: roundNumber,
             winner: winner.username,
             loser: loser.username
@@ -392,7 +342,6 @@ export class OnlineTournament {
 
         const completeMsg = {
             type: "tournament_complete",
-            // tournament_id: tournament.id,
             final_ranking: tournament.final_ranking
         };
 

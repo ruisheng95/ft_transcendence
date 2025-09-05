@@ -15,16 +15,6 @@ export function online_tour_game_setup()
 	if (!onlineTour_regist_page || !online_tour_start_button || !online_tour_close_button)
 		throw new Error("Error online_tour_game buttons not found");
 
-	// online_tour_start_button.addEventListener("click", () => {
-	// 	console.log("Starting online tournament...");
-	// 	onlineTour_regist_page.classList.add("hidden");
-	// 	online_tour_manager();
-	// });
-
-	// online_tour_close_button.addEventListener("click", () => {
-	// 	onlineTour_regist_page.classList.add("hidden");
-	// 	click_pong_modes_button();
-	// });
 	online_tour_start_button.removeEventListener("click", handleJoinButton);
 	online_tour_close_button.removeEventListener("click", handleCancelButton);
 
