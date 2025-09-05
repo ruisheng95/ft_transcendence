@@ -135,19 +135,7 @@ export function online_1v1_play()
 		}
 		else if(msg_obj.type === "player_dced")
 		{
-			optional_msg_div.innerHTML = translate_text("Match terminated because a player has disconnected");
 			player_dced_flag = true;
-			matchmaking_popup.classList.add("hidden");
-
-			const onlineTour_mm_popup = document.querySelector("#onlineTour_matchmaking_popup");
-			const online1v1_winner_popup = document.querySelector<HTMLDivElement>("#online_1v1_winner_popup");
-
-			if(tournament_context)
-			{
-				online1v1_winner_popup?.classList.add("hidden");
-				onlineTour_mm_popup?.classList.remove("hidden");
-			}
-			
 			handle_game_end(msg_obj);
 		}
 	}
