@@ -140,9 +140,13 @@ export function online_1v1_play()
 			matchmaking_popup.classList.add("hidden");
 
 			const onlineTour_mm_popup = document.querySelector("#onlineTour_matchmaking_popup");
+			const online1v1_winner_popup = document.querySelector<HTMLDivElement>("#online_1v1_winner_popup");
 
 			if(tournament_context)
+			{
+				online1v1_winner_popup?.classList.add("hidden");
 				onlineTour_mm_popup?.classList.remove("hidden");
+			}
 			
 			handle_game_end(msg_obj);
 		}
