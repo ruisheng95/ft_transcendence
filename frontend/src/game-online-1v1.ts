@@ -396,7 +396,7 @@ export function online_1v1_play()
 		}
 
 		const tournament_cancelled = localStorage.getItem("tournament_cancelled");
-		if (tournament_cancelled) { console.log(`tournament cancelled exist`);}
+		if (tournament_cancelled) { console.log(`2. tournament cancelled exist`);}
 
 		if(!(tournament_context && player_dced_flag === true) && !tournament_cancelled) {
 			console.log(`show 1v1 popup`);

@@ -134,7 +134,7 @@ export function online_tour_manager()
 			localStorage.setItem("tournament_cancelled", JSON.stringify({}));
 			const exist = localStorage.getItem("tournament_cancelled")
 			if (exist)
-				console.log(`tournament cancelled exist`);
+				console.log(`1. tournament cancelled exist`);
 			tournamentManagerActive = false;
 		}
 	}
@@ -250,8 +250,8 @@ export function online_tour_manager()
 
 	function start_online_game()
 	{
-		if(onlineTour_matchmaking_popup)
-			onlineTour_matchmaking_popup.classList.add("hidden");
+		// if(onlineTour_matchmaking_popup)
+		// 	onlineTour_matchmaking_popup.classList.add("hidden");
 		
 		const player1_name = Tournament_state.current_players[0];
 		const player2_name = Tournament_state.current_players[1];
