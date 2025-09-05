@@ -12,8 +12,8 @@ let onlineTour_back_nav_disabled = false;
 
 export function online_tour_manager()
 {
-	console.log(`entered online tour manager`);
-	console.log(`tournament manager status: ${tournamentManagerActive}`);
+	// console.log(`entered online tour manager`);
+	// console.log(`tournament manager status: ${tournamentManagerActive}`);
 
 	if (tournamentManagerActive) {
         console.log(`tournament manager still active!!! status: ${tournamentManagerActive}`);
@@ -33,8 +33,8 @@ export function online_tour_manager()
 
 	const socketBase = `${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`;
 	const socket = WS.getInstance(socketBase);
-	console.log(`Socket created:`, socket);
-	console.log(`Socket readyState:`, socket.readyState);
+	// console.log(`Socket created:`, socket);
+	// console.log(`Socket readyState:`, socket.readyState);
 	
 	const Tournament_state = {
 		players : ["", "", "", ""],
@@ -74,7 +74,7 @@ export function online_tour_manager()
 		if(!optional_msg_div) throw new Error("onlinTour process msg socket elements not found");
 
 		const msg_obj = JSON.parse(message.data);
-		console.log("RECVED FROM TOUR SOCKET: ", msg_obj);
+		// console.log("RECVED FROM TOUR SOCKET: ", msg_obj);
 			
 		if(msg_obj.type === "tournament_status") {
 			update_matchmaking_status(msg_obj);
@@ -83,7 +83,7 @@ export function online_tour_manager()
 			Tournament_state.players = msg_obj.players;
 			Tournament_state.player_sessions = msg_obj.player_sessions;
 			Tournament_state.tournament_id = msg_obj.tournament_id;
-			console.log("Updated Tournament_state:", Tournament_state);
+			// console.log("Updated Tournament_state:", Tournament_state);
 			update_bracket_display();
 			hide_status_show_bracket();
 			disable_back_navigation();
@@ -132,9 +132,9 @@ export function online_tour_manager()
 			WS.removeInstance(socketBase);
 			localStorage.removeItem("tournament_context");
 			localStorage.setItem("tournament_cancelled", JSON.stringify({}));
-			const exist = localStorage.getItem("tournament_cancelled")
-			if (exist)
-				console.log(`1. tournament cancelled exist`);
+			// const exist = localStorage.getItem("tournament_cancelled")
+			// if (exist)
+			// 	console.log(`1. tournament cancelled exist`);
 			tournamentManagerActive = false;
 		}
 	}
@@ -241,7 +241,7 @@ export function online_tour_manager()
 				// match_id: Tournament_state.current_match_id,
 				// tournament_id: Tournament_state.tournament_id
 			}
-			console.log("Sending start match message:", startMessage);
+			// console.log("Sending start match message:", startMessage);
 			socket.send(JSON.stringify(startMessage));
 		} else {
 			console.log("Socket not open, current state:", socket.readyState);
@@ -457,10 +457,10 @@ export function online_tour_manager()
 	{
 		if(onlineTour_back_nav_disabled === true)
 			return;
-		console.log(`popstate status before: ${tournamentManagerActive}`);
+		// console.log(`popstate status before: ${tournamentManagerActive}`);
 		socket.close();
 		cleanupTournamentManager();
-		console.log(`popstate status after: ${tournamentManagerActive}`);
+		// console.log(`popstate status after: ${tournamentManagerActive}`);
 	}
 
 	function handleSocketOpen() { console.log(`Connection established`); }
@@ -471,12 +471,12 @@ export function online_tour_manager()
 	}
 
 	function handleExitTournament() {
-		console.log(`x status before: ${tournamentManagerActive}`);
+		// console.log(`x status before: ${tournamentManagerActive}`);
 		socket.close();
 		cleanupTournamentManager();
 		if (onlineTour_matchmaking_popup)
 			onlineTour_matchmaking_popup.classList.add("hidden");
-		console.log(`x status after: ${tournamentManagerActive}`);
+		// console.log(`x status after: ${tournamentManagerActive}`);
 		click_pong_modes_button();
 		enable_back_navigation();
 		onlineTour_back_nav_disabled = false;
@@ -485,10 +485,10 @@ export function online_tour_manager()
 	function backToMenu() {
 		if(onlineTour_matchmaking_popup)
 				onlineTour_matchmaking_popup.classList.add("hidden");
-			console.log(`backtomenu status before: ${tournamentManagerActive}`);
+			// console.log(`backtomenu status before: ${tournamentManagerActive}`);
 			socket.close();
 			cleanupTournamentManager();
-			console.log(`backtomenu status after: ${tournamentManagerActive}`);
+			// console.log(`backtomenu status after: ${tournamentManagerActive}`);
 			console.log(`Completed tournament. Disconnecting...`);
 			click_pong_modes_button();
 	}

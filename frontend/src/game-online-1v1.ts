@@ -358,7 +358,7 @@ export function online_1v1_play()
 
 		// check if in tournament first to determine point display
 		const tournament_context = localStorage.getItem("tournament_context");
-		console.log("TOURNAMENT CONTEXT: ", tournament_context);
+		// console.log("TOURNAMENT CONTEXT: ", tournament_context);
 
 		if(!tournament_context)
 			enable_back_navigation();
@@ -399,10 +399,10 @@ export function online_1v1_play()
 		}
 
 		const tournament_cancelled = localStorage.getItem("tournament_cancelled");
-		if (tournament_cancelled) { console.log(`2. tournament cancelled exist`);}
+		// if (tournament_cancelled) { console.log(`2. tournament cancelled exist`);}
 
 		if(!(tournament_context && player_dced_flag === true) && !tournament_cancelled) {
-			console.log(`show 1v1 popup`);
+			// console.log(`show 1v1 popup`);
 			online1v1_winner_popup.classList.remove("hidden");
 		}
 		
@@ -476,9 +476,9 @@ export function online_1v1_play()
 
 		playing = false;
 		localStorage.removeItem("tournament_cancelled");
-		const newtournament_cancelled = localStorage.getItem("tournament_cancelled");
-		if (newtournament_cancelled) { console.log(`not removed`); }
-		else { console.log(`removed`); }
+		// const newtournament_cancelled = localStorage.getItem("tournament_cancelled");
+		// if (newtournament_cancelled) { console.log(`not removed`); }
+		// else { console.log(`removed`); }
 
 		
 		function close_online1v1_winner_popup_ft()
