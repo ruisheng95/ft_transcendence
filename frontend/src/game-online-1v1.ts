@@ -391,8 +391,13 @@ export function online_1v1_play()
 			}
 		}
 
-		if(!(tournament_context && player_dced_flag === true))
+		const tournament_cancelled = localStorage.getItem("tournament_cancelled");
+		if (tournament_cancelled) { console.log(`tournament cancelled exist`);}
+
+		if(!(tournament_context && player_dced_flag === true) && !tournament_cancelled) {
+			console.log(`show 1v1 popup`);
 			online1v1_winner_popup.classList.remove("hidden");
+		}
 		
 		game_popup.classList.add("hidden");
 		
@@ -463,6 +468,11 @@ export function online_1v1_play()
 		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws-online`);
 
 		playing = false;
+		localStorage.removeItem("tournament_cancelled");
+		const newtournament_cancelled = localStorage.getItem("tournament_cancelled");
+		if (newtournament_cancelled) { console.log(`not removed`); }
+		else { console.log(`removed`); }
+
 		
 		function close_online1v1_winner_popup_ft()
 		{

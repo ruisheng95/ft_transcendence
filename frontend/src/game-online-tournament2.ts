@@ -131,6 +131,10 @@ export function online_tour_manager()
 			}
 			WS.removeInstance(socketBase);
 			localStorage.removeItem("tournament_context");
+			localStorage.setItem("tournament_cancelled", JSON.stringify({}));
+			const exist = localStorage.getItem("tournament_cancelled")
+			if (exist)
+				console.log(`tournament cancelled exist`);
 			tournamentManagerActive = false;
 		}
 	}
