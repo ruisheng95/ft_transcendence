@@ -10,7 +10,6 @@ export class OnlineTournament {
     }
 
     addPlayer(playerInfo) {
-        console.log(`HEREEE ${playerInfo.username}`);
         const existingPlayer = this.#waitingPlayers.find(player => player.session === playerInfo.session);
         if (!existingPlayer) {
             this.#waitingPlayers.push(playerInfo);
@@ -48,7 +47,7 @@ export class OnlineTournament {
         if (!isInMatch)
             return;
 
-        console.log(`Tournament: ${playerInfo.username} starting match round ${current_tournament.current_match.round}`);
+        // console.log(`Tournament: ${playerInfo.username} starting match round ${current_tournament.current_match.round}`);
 
         // redirect to 1v1
         playerInfo.connection.send(JSON.stringify({
@@ -158,9 +157,7 @@ export class OnlineTournament {
     }
 
     #startTournament() {
-        console.log(`prev tournament count: ${this.#tournamentCounter}`);
         this.#tournamentCounter++;
-        console.log(`after tournament count: ${this.#tournamentCounter}`);
         const tournamentId = `tournament_${this.#tournamentCounter}`;
 
         // get the first 4 waiting players
@@ -408,7 +405,7 @@ export class OnlineTournament {
                 fourthPlace.email, 4
                 );
 
-            console.log(`Tournament: Stats updated successfully`);
+            // console.log(`Tournament: Stats updated successfully`);
         } catch(error) {
             console.error("Error updating tournament stats:", error);
         }

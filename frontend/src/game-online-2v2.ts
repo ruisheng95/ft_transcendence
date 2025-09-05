@@ -226,7 +226,7 @@ export function online_2v2_play()
 		}
 		else if(msg_obj.type === "player_assigned") {
 			my_player_index = msg_obj.player_index;
-			console.log(`You are player ${my_player_index}`);
+			// console.log(`You are player ${my_player_index}`);
 		}
 		else if(msg_obj.type == "gu")
 		{
