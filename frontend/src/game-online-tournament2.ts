@@ -30,26 +30,6 @@ export function online_tour_manager()
 	
     // clear old tournament context
 	localStorage.removeItem("tournament_context");
-	// if ((window as any).tournamentState) {
-	// 	delete (window as any).tournamentState;
-	// }
-	
-	// let isReturningFromGame = false;
-	// let savedTournamentId = "";
-	
-	// // rejoin only after a match (ongoing tournament)
-	// const urlParams = new URLSearchParams(window.location.search);
-	// const fromGame = urlParams.get('from_game');
-	
-	// if (fromGame === 'true') {
-	// 	console.log("ENTERED FROMGAME TRUE");
-	// 	const tournamentContext = localStorage.getItem("tournament_context");
-	// 	if (tournamentContext) {
-	// 		isReturningFromGame = true;
-	// 		const context = JSON.parse(tournamentContext);
-	// 		savedTournamentId = context.tournament_id;
-	// 	}
-	// }
 
 	const socketBase = `${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`;
 	const socket = WS.getInstance(socketBase);
@@ -81,36 +61,11 @@ export function online_tour_manager()
 	show_matchmaking_popup();
 
 	socket.addEventListener("message", process_msg_from_socket);
-	// socket.addEventListener("open", () => {
-	// 	// rejoin existing tournament after a match (only if returning from game)
-	// 	// if (isReturningFromGame && savedTournamentId) {
-	// 	// 	socket.send(JSON.stringify({
-	// 	// 		type: "rejoin_tournament",
-	// 	// 		tournament_id: savedTournamentId
-	// 	// 	}));
-	// 	// }
-	// 	console.log(`Connection established`);
-	// });
-
-	// socket.addEventListener("close", () => {
-	// 	console.log("Disconnected from online tournament server");
-	// 	WS.removeInstance(socketBase);
-	// });
-
 	socket.addEventListener("open", handleSocketOpen);
 	socket.addEventListener("close", handleSocketClose);
 
 	exit_tournament_button.removeEventListener("click", handleExitTournament);
 	exit_tournament_button.addEventListener("click", handleExitTournament);
-
-	// exit_tournament_button.addEventListener("click", () => {
-	// 	console.log(`x status before: ${tournamentManagerActive}`);
-	// 	socket.close();
-	// 	cleanupTournamentManager();
-	// 	onlineTour_matchmaking_popup.classList.add("hidden");
-	// 	console.log(`x status after: ${tournamentManagerActive}`);
-	// 	click_pong_modes_button();
-	// });
 
 	function process_msg_from_socket(message: MessageEvent)
 	{
@@ -124,16 +79,6 @@ export function online_tour_manager()
 		if(msg_obj.type === "tournament_status") {
 			update_matchmaking_status(msg_obj);
 		}
-		// else if(msg_obj.type === "player_assigned") {
-		// 	Tournament_state.my_player_index = msg_obj.player_index;
-		// 	Tournament_state.tournament_id = msg_obj.tournament_id;
-			
-		// 	// if rejoining after a match - clean up the context
-		// 	// if (isReturningFromGame && savedTournamentId === msg_obj.tournament_id) {
-		// 	// 	localStorage.removeItem("tournament_context");
-		// 	// 	isReturningFromGame = false;
-		// 	// }
-		// }
 		else if(msg_obj.type === "tournament_ready") {
 			Tournament_state.players = msg_obj.players;
 			Tournament_state.player_sessions = msg_obj.player_sessions;
@@ -171,31 +116,14 @@ export function online_tour_manager()
 		else if(msg_obj.type === "tournament_complete") {
 			Tournament_state.final_ranking = msg_obj.final_ranking;
 			localStorage.removeItem("tournament_context");
-			// if ((window as any).tournamentState) {
-			// 	delete (window as any).tournamentState;
-			// }
 			optional_msg_div.innerHTML = "";
 			make_final_ranking();
 		}
 		else if(msg_obj.type === "redirect_to_game") {
-            // 1v1 match round
 			start_online_game();
 		}
-		// else if(msg_obj.type === "rejoin_failed") {
-		// 	console.log(`rejoin failed`);
-		// 	// localStorage.removeItem("tournament_context");
-		// 	// if ((window as any).tournamentState) {
-		// 	// 	delete (window as any).tournamentState;
-		// 	// }
-		// 	// isReturningFromGame = false;
-		// 	// savedTournamentId = "";
-		// }
 		else if(msg_obj.type === "player_dced") {
 			Tournament_state.final_ranking = msg_obj.final_ranking;
-			// localStorage.removeItem("tournament_context");
-			// if ((window as any).tournamentState) {
-			// 	delete (window as any).tournamentState;
-			// }
 			optional_msg_div.innerHTML = translate_text("Tournament ended: player disconnected (rating changes: +5 all, -10 leaver)");
 			make_final_ranking();
 			if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
@@ -330,9 +258,6 @@ export function online_tour_manager()
 		const player1_session = Tournament_state.player_sessions[player1_index];
 		const player2_session = Tournament_state.player_sessions[player2_index];
 		
-		// store tournament context and original socket reference
-		// const stored_socket_url = `${import.meta.env.VITE_SOCKET_URL}/ws-online-tournament`;
-		// console.log(`Storing tournament context with URL: ${stored_socket_url}`);
 		localStorage.setItem("tournament_context", JSON.stringify({
 			tournament_id: Tournament_state.tournament_id,
 			current_match_id: Tournament_state.current_match_id,
@@ -347,17 +272,8 @@ export function online_tour_manager()
 					session: player2_session
 				}
 			},
-			// preserve_tournament_connection: true // flag to indicate we should preserve the connection
 		}));
-		
-		// store a reference to the current tournament state and socket in a global variable
-		// so we can restore it when coming back from the game
-		// (window as any).tournamentState = {
-		// 	socket: socket,
-		// 	state: Tournament_state,
-		// 	popup: onlineTour_matchmaking_popup
-		// };
-		
+
 		// use the existing online 1v1 game but with tournament context
 		online_1v1_play();
 	}
@@ -503,35 +419,8 @@ export function online_tour_manager()
 		if(!current_open_game_button || !finalwinner_name_display || !close_finalwinner_popup_button || !currentbattle_div || !finalwinner_div || !ranking_1st || !ranking_2nd || !ranking_3rd || !ranking_4th || !status_section)
 			throw new Error("onlineTour winnerpage elements not found");
 
-		// remove existing event listeners to avoid duplicates
-		// const newCloseButton = close_finalwinner_popup_button.cloneNode(true) as HTMLButtonElement;
-		// close_finalwinner_popup_button.parentNode?.replaceChild(newCloseButton, close_finalwinner_popup_button);
-		
-		// newCloseButton.addEventListener("click", () =>{
-		// 	if(onlineTour_matchmaking_popup)
-		// 		onlineTour_matchmaking_popup.classList.add("hidden");
-		// 	socket.close();
-		// 	tournamentManagerActive = false;
-		// 	localStorage.removeItem("tournament_context");
-		// 	if ((window as any).tournamentState) {
-		// 		delete (window as any).tournamentState;
-		// 	}
-		// 	click_pong_modes_button();
-		// });
-
 		close_finalwinner_popup_button.removeEventListener("click", backToMenu);
 		close_finalwinner_popup_button.addEventListener("click", backToMenu);
-
-		// close_finalwinner_popup_button.addEventListener("click", () =>{
-		// 	if(onlineTour_matchmaking_popup)
-		// 		onlineTour_matchmaking_popup.classList.add("hidden");
-		// 	console.log(`backtomenu status before: ${tournamentManagerActive}`);
-		// 	socket.close();
-		// 	cleanupTournamentManager();
-		// 	console.log(`called here 2`);
-		// 	console.log(`backtomenu status after: ${tournamentManagerActive}`);
-		// 	click_pong_modes_button();
-		// });
 
 		status_section.classList.add("hidden");
 		currentbattle_div.classList.add("hidden");

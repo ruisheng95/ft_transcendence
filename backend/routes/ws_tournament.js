@@ -56,15 +56,6 @@ const root = async function (fastify) {
                 if (msg.type === "start_match") {
                     tournamentManager.handleStartMatch(playerInfo);
                 }
-                // else if (msg.type === "rejoin_tournament") {
-                //     const rejoinResult = tournamentManager.rejoinTournament(msg.tournament_id, playerInfo);
-                //     if (!rejoinResult) {
-                //         connection.send(JSON.stringify({
-                //             type: "rejoin_failed",
-                //             message: "Tournament not found or cannot rejoin"
-                //         }));
-                //     }
-                // }
                 else if (msg.type === "game_result") {
                     tournamentManager.handleGameResult(
                         msg.tournament_id,
