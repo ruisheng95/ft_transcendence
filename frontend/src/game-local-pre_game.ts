@@ -75,22 +75,22 @@ export function local_play_menus_setup()
 
 	local_1v1_button.addEventListener("click", () => {
 		open_local1v1();
-		add_history("/pong/local1v1");
+		add_history("/local1v1");
 	});
 
 	local_2v2_button.addEventListener("click", () => {
 		open_local2v2();
-		add_history("/pong/local2v2");
+		add_history("/local2v2");
 	});
 
 	local_tournament_button.addEventListener("click", () => {
 		open_localTour();
-		add_history("/pong/localtournament");
+		add_history("/localtournament");
 	});
 
 	local_xox_button.addEventListener("click", () => {
 		open_localxox();
-		add_history("/tic_tac_toe/localgame");
+		add_history("/tic_tac_toe-local");
 	})
 
 	close_1v1_registration.addEventListener("click", () => {

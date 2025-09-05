@@ -25,7 +25,7 @@ export function xox_setup ()
 
 	xox_online_button.addEventListener("click", () => {
 		xox_online_play();
-		add_history("/tic_tac_toe/onlinegame");
+		add_history("/tic_tac_toe-online");
 	});
 }
 

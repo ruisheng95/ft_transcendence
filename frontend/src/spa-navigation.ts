@@ -198,27 +198,27 @@ function display_other_pages(path : string)
 			open_settings_page(); break;
 		case "vs_AI_game":
 			vs_AI_spa_nav(); break;
-		case "/pong/local1v1":
+		case "/local1v1":
 			open_local1v1(); break;
-		case "/pong/local2v2":
+		case "/local2v2":
 			open_local2v2(); break;
-		case "/pong/localtournament":
+		case "/localtournament":
 			open_localTour(); break;
 		case "/pong":
 			open_pong_modes(); break;
-		case "/pong/online1v1":
+		case "/online1v1":
 			online_1v1_play(); break;
-		case "/pong/online2v2":
+		case "/online2v2":
 			online_2v2_play(); break;
-		case "/pong/online-tournament":
+		case "/online-tournament":
 			onlineTour_play(); break;
 		case "/friends":
 			open_friend_page(); break;
 		case "/tic_tac_toe":
 			open_xox_modes(); break;
-		case "/tic_tac_toe/localgame":
+		case "/tic_tac_toe-local":
 			open_localxox(); break;
-		case "/tic_tac_toe/onlinegame":
+		case "/tic_tac_toe-online":
 			xox_online_play(); break;
 		case "login": 
 			logout_button.click(); break;

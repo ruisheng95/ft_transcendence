@@ -17,17 +17,17 @@ export function online_play_menus_setup()
 		throw new Error("online play menus stuff not found");
 
 	online_1v1_button.addEventListener("click", () => {
-		add_history("/pong/online1v1");
+		add_history("/online1v1");
 		online_1v1_play();
 	});
 
 	online_2v2_button.addEventListener("click", () => {
-		add_history("/pong/online2v2");
+		add_history("/online2v2");
 		online_2v2_play();
 	});
 
 	online_tournament_button.addEventListener("click", () => {
-		add_history("/pong/online-tournament");
+		add_history("/online-tournament");
 		onlineTour_play();
 	});
 }

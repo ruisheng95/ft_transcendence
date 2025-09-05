@@ -152,7 +152,7 @@ export function settings_setup ()
 		}
 
 		socket.send(JSON.stringify(send_obj)); //send to backend to verify the pf config shit
-		add_history("");
+		// add_history("");
 	});
 	
 	language_radios.forEach(radio => {
