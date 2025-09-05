@@ -96,8 +96,20 @@ export function settings_setup ()
 
 	input_pfp.addEventListener("change", () => {
 		
+		error_display.innerHTML = "";
+
 		if(!input_pfp.files) throw new Error("files not found");
 		const file = input_pfp.files[0];
+
+		//max file size
+		const max_file_size = 5 * 1024 * 1024;
+		if(file.size > max_file_size)
+		{
+			error_display.classList.remove("hidden");
+			error_display.innerText = translate_text("File too big ( > 5MB )");
+			input_pfp.value = "";
+			return;
+		}
 
 		const imageUrl = URL.createObjectURL(file);
 		pfp_img_preview.src = imageUrl;

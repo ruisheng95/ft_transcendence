@@ -16,6 +16,7 @@ export function online_1v1_play()
 	let player_dced_flag = false;
 	const tournament_context = localStorage.getItem("tournament_context");
 	const gameMode = tournament_context ? "Tournament" : "1 vs 1";
+	let playerIndex = -1;
 
 	//socket
 	let parsedContext = null;
@@ -112,7 +113,7 @@ export function online_1v1_play()
 
 		if(!optional_msg_div || !matchmaking_popup) throw new Error("process msg socket elements not found");
 
-		// console.log("JSON recv to frontend: ", message.data);
+		console.log("JSON recv to frontend: ", message.data);
 		const msg_obj = JSON.parse(message.data);
 			
 		if(msg_obj.type === "matchmaking_status")
@@ -150,6 +151,8 @@ export function online_1v1_play()
 			
 			handle_game_end(msg_obj);
 		}
+		else if(msg_obj.type === "player_assigned")
+			playerIndex = msg_obj.player_index;
 	}
 
 	function init_positions()
@@ -251,7 +254,7 @@ export function online_1v1_play()
 		else if(msg_obj.status === "Lobby full")
 		{
 			disable_back_navigation();
-			start_matchmaking_countdown(mm_status_div, msg_obj);
+			start_matchmaking_countdown(mm_status_div);
 			console.log(players);
 			p1_name = players[0];
 			p2_name = players[1];
@@ -264,7 +267,7 @@ export function online_1v1_play()
 		matchmaking_popup.classList.remove("hidden");
 	}
 
-	function start_matchmaking_countdown(mm_status_div: HTMLDivElement, msg_obj : any)
+	function start_matchmaking_countdown(mm_status_div: HTMLDivElement)
 	{
 		const game_popup = document.querySelector<HTMLDivElement>("#online_game_popup");
 		const matchmaking_popup = document.querySelector<HTMLDivElement>("#online1v1_matchmaking_popup");
@@ -309,8 +312,8 @@ export function online_1v1_play()
 
 				//auto start after 4s
 				setTimeout(() => {
-					const playersArr = JSON.parse(msg_obj.players);
-					if (playersArr[0] === localStorage.getItem("current_username"))
+					// const playersArr = JSON.parse(msg_obj.players);
+					if (playerIndex === 0)
 						start_the_fkin_game();
 				}, 4000);
 
