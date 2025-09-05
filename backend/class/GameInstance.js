@@ -36,7 +36,6 @@ export class GameInstance {
   #rightplayerY = 0;
   #leftplayerY = 0;
   #game_interval_id = 0;
-  #game_hit_lock = false;
   #isTournamentGame = false;
   #tournamentId = null;
   #matchId = null;
@@ -189,16 +188,15 @@ export class GameInstance {
       }
     } else {
       if (
-        !this.#game_hit_lock &&
         //left paddle hit
         //Math.abs to make detection area bigger to counter ball jump bug
-        ((this.#ballX <=
+        ((this.#dx < 0 && this.#ballX <=
           this.#player_indent + this.#block_width + Math.abs(this.#dx) &&
           this.#ballX >= this.#player_indent - Math.abs(this.#dx) &&
           this.#ballY + this.#ball_len >= this.#leftplayerY - 2 &&
           this.#ballY <= this.#leftplayerY + this.#block_height + 2) ||
           //same thing applied here also
-          (this.#ballX + this.#ball_len >=
+          (this.#dx > 0 && this.#ballX + this.#ball_len >=
             this.#boardWidth -
               this.#player_indent -
               this.#block_width -
@@ -211,10 +209,6 @@ export class GameInstance {
         this.#dx = -this.#dx;
         this.#dx *= 1.1;
         this.#dy *= 1.1;
-        this.#game_hit_lock = true;
-        setTimeout(() => {
-          this.#game_hit_lock = false;
-        }, 200); //does exactly wat i want damnnn non blocks and later sets gamelock to false
       }
 
       //check collision wif horizontal walls

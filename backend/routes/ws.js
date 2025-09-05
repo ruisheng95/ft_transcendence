@@ -17,7 +17,7 @@ const root = async function (fastify) {
       rightplayerY,
       leftplayerY,
       player_indent;
-    let game_interval_id, game_hit_lock;
+    let game_interval_id;
     const player_movement = {
       rightplayer_up: false,
       rightplayer_down: false,
@@ -70,15 +70,17 @@ const root = async function (fastify) {
           );
         } else {
           if (
-            !game_hit_lock &&
             //Math.abs to make detection area bigger to counter ball jump bug
-            ((ballX <= player_indent + block_width + Math.abs(dx) &&
+            ((
+				dx < 0 &&
+				ballX <= player_indent + block_width + Math.abs(dx) &&
               ballX >= player_indent - Math.abs(dx) &&
               ballY + ball_len >= leftplayerY - 2 &&
               ballY <= leftplayerY + block_height + 2) ||
               //same thing applied here also
-              (ballX + ball_len >=
-                boardWidth - player_indent - block_width - Math.abs(dx) &&
+              (
+				dx > 0 &&
+				ballX + ball_len >= boardWidth - player_indent - block_width - Math.abs(dx) &&
                 ballX + ball_len <= boardWidth - player_indent + Math.abs(dx) &&
                 ballY + ball_len >= rightplayerY - 2 &&
                 ballY <= rightplayerY + block_height + 2))
@@ -93,10 +95,10 @@ const root = async function (fastify) {
 
             dy *= 1 + (Math.random() * 0.2 + -0.1); //randomnes for dy
             //dy *= 1.1;
-            game_hit_lock = true;
-            setTimeout(() => {
-              game_hit_lock = false;
-            }, 200); //does exactly wat i want damnnn non blocks and later sets gamelock to false
+            // game_hit_lock = true;
+            // setTimeout(() => {
+            //   game_hit_lock = false;
+            // }, 200); //does exactly wat i want damnnn non blocks and later sets gamelock to false
           }
 
           //check collision wif horizontal walls
