@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { add_history } from "./spa-navigation";
 import { WS } from "./class/WS";
 import { translate_text } from "./language";
@@ -38,7 +40,6 @@ export function open_playerstats_page()
 	insert_playerstats_and_history_main();
 }
 
-let added_listener_flag = false;
 function insert_playerstats_and_history_main()
 {
 	const socket = WS.getInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`);
@@ -48,205 +49,205 @@ function insert_playerstats_and_history_main()
 	else
 		socket.addEventListener("open", () => { socket.send(JSON.stringify( {type: "get_playerstats" })) }, { once: true });
 
-	if(added_listener_flag === true)
-		return;
+	socket.removeEventListener("message", socket_event_listener);
+	socket.addEventListener("message", socket_event_listener);
+}
 
-	added_listener_flag = true;
-	socket.addEventListener("message", (event) => {
-		const msg_obj = JSON.parse(event.data);
+function socket_event_listener(event : any)
+{
+	const msg_obj = JSON.parse(event.data);
 
-		if(msg_obj.type === "playerstats_info")
+	if(msg_obj.type === "playerstats_info")
+	{
+		const rating = msg_obj.rating;
+		const winstreak = msg_obj.winning_streak;
+		const total_wins = msg_obj.total_win;
+		const total_loss = msg_obj.total_lose;
+		const total_matches = msg_obj.history.length;
+		const winrate = total_matches != 0 ? Math.round((total_wins / total_matches) * 100) : 0;
+		
+		function getOrdinalSuffix(num: number): string {
+			const j = num % 10;
+			if (j == 1) {
+				return "st";
+			}
+			if (j == 2) {
+				return "nd";
+			}
+			if (j == 3) {
+				return "rd";
+			}
+			return "th";
+		}
+
+		function getPlacementColor(placement: number): string {
+			switch(placement) {
+				case 1: return "text-yellow-400";
+				case 2: return "text-gray-300";
+				case 3: return "text-orange-400";
+				case 4: return "text-blue-400";
+				case -1: return "text-gray-400";
+				case -2: return "text-red-400";
+				default: return "text-gray-400";
+			}
+		}
+
+		const rating_div = document.querySelector<HTMLDivElement>("#playerstats_rating");
+		const winstreak_div = document.querySelector<HTMLDivElement>("#playerstats_winstreak");
+		const total_matches_div = document.querySelector<HTMLDivElement>("#playerstats_total_matches");
+		const total_wins_div = document.querySelector<HTMLDivElement>("#playerstats_total_wins");
+		const total_loss_div = document.querySelector<HTMLDivElement>("#playerstats_total_loss");
+		const winrate_div = document.querySelector<HTMLDivElement>("#playerstats_winrate");
+		const winrate_bar = document.querySelector<HTMLDivElement>("#playerstats_winrate_bar");
+
+		if(!winrate_div || !winrate_bar || !rating_div || !winstreak_div || !total_matches_div || !total_wins_div || !total_loss_div) 
+			throw new Error("Insert playerstats elements not found");
+
+		rating_div.innerHTML = `${rating}`;
+		winstreak_div.innerHTML = `${winstreak}`;
+		total_matches_div.innerHTML = `${total_matches}`;
+		total_wins_div.innerHTML = `${total_wins}`;
+		total_loss_div.innerHTML = `${total_loss}`;
+		winrate_div.innerHTML = `${winrate}%`;
+		winrate_bar.style.width = `${winrate}%`;
+
+		//history
+		let history = `<div class="h-[73vh] overflow-y-scroll pr-2 space-y-3">`;
+
+		if(msg_obj.history.length == 0)
 		{
-			const rating = msg_obj.rating;
-			const winstreak = msg_obj.winning_streak;
-			const total_wins = msg_obj.total_win;
-			const total_loss = msg_obj.total_lose;
-			const total_matches = msg_obj.history.length;
-			const winrate = total_matches != 0 ? Math.round((total_wins / total_matches) * 100) : 0;
-			
-			function getOrdinalSuffix(num: number): string {
-				const j = num % 10;
-				if (j == 1) {
-					return "st";
-				}
-				if (j == 2) {
-					return "nd";
-				}
-				if (j == 3) {
-					return "rd";
-				}
-				return "th";
-			}
-
-			function getPlacementColor(placement: number): string {
-				switch(placement) {
-					case 1: return "text-yellow-400";
-					case 2: return "text-gray-300";
-					case 3: return "text-orange-400";
-					case 4: return "text-blue-400";
-					case -1: return "text-gray-400";
-					case -2: return "text-red-400";
-					default: return "text-gray-400";
-				}
-			}
-
-			const rating_div = document.querySelector<HTMLDivElement>("#playerstats_rating");
-			const winstreak_div = document.querySelector<HTMLDivElement>("#playerstats_winstreak");
-			const total_matches_div = document.querySelector<HTMLDivElement>("#playerstats_total_matches");
-			const total_wins_div = document.querySelector<HTMLDivElement>("#playerstats_total_wins");
-			const total_loss_div = document.querySelector<HTMLDivElement>("#playerstats_total_loss");
-			const winrate_div = document.querySelector<HTMLDivElement>("#playerstats_winrate");
-			const winrate_bar = document.querySelector<HTMLDivElement>("#playerstats_winrate_bar");
-
-			if(!winrate_div || !winrate_bar || !rating_div || !winstreak_div || !total_matches_div || !total_wins_div || !total_loss_div) 
-				throw new Error("Insert playerstats elements not found");
-
-			rating_div.innerHTML = `${rating}`;
-			winstreak_div.innerHTML = `${winstreak}`;
-			total_matches_div.innerHTML = `${total_matches}`;
-			total_wins_div.innerHTML = `${total_wins}`;
-			total_loss_div.innerHTML = `${total_loss}`;
-			winrate_div.innerHTML = `${winrate}%`;
-			winrate_bar.style.width = `${winrate}%`;
-
-			//history
-			let history = `<div class="h-[73vh] overflow-y-scroll pr-2 space-y-3">`;
-
-			if(msg_obj.history.length == 0)
+			history += `
+				<div class="flex flex-col w-full h-full justify-center items-center text-gray-400">
+					<span class="text-xl">${translate_text("No match history yet")}</span>
+				</div>`;
+		}
+		else
+		{
+			for(let i = msg_obj.history.length - 1; i >= 0; i--)
 			{
+				const entry = msg_obj.history[i];
+				let user_result = '';
+				let result_color = '';
+				const username = localStorage.getItem("current_username");
+				const isTournament = entry.match_type === "Tournament";
+
+				// tournament - show placement
+				// others - win/loss
+				if(entry.user1_name == username)
+				{
+					if(isTournament) {
+						const placement = entry.user1_result;
+						if(placement != -1 && placement != -2)
+						{
+							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+							result_color = getPlacementColor(placement);
+						}
+						else
+						{
+							user_result = placement === -1 ? "invalid" : "disconnected";
+							result_color = getPlacementColor(placement);
+						}
+					} else {
+						user_result = entry.user1_result == 1 ? "Win" : "Loss";
+						result_color = entry.user1_result == 1 ? "text-green-500" : "text-red-500";
+					}
+				}
+
+				if(entry.user2_name == username)
+				{
+					if(isTournament) {
+						const placement = entry.user2_result;
+						if(placement != -1 && placement != -2)
+						{
+							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+							result_color = getPlacementColor(placement);
+						}
+						else
+						{
+							user_result = placement === -1 ? "invalid" : "disconnected";
+							result_color = getPlacementColor(placement);
+						}
+					} else {
+						user_result = entry.user2_result == 1 ? "Win" : "Loss";
+						result_color = entry.user2_result == 1 ? "text-green-500" : "text-red-500";
+					}
+				}
+
+				if(entry.user3_name && entry.user3_name == username)
+				{
+					if(isTournament) {
+						const placement = entry.user3_result;
+						if(placement != -1 && placement != -2)
+						{
+							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+							result_color = getPlacementColor(placement);
+						}
+						else
+						{
+							user_result = placement === -1 ? "invalid" : "disconnected";
+							result_color = getPlacementColor(placement);
+						}
+					} else {
+						user_result = entry.user3_result == 1 ? "Win" : "Loss";
+						result_color = entry.user3_result == 1 ? "text-green-500" : "text-red-500";
+					}
+				}
+				
+				if(entry.user4_name && entry.user4_name == username)
+				{
+					if(isTournament) {
+						const placement = entry.user4_result;
+						if(placement != -1 && placement != -2)
+						{
+							user_result = `${placement}${getOrdinalSuffix(placement)} place`;
+							result_color = getPlacementColor(placement);
+						}
+						else
+						{
+							user_result = placement === -1 ? "invalid" : "disconnected";
+							result_color = getPlacementColor(placement);
+						}
+					} else {
+						user_result = entry.user4_result == 1 ? "Win" : "Loss";
+						result_color = entry.user4_result == 1 ? "text-green-500" : "text-red-500";
+					}
+				}
+				
 				history += `
-					<div class="flex flex-col w-full h-full justify-center items-center text-gray-400">
-						<span class="text-xl">${translate_text("No match history yet")}</span>
+					<!-- Entry -->
+					<div class="bg-white/20 rounded-lg px-4 py-2 grid grid-cols-[2fr_2fr_3fr_1fr] gap-4 items-center">
+						<span>${entry.date}</span>
+						<span>${entry.match_type}</span>
+						<div class="flex space-x-1 relative">
+							<div class="relative group">
+								<img class="w-10 h-10 rounded-full object-cover" src="${entry.user1_avatar ? entry.user1_avatar : "/defaultpfp.png"}" alt="player">
+								<span class="tooltip-2">${entry.user1_name}</span>
+							</div>
+							<div class="relative group">
+								<img class="w-10 h-10 rounded-full object-cover" src="${entry.user2_avatar ? entry.user2_avatar : "/defaultpfp.png"}" alt="player">
+								<span class="tooltip-2">${entry.user2_name}</span>
+							</div>
+							${entry.user3_name ? `
+							<div class="relative group">
+								<img class="w-10 h-10 rounded-full object-cover" src="${entry.user3_avatar ? entry.user3_avatar : "/defaultpfp.png"}" alt="player">
+								<span class="tooltip-2">${entry.user3_name}</span>
+							</div>` : ""}
+							${entry.user3_name ? `
+							<div class="relative group">
+								<img class="w-10 h-10 rounded-full object-cover" src="${entry.user4_avatar ? entry.user4_avatar : "/defaultpfp.png"}" alt="player">
+								<span class="tooltip-2">${entry.user4_name}</span>
+							</div>` : ""}
+						</div>
+						<span class="${result_color} font-semibold">${user_result}</span>
 					</div>`;
 			}
-			else
-			{
-				for(let i = msg_obj.history.length - 1; i >= 0; i--)
-				{
-					const entry = msg_obj.history[i];
-					let user_result = '';
-					let result_color = '';
-					const username = localStorage.getItem("current_username");
-					const isTournament = entry.match_type === "Tournament";
-
-					// tournament - show placement
-					// others - win/loss
-					if(entry.user1_name == username)
-					{
-						if(isTournament) {
-							const placement = entry.user1_result;
-							if(placement != -1 && placement != -2)
-							{
-								user_result = `${placement}${getOrdinalSuffix(placement)} place`;
-								result_color = getPlacementColor(placement);
-							}
-							else
-							{
-								user_result = placement === -1 ? "invalid" : "disconnected";
-								result_color = getPlacementColor(placement);
-							}
-						} else {
-							user_result = entry.user1_result == 1 ? "Win" : "Loss";
-							result_color = entry.user1_result == 1 ? "text-green-500" : "text-red-500";
-						}
-					}
-
-					if(entry.user2_name == username)
-					{
-						if(isTournament) {
-							const placement = entry.user2_result;
-							if(placement != -1 && placement != -2)
-							{
-								user_result = `${placement}${getOrdinalSuffix(placement)} place`;
-								result_color = getPlacementColor(placement);
-							}
-							else
-							{
-								user_result = placement === -1 ? "invalid" : "disconnected";
-								result_color = getPlacementColor(placement);
-							}
-						} else {
-							user_result = entry.user2_result == 1 ? "Win" : "Loss";
-							result_color = entry.user2_result == 1 ? "text-green-500" : "text-red-500";
-						}
-					}
-
-					if(entry.user3_name && entry.user3_name == username)
-					{
-						if(isTournament) {
-							const placement = entry.user3_result;
-							if(placement != -1 && placement != -2)
-							{
-								user_result = `${placement}${getOrdinalSuffix(placement)} place`;
-								result_color = getPlacementColor(placement);
-							}
-							else
-							{
-								user_result = placement === -1 ? "invalid" : "disconnected";
-								result_color = getPlacementColor(placement);
-							}
-						} else {
-							user_result = entry.user3_result == 1 ? "Win" : "Loss";
-							result_color = entry.user3_result == 1 ? "text-green-500" : "text-red-500";
-						}
-					}
-					
-					if(entry.user4_name && entry.user4_name == username)
-					{
-						if(isTournament) {
-							const placement = entry.user4_result;
-							if(placement != -1 && placement != -2)
-							{
-								user_result = `${placement}${getOrdinalSuffix(placement)} place`;
-								result_color = getPlacementColor(placement);
-							}
-							else
-							{
-								user_result = placement === -1 ? "invalid" : "disconnected";
-								result_color = getPlacementColor(placement);
-							}
-						} else {
-							user_result = entry.user4_result == 1 ? "Win" : "Loss";
-							result_color = entry.user4_result == 1 ? "text-green-500" : "text-red-500";
-						}
-					}
-					
-					history += `
-						<!-- Entry -->
-						<div class="bg-white/20 rounded-lg px-4 py-2 grid grid-cols-[2fr_2fr_3fr_1fr] gap-4 items-center">
-							<span>${entry.date}</span>
-							<span>${entry.match_type}</span>
-							<div class="flex space-x-1 relative">
-								<div class="relative group">
-									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user1_avatar ? entry.user1_avatar : "/defaultpfp.png"}" alt="player">
-									<span class="tooltip-2">${entry.user1_name}</span>
-								</div>
-								<div class="relative group">
-									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user2_avatar ? entry.user2_avatar : "/defaultpfp.png"}" alt="player">
-									<span class="tooltip-2">${entry.user2_name}</span>
-								</div>
-								${entry.user3_name ? `
-								<div class="relative group">
-									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user3_avatar ? entry.user3_avatar : "/defaultpfp.png"}" alt="player">
-									<span class="tooltip-2">${entry.user3_name}</span>
-								</div>` : ""}
-								${entry.user3_name ? `
-								<div class="relative group">
-									<img class="w-10 h-10 rounded-full object-cover" src="${entry.user4_avatar ? entry.user4_avatar : "/defaultpfp.png"}" alt="player">
-									<span class="tooltip-2">${entry.user4_name}</span>
-								</div>` : ""}
-							</div>
-							<span class="${result_color} font-semibold">${user_result}</span>
-						</div>`;
-				}
-			}
-
-			history += "</div>";
-			const history_div = document.querySelector<HTMLDivElement>("#playerstats_history");
-			if(!history_div) throw new Error("history div not found");
-			history_div.innerHTML = history;
 		}
-	});
+
+		history += "</div>";
+		const history_div = document.querySelector<HTMLDivElement>("#playerstats_history");
+		if(!history_div) throw new Error("history div not found");
+		history_div.innerHTML = history;
+	}
 }
 
 export const playerstats_popup = `

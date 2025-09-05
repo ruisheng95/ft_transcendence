@@ -158,12 +158,26 @@ const root = async function (fastify) {
 			return USERNAME;
 		}
 
+		function get_avatar_from_email(email)
+		{
+			const { AVATAR } = fastify.betterSqlite3
+			.prepare("SELECT AVATAR FROM USER WHERE EMAIL = ?")
+			.get(email);
+
+			return AVATAR;
+		}
+
 		for (const entry of HISTORY) //add them names
 		{
 			if(entry.user1_email) entry.user1_name = get_username_from_email(entry.user1_email);
 			if(entry.user2_email) entry.user2_name = get_username_from_email(entry.user2_email);
 			if(entry.user3_email) entry.user3_name = get_username_from_email(entry.user3_email);
 			if(entry.user4_email) entry.user4_name = get_username_from_email(entry.user4_email);
+
+			if(entry.user1_email) entry.user1_avatar = get_avatar_from_email(entry.user1_email);
+			if(entry.user2_email) entry.user2_avatar = get_avatar_from_email(entry.user2_email);
+			if(entry.user3_email) entry.user3_avatar = get_avatar_from_email(entry.user3_email);
+			if(entry.user4_email) entry.user4_avatar = get_avatar_from_email(entry.user4_email);
 		} 
 
 		//return obj
