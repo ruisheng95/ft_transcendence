@@ -22,15 +22,15 @@ export function online_1v1_play()
 	if (tournament_context) {
 		try {
 			parsedContext = JSON.parse(tournament_context);
-			// console.log("[DEBUG] Parsed tournament context:", parsedContext);
+			// console.log("Parsed tournament context:", parsedContext);
 		} catch (error) {
-			console.error("[ERROR] Failed to parse tournament context:", error);
+			console.error("Failed to parse tournament context:", error);
 		}
 	}
 	let socketUrl = `${import.meta.env.VITE_SOCKET_URL}/ws-online`;
 	if (parsedContext && parsedContext.tournament_id && parsedContext.current_match_id) {
 		socketUrl += `?tournament=${parsedContext.tournament_id}&match=${parsedContext.current_match_id}`;
-		// console.log("[DEBUG] Tournament parameters added to WebSocket URL");
+		// console.log("Tournament parameters added to WebSocket URL");
 	}
 	
 	const socket = WS.getInstance(socketUrl);
