@@ -48,7 +48,6 @@ export function settings_setup ()
 	name_input.addEventListener("input", () => {
 		//check for invalid chars
 		const input_str = name_input.value;
-		const valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
 		if(input_str.length === 0)
 			return;
