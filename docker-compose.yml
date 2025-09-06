@@ -1,6 +1,10 @@
 networks:
   trust_me_bro:
 
+secrets:
+  google_client_id_secret:
+    environment: GOOGLE_CLIENT_ID
+
 services:
   backend:
     build: ./backend
@@ -9,9 +13,12 @@ services:
     networks:
       - trust_me_bro
     volumes:
-      - ./backend/data.db:/app/data.db:rw,z
+      - ./backend/database:/app/database:rw,z
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      secrets:
+        - google_client_id_secret
     image: ft-transcendence-frontend
     ports:
       - "3000:3000"

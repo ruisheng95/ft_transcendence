@@ -3,7 +3,7 @@ import Database from "better-sqlite3";
 import Postgrator from "postgrator";
 
 function fastifyBetterSqlite3(fastify, options, done) {
-  const db = new Database("data.db");
+  const db = new Database("database/data.db");
   // optional pragmas
   // db.prepare("PRAGMA foreign_keys = ON").run();
   // db.prepare("PRAGMA journal_mode = WAL").run();
