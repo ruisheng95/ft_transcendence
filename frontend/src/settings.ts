@@ -53,7 +53,7 @@ export function settings_setup ()
 		if(input_str.length === 0)
 			return;
 		
-		if(!valid_chars.includes(input_str[input_str.length - 1]))
+		if(!/^[a-zA-Z0-9_]+$/.test(input_str))
 		{
 			error_display.classList.remove("hidden");
 			error_display.innerText = translate_text("Alphabets, numbers or '_' only");

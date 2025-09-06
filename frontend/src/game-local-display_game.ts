@@ -253,11 +253,13 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 
 	//AI functions
 
+	let AI_playerY = rightplayerY;
 	function AI_movement()
 	{
 		let predicted_y = boardHeight / 2;
 		let last_key_press = "";
 		let frame_counter = 0;
+		let current_key_press = "";
 		
 		//predict pos every sec
 		setInterval(() => {
@@ -271,16 +273,28 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 			if (playing == false)
 				return;
 			
+			//predicting the AI playerY since we can only check rightplayerY ones every sec
+			if(current_key_press === "ArrowUp")
+			{
+				AI_playerY -= 15;
+				AI_playerY = Math.max(0, AI_playerY);
+			}
+			else if(current_key_press === "ArrowDown")
+			{
+				AI_playerY += 15;
+				AI_playerY = Math.min(boardHeight - block_height, AI_playerY);
+			}
+
+			//distraction
 			frame_counter++;
-			const distraction = Math.min(0.98, 0.80 + (frame_counter * 0.0002));
-			// console.log(distraction);
-			if(Math.random() < distraction) //simulate human distractions lol and slow reaction
+			const distraction = Math.min(0.98, 0.80 + (frame_counter * 0.00015));
+			if(Math.random() < distraction)
 				return;
 
-			const paddle_center = rightplayerY + block_height / 2;
-			let current_key_press = "";
-			const buffer = Math.floor(Math.random() * 21) + 20; // 20-40px simulate eye error from center of the paddle (between 18-22 px)
+			const paddle_center = AI_playerY + block_height / 2;
+			const buffer = Math.floor(Math.random() * 21) + 20; // 20-40px
 			
+			current_key_press = "";
 			if(paddle_center > predicted_y + buffer)
 				current_key_press = "ArrowUp";
 			else if(paddle_center < predicted_y - buffer)
@@ -308,10 +322,14 @@ export function display_game(handle_game_end : (msg_obj : object) => void, AI_fl
 
 	function predict_ball_landing_spot()
 	{
+		//check the correct ball pos
 		let sim_x = ballX;
 		let sim_y = ballY;
 		let sim_dx = dx;
 		let sim_dy = dy;
+
+		//correct the AI y pos
+		AI_playerY = rightplayerY;
 
 		while (sim_x < boardWidth - player_indent - block_width)
 		{
