@@ -67,12 +67,16 @@ export function friends_page_setup()
 
 		if(!error_div) throw new Error("error div not found");
 		const input_str = addfriend_search_bar.value;
-		const valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
 		if(input_str.length === 0)
+		{
+			player_list_div.innerHTML = "";
+			player_list_div.classList.add("hidden");
+			error_div.classList.add("hidden");
+			error_div.innerHTML = "";
 			return;
-
-		if(input_str.length > 20)
+		}
+		else if(input_str.length > 20)
 		{
 			player_list_div.innerHTML = "";
 			player_list_div.classList.add("hidden");
@@ -80,17 +84,17 @@ export function friends_page_setup()
 			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">${translate_text("search input too long")}</h1>`;
 			return;
 		}
-		else if(!valid_chars.includes(input_str[input_str.length - 1]))
+		else if(!/^[a-zA-Z0-9_]+$/.test(input_str))
 		{
 			player_list_div.innerHTML = "";
 			player_list_div.classList.add("hidden");
 			error_div.classList.remove("hidden");
 			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">${translate_text("Alphabets, numbers or '_' only")}</h1>`;
 			addfriend_search_bar.value = input_str.substring(0, input_str.length - 1);
+			return;
 		}
 		else
 			error_div.innerHTML = "";
-
 		if (input_str.length >= 5)
 			socket.send(JSON.stringify({type: "get_server_players", name: addfriend_search_bar.value}));
 		else

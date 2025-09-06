@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(() => {
   return {
-    base: "./",
+    base: "/",
     resolve: {
       alias: {
         "~": path.resolve(__dirname, "./src"),

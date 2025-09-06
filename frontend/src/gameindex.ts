@@ -42,6 +42,7 @@ export function index_init()
 		// if (!event.wasClean) {
 		// 	display_login_page();
 		// }
+		WS.removeInstance(`${import.meta.env.VITE_SOCKET_URL}/ws_profile`)
 		display_login_page();
 		clearInterval(websocketKeepAliveTimeout);
 	});
