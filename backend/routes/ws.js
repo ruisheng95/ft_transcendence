@@ -7,7 +7,7 @@ import { MsgType } from "../class/MessageType.js";
 
 const root = async function (fastify) {
   const onlineMatchmaking = new OnlineMatchmaking(fastify); //modifed by ck
-  fastify.get("/ws", { websocket: true }, (connection) => {
+  fastify.get("/ws", { websocket: true, onRequest: fastify.verify_session }, (connection) => {
     //declare vars
     let boardHeight, boardWidth, board_border_width;
     let ball_len, ballX, ballY, dy, dx;
@@ -123,7 +123,7 @@ const root = async function (fastify) {
     }
 
     function recv_msg(message) {
-      const message_obj = JSON.parse(message.toString());
+      const message_obj = fastify.parseJson(message.toString());
       console.log("Received:", message_obj);
 
       if (message_obj.type == "game_init") {
@@ -176,7 +176,7 @@ const root = async function (fastify) {
       );
 
       connection.on("message", (message) => {
-        const message_obj = JSON.parse(message.toString());
+        const message_obj = fastify.parseJson(message.toString());
 		// console.log("MESSAGE_OBJ: ", message_obj);
         const player = onlineMatchmaking.getPlayerByConnection(connection);
         if (message_obj.type == MsgType.GAME_START) {
@@ -232,7 +232,7 @@ const root = async function (fastify) {
       );
 
       connection.on("message", (message) => {
-        const message_obj = JSON.parse(message.toString());
+        const message_obj = fastify.parseJson(message.toString());
         const player = onlineMatchmaking.getPlayerByConnection(connection);
         if (message_obj.type == MsgType.GAME_START) {
           player.gameInstance?.startGame(defaultGameSetting2v2);
@@ -298,7 +298,7 @@ const root = async function (fastify) {
 		);
 
 		connection.on("message", (message) => {
-			const message_obj = JSON.parse(message.toString());
+			const message_obj = fastify.parseJson(message.toString());
 			const player = onlineMatchmaking.getPlayerByConnection(connection);
 			// console.log("FRONTEND SEND A MESSAGEEEEE: ", message_obj);
 			if (message_obj.type == MsgType.GAME_START)

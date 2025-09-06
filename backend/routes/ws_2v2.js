@@ -1,5 +1,5 @@
 const root = async function (fastify) {
-  fastify.get("/ws_2v2", { websocket: true }, (connection) => {
+  fastify.get("/ws_2v2", { websocket: true, onRequest: fastify.verify_session }, (connection) => {
 	//declare vars
 	let boardHeight, boardWidth, board_border_width;
 	let ball_len, ballX, ballY, dy, dx;
@@ -148,7 +148,7 @@ const root = async function (fastify) {
 	}
 
 	function recv_msg(message) {
-	  const message_obj = JSON.parse(message.toString());
+	  const message_obj = fastify.parseJson(message.toString());
 	  // console.log("Received:", message_obj);
 
 	  if (message_obj.type == "game_init") {

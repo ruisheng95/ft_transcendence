@@ -14,10 +14,20 @@ function localConfig(fastify, options, done) {
     const session = request.query.session;
     if (!fastify.conf.session[session]) {
       request.log.error(session, "Session not found");
-      done(new Error("Invalid session"));
+      reply.code(401);
+      done(new Error("Unauthorized. Invalid session"));
     } else {
       done();
     }
+  });
+  fastify.decorate("parseJson", function (message) {
+    let json = {};
+    try {
+      json = JSON.parse(message);
+    } catch (ex) {
+      ex;
+    }
+    return json;
   });
   done();
 }

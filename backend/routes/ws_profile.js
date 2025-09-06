@@ -19,7 +19,7 @@ const root = async function (fastify) {
       //functions
 
       function recv_msg(message) {
-        const message_obj = JSON.parse(message.toString());
+        const message_obj = fastify.parseJson(message.toString());
         if (Object.keys(message_obj).length !== 0) {
         //   request.log.info(message_obj, "Received:");
         }

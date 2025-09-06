@@ -7,7 +7,7 @@ const root = async function (fastify) {
     if (!tournamentManager)
         tournamentManager = new OnlineTournament(fastify);
 
-    fastify.get("/ws-online-tournament", { websocket: true }, (connection, req) => {
+    fastify.get("/ws-online-tournament", { websocket: true, onRequest: fastify.verify_session }, (connection, req) => {
         const session = req.query.session;
 
         let playerInfo = {
@@ -51,7 +51,7 @@ const root = async function (fastify) {
 
         connection.on("message", (message) => {
             try {
-                const msg = JSON.parse(message.toString());
+                const msg = fastify.parseJson(message.toString());
 
                 if (msg.type === "start_match") {
                     tournamentManager.handleStartMatch(playerInfo);

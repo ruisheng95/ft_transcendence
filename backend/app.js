@@ -27,7 +27,11 @@ async function app(fastify, opts) {
     ],
   });
 
-  await fastify.register(websocket);
+  await fastify.register(websocket, {
+    options: {
+      maxPayload: 5 * 1024 * 1024 + 1024, //Max messages size to 5 MB++ (include 1024 bytes buffer for JSON body)
+    },
+  });
   // Do not touch the following lines
 
   // This loads all plugins defined in plugins

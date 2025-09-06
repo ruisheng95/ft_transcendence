@@ -1,7 +1,7 @@
 // Fastify Tic-Tac-Toe Backend - Local Play with Backend Logic
 const root = async function (fastify) {
   
-	fastify.get("/ws_xox", { websocket: true }, (connection) => {
+	fastify.get("/ws_xox", { websocket: true, onRequest: fastify.verify_session }, (connection) => {
 
 		//Game state vars (moved from frontend)
 		let whosTurn;
@@ -28,7 +28,7 @@ const root = async function (fastify) {
 		
 		function recv_msg(message)
 		{
-			const message_obj = JSON.parse(message.toString());
+			const message_obj = fastify.parseJson(message.toString());
 			//console.log("Received:", message_obj);
 			if(message_obj.type === "start_game")
 				handleStartGame(message_obj);
