@@ -90,7 +90,7 @@ export function friends_page_setup()
 			player_list_div.classList.add("hidden");
 			error_div.classList.remove("hidden");
 			error_div.innerHTML = `<h1 class="text-[13px] text-red-500">${translate_text("Alphabets, numbers or '_' only")}</h1>`;
-			addfriend_search_bar.value = input_str.substring(0, input_str.length - 1);
+			addfriend_search_bar.value = clean_invalid_string(input_str);
 			return;
 		}
 		else
@@ -243,4 +243,18 @@ function handle_add_friend(event : Event)
 
 	button.classList.add("hidden");
 	button.removeEventListener("click", handle_add_friend);
+}
+
+export function clean_invalid_string(input : string)
+{
+	const valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+	let clean_input = "";
+
+	for (const input_char of input)
+	{
+		if (valid_chars.includes(input_char))
+			clean_input += input_char;
+	}
+
+	return clean_input;
 }

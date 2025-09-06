@@ -1,6 +1,7 @@
 //pf config
 
 import { WS } from "./class/WS.ts";
+import { translate_text } from "./language.ts";
 import { add_history } from "./spa-navigation.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
@@ -44,17 +45,17 @@ export function pf_config_setup()
 
 		if(input_str.length === 0)
 			return;
-		
+
 		if(!/^[a-zA-Z0-9_]+$/.test(input_str))
 		{
 			error_display.classList.remove("hidden");
-			error_display.innerText = "Alphabets, numbers or '_' only";
+			error_display.innerText = translate_text("Alphabets, numbers or '_' only");
 			name_input.value = input_str.substring(0, input_str.length - 1);
 		}
-		else if(input_str.length > 30)
+		else if(input_str.length > 20)
 		{
 			error_display.classList.remove("hidden");
-			error_display.innerText = "Search too long";
+			error_display.innerText = translate_text("input name too long");
 			name_input.value = input_str.substring(0, input_str.length - 1);
 		}
 		else
@@ -123,7 +124,7 @@ export function pf_config_setup()
 			
 			if (!file.type.startsWith('image/')) //checks the MIME type for image files only
 			{
-				error_display.innerText = "Error: Please choose an image file only!";
+				error_display.innerText = translate_text("Error: Please choose an image file only!");
 				return;
 			}
 			

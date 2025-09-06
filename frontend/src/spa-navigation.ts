@@ -189,7 +189,7 @@ function display_other_pages(path : string)
 		|| !vs_AI_game_button) throw new Error("display othar pages elements not found");
 
 	rmv_all_pgs_except_index();
-	
+
 	switch(path)
 	{
 		case "/playerstats":

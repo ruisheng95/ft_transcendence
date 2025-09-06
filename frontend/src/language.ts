@@ -221,6 +221,7 @@ const bm_texts = {
 	"Input too long": "Input terlalu panjang",
 	"Numbers, alphabets and '_' only": "Nombor, abjad dan '_' sahaja",
 	"File too big": "Fail terlalu besar ( > 5MB )",
+	"Error: Please choose an image file only!": "Ralat: Sila pilih fail imej sahaja!",
 
 	//history strings
 	"No match history yet": "Belum ada sejarah perlawanan",
@@ -693,6 +694,7 @@ const cn_texts = {
 	"Input too long": "输入过长",
 	"Numbers, alphabets and '_' only": "仅限数字、字母和 '_'",
 	"File too big": "文件太大 ( > 5MB )",
+	"Error: Please choose an image file only!": "错误：请仅选择图像文件！",
 
 	//history strings
 	"No match history yet": "暂无比赛历史",

@@ -397,7 +397,7 @@ const root = async function (fastify) {
       function check_valid_input_for_update(name) {
         if (name.length < 5) return "name must be minimum 5 characters";
 
-        if (name.length > 30) return "name must be maximum 30 characters";
+        if (name.length > 20) return "name must be maximum 20 characters";
 
         for (let i = 0; i < name.length; i++) {
           const code = name.charCodeAt(i);

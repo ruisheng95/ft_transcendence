@@ -3,6 +3,7 @@ import { hide_all_main_pages } from "./pong_modes.ts";
 import { WS } from "./class/WS.ts";
 import { add_history } from "./spa-navigation.ts";
 import { handle_language_change, translate_text } from "./language.ts";
+import { clean_invalid_string } from "./friends.ts";
 
 const html = (strings: TemplateStringsArray, ...values: unknown[]) => 
   String.raw({ raw: strings }, ...values);
@@ -56,7 +57,7 @@ export function settings_setup ()
 		{
 			error_display.classList.remove("hidden");
 			error_display.innerText = translate_text("Alphabets, numbers or '_' only");
-			name_input.value = input_str.substring(0, input_str.length - 1);
+			name_input.value = clean_invalid_string(input_str);
 		}
 		else if(input_str.length > 20)
 		{
