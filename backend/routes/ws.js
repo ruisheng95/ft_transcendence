@@ -225,10 +225,10 @@ const root = async function (fastify) {
         connection,
         4, // 4 players for 2v2
         request,
-		get_username_from_email(fastify.get_email_by_session(request)),
-    {//add this empty object
-    },//
-		'pong'
+        get_username_from_email(fastify.get_email_by_session(request)),
+        {//add this empty object
+        },//
+        'pong'
       );
 
       connection.on("message", (message) => {
@@ -257,26 +257,27 @@ const root = async function (fastify) {
         onlineMatchmaking.removePlayerByConnection(connection);
 
 		//send JSON to all players in the lobby that a player has left
-		const remainingPlayers = onlineMatchmaking.getWaitingPlayers(4, 'pong');
-   		 remainingPlayers.forEach(player => {
-			player.connection.send(JSON.stringify({
-				type: MsgType.MATCHMAKING_STATUS,
-				status: "Waiting for players",
-				gameType: 'pong',
-				players: JSON.stringify(remainingPlayers.map(player => player.username)),
-      	}))});
+        const remainingPlayers = onlineMatchmaking.getWaitingPlayers(4, 'pong');
+        remainingPlayers.forEach(player => {
+          player.connection.send(JSON.stringify({
+            type: MsgType.MATCHMAKING_STATUS,
+            status: "Waiting for players",
+            gameType: 'pong',
+            players: JSON.stringify(remainingPlayers.map(player => player.username)),
+          }))
+        });
 
         request.log.info("Socket disconnect: " + player.email);
       });
 
-	  function get_username_from_email(email)
-	  {
-		const { USERNAME } = fastify.betterSqlite3
-        .prepare("SELECT USERNAME FROM USER WHERE EMAIL = ?")
-        .get(email);
+      function get_username_from_email(email)
+      {
+        const { USERNAME } = fastify.betterSqlite3
+            .prepare("SELECT USERNAME FROM USER WHERE EMAIL = ?")
+            .get(email);
 
-		return USERNAME;
-	  }
+        return USERNAME;
+      }
     }
   );
 
