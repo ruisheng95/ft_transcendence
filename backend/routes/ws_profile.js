@@ -515,6 +515,14 @@ const root = async function (fastify) {
             };
             connection.send(JSON.stringify(success_obj));
             
+            const friendConnection = emailToWebsocketMap[friendEmail];
+            if (friendConnection) {
+                const updatedFriendFriends = get_friend_list_data(friendEmail);
+                friendConnection.send(JSON.stringify({
+                    type: "player_friends",
+                    friends: updatedFriendFriends,
+                }));
+            }
         } catch (error) {
             console.error('Error adding friend:', error);
             const error_obj = {
@@ -591,6 +599,14 @@ const root = async function (fastify) {
               };
               connection.send(JSON.stringify(success_obj));
               
+              const friendConnection = emailToWebsocketMap[friendEmail];
+              if (friendConnection) {
+                  const updatedFriendFriends = get_friend_list_data(friendEmail);
+                  friendConnection.send(JSON.stringify({
+                      type: "player_friends",
+                      friends: updatedFriendFriends,
+                  }));
+              }
           } catch (error) {
               console.error('Error removing friend:', error);
               const error_obj = {

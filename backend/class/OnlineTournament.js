@@ -276,7 +276,7 @@ export class OnlineTournament {
         const match = tournament.current_match;
         const roundNumber = match.round;
 
-        console.log(`Tournament: Round ${roundNumber} result: ${winner.username} defeats ${loser.username}`);
+        // console.log(`Tournament: Round ${roundNumber} result: ${winner.username} defeats ${loser.username}`);
 
         // Update round results
         const round = tournament.rounds[`round${roundNumber}`];

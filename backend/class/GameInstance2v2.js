@@ -124,7 +124,7 @@ export class GameInstance2v2 {
       this.#ballX + this.#ball_len >= this.#boardWidth
     ) {
       // Game hit border, end game
-	  this.#clean_disconnect_flag = true;
+      this.#clean_disconnect_flag = true;
       const winning_team = this.#ballX <= this.#ball_len / 2 ? "team2" : "team1";
       clearInterval(this.#game_interval_id);
       this.#sendJson({ type: MsgType.GAME_OVER, winner: winning_team });
@@ -150,31 +150,31 @@ export class GameInstance2v2 {
         (
           // Left team player 1 paddle hit (at player_indent position) - ball coming from right
           (this.#dx < 0 && 
-           this.#ballX <= this.#player_indent + this.#block_width + Math.abs(this.#dx) &&
-           this.#ballX >= this.#player_indent - Math.abs(this.#dx) &&
-           this.#ballY + this.#ball_len >= this.#leftplayer1Y - 2 &&
-           this.#ballY <= this.#leftplayer1Y + this.#block_height + 2) ||
+            this.#ballX <= this.#player_indent + this.#block_width + Math.abs(this.#dx) &&
+            this.#ballX >= this.#player_indent - Math.abs(this.#dx) &&
+            this.#ballY + this.#ball_len >= this.#leftplayer1Y - 2 &&
+            this.#ballY <= this.#leftplayer1Y + this.#block_height + 2) ||
           
           // Left team player 2 paddle hit (at 8 * player_indent position) - ball coming from right
           (this.#dx < 0 &&
-           this.#ballX <= (8 * this.#player_indent) + this.#block_width + Math.abs(this.#dx) &&
-           this.#ballX >= (8 * this.#player_indent) - Math.abs(this.#dx) &&
-           this.#ballY + this.#ball_len >= this.#leftplayer2Y - 2 &&
-           this.#ballY <= this.#leftplayer2Y + this.#block_height + 2) ||
+            this.#ballX <= (8 * this.#player_indent) + this.#block_width + Math.abs(this.#dx) &&
+            this.#ballX >= (8 * this.#player_indent) - Math.abs(this.#dx) &&
+            this.#ballY + this.#ball_len >= this.#leftplayer2Y - 2 &&
+            this.#ballY <= this.#leftplayer2Y + this.#block_height + 2) ||
           
           // Right team player 1 paddle hit (at 8 * player_indent from right) - ball coming from left
           (this.#dx > 0 &&
-           this.#ballX + this.#ball_len >= this.#boardWidth - (8 * this.#player_indent) - this.#block_width - Math.abs(this.#dx) &&
-           this.#ballX + this.#ball_len <= this.#boardWidth - (8 * this.#player_indent) + Math.abs(this.#dx) &&
-           this.#ballY + this.#ball_len >= this.#rightplayer1Y - 2 &&
-           this.#ballY <= this.#rightplayer1Y + this.#block_height + 2) ||
+            this.#ballX + this.#ball_len >= this.#boardWidth - (8 * this.#player_indent) - this.#block_width - Math.abs(this.#dx) &&
+            this.#ballX + this.#ball_len <= this.#boardWidth - (8 * this.#player_indent) + Math.abs(this.#dx) &&
+            this.#ballY + this.#ball_len >= this.#rightplayer1Y - 2 &&
+            this.#ballY <= this.#rightplayer1Y + this.#block_height + 2) ||
           
           // Right team player 2 paddle hit (at player_indent from right) - ball coming from left
           (this.#dx > 0 &&
-           this.#ballX + this.#ball_len >= this.#boardWidth - this.#player_indent - this.#block_width - Math.abs(this.#dx) &&
-           this.#ballX + this.#ball_len <= this.#boardWidth - this.#player_indent + Math.abs(this.#dx) &&
-           this.#ballY + this.#ball_len >= this.#rightplayer2Y - 2 &&
-           this.#ballY <= this.#rightplayer2Y + this.#block_height + 2)
+            this.#ballX + this.#ball_len >= this.#boardWidth - this.#player_indent - this.#block_width - Math.abs(this.#dx) &&
+            this.#ballX + this.#ball_len <= this.#boardWidth - this.#player_indent + Math.abs(this.#dx) &&
+            this.#ballY + this.#ball_len >= this.#rightplayer2Y - 2 &&
+            this.#ballY <= this.#rightplayer2Y + this.#block_height + 2)
         )
       ) {
         this.#dx = -this.#dx;
@@ -336,10 +336,10 @@ export class GameInstance2v2 {
 	this.stopGame();
 	}
 
-  isGamePlayer(connection) {
-    const found = this.#connectionArray.some((conn) => conn === connection);
-    return found;
-  }
+  // isGamePlayer(connection) {
+  //   const found = this.#connectionArray.some((conn) => conn === connection);
+  //   return found;
+  // }
 
   // Team-based stats update
   #update_team_stats_aftergame(winning_team_emails, losing_team_emails) {
